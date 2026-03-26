@@ -1,8 +1,19 @@
 import { Link } from 'react-router-dom'
 import './VehicleCard.css'
 
+function toSlug(brand, model) {
+  return `${brand}-${model}`
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
+}
+
 export default function VehicleCard({ vehicle, index }) {
   const { id, brand, model, year, price, fuel_type, mileage, power, images, status } = vehicle
+
+  const slug = toSlug(brand, model)
 
   const badge = {
     available: <span className="badge-available">Disponible</span>,
@@ -11,7 +22,7 @@ export default function VehicleCard({ vehicle, index }) {
   }
 
   return (
-    <Link to={`/vehicles/${id}`} className="vcard">
+    <Link to={`/vehicles/${slug}`} className="vcard">
       <div className="vcard-top">
         <span className="vcard-num">{String(index + 1).padStart(2, '0')}</span>
         {badge[status] || badge.available}

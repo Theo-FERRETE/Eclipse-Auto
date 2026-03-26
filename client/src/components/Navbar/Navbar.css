@@ -39,7 +39,7 @@
   font-size: 12px;
   letter-spacing: 3px;
   text-transform: uppercase;
-  color: var(--gray);
+  color: rgba(255, 255, 255, 0.5);
   font-weight: 600;
   transition: color 0.2s;
   position: relative;
