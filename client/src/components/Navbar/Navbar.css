@@ -53,7 +53,27 @@
   border-bottom: 1px solid var(--red);
 }
 
+.admin-link {
+  color: var(--red) !important;
+}
+
 .navbar-actions { margin-left: auto; }
+
+.navbar-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navbar-username {
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--cyan);
+  transition: color 0.2s;
+}
+.navbar-username:hover { color: var(--white); }
 
 .navbar-burger {
   display: none;
