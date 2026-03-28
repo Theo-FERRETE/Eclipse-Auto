@@ -1,0 +1,92 @@
+.admin-hero {
+  padding: 60px 0 40px;
+}
+
+.admin-title {
+  font-family: var(--font-display);
+  font-size: clamp(48px, 8vw, 96px);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -2px;
+  line-height: 0.9;
+  margin-top: 12px;
+}
+
+.admin-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 48px;
+  padding-top: 48px;
+  padding-bottom: 80px;
+}
+
+.admin-sidebar {
+  height: fit-content;
+  position: sticky;
+  top: 84px;
+}
+
+.admin-main {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.admin-section-title {
+  margin-bottom: 4px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+  background: var(--border);
+}
+
+.stat-card {
+  background: var(--black-2);
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: background 0.2s;
+}
+.stat-card:hover { background: var(--black-3); }
+
+.stat-card-n {
+  font-family: var(--font-display);
+  font-size: 48px;
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1;
+}
+
+.stat-card-n.available { color: var(--red); }
+.stat-card-n.reserved { color: #EF9F27; }
+.stat-card-n.sold { color: var(--gray); }
+.stat-card-n.pending { color: #EF9F27; }
+.stat-card-n.confirmed { color: #22c55e; }
+
+.stat-card-l {
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gray-dark);
+}
+
+.admin-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 1024px) {
+  .admin-layout { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 480px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+}
