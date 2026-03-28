@@ -35,7 +35,16 @@ export function AuthProvider({ children }) {
       }
     )
 
-    return () => subscription.unsubscribe()
+    // Déconnexion automatique à la fermeture du navigateur
+    const handleUnload = () => {
+      supabase.auth.signOut()
+    }
+    window.addEventListener('beforeunload', handleUnload)
+
+    return () => {
+      subscription.unsubscribe()
+      window.removeEventListener('beforeunload', handleUnload)
+    }
   }, [])
 
   const isAdmin = profile?.role === 'admin'

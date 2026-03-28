@@ -143,15 +143,27 @@ export default function VehicleDetail() {
 
           <div className="detail-actions">
             {status === 'available' ? (
-              <Link to={`/reserve/${vehicle.id}`} className="btn-primary" style={{ display: 'block', textAlign: 'center' }}>
+              <Link
+                to={`/reserve/${slug}`}
+                className="btn-primary"
+                style={{ display: 'block', textAlign: 'center' }}
+              >
                 Réserver ce véhicule
               </Link>
             ) : (
-              <button className="btn-ghost" disabled style={{ width: '100%', opacity: 0.5 }}>
+              <button
+                className="btn-ghost"
+                disabled
+                style={{ width: '100%', opacity: 0.5 }}
+              >
                 {status === 'reserved' ? 'Véhicule réservé' : 'Véhicule vendu'}
               </button>
             )}
-            <Link to="/contact" className="btn-ghost" style={{ display: 'block', textAlign: 'center' }}>
+            <Link
+              to="/contact"
+              className="btn-ghost"
+              style={{ display: 'block', textAlign: 'center' }}
+            >
               Nous contacter
             </Link>
           </div>
