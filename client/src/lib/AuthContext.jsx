@@ -8,57 +8,54 @@ export function AuthProvider({ children }) {
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  async function fetchProfile(userId) {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .single()
-    if (!error) setProfile(data)
-  }
-
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
-      if (session?.user) fetchProfile(session.user.id)
-      setLoading(false)
+      if (session?.user) {
+        supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single()
+          .then(({ data }) => {
+            setProfile(data ?? null)
+            setLoading(false)
+          })
+      } else {
+        setLoading(false)
+      }
     })
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null)
-        if (session?.user) {
-          fetchProfile(session.user.id)
-        } else {
-          setProfile(null)
-        }
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+      if (session?.user) {
+        supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single()
+          .then(({ data }) => setProfile(data ?? null))
+      } else {
+        setProfile(null)
       }
-    )
+    })
 
-    // Déconnexion automatique à la fermeture du navigateur
-    const handleUnload = () => {
-      supabase.auth.signOut()
-    }
-    window.addEventListener('beforeunload', handleUnload)
-
-    return () => {
-      subscription.unsubscribe()
-      window.removeEventListener('beforeunload', handleUnload)
-    }
+    return () => subscription.unsubscribe()
   }, [])
 
-  const isAdmin = profile?.role === 'admin'
-  const isClient = profile?.role === 'client'
-
   return (
-    <AuthContext.Provider value={{ user, profile, loading, isAdmin, isClient }}>
+    <AuthContext.Provider value={{
+      user,
+      profile,
+      loading,
+      isAdmin: profile?.role === 'admin',
+      isClient: profile?.role === 'client',
+    }}>
       {!loading && children}
     </AuthContext.Provider>
   )
 }
 
 export function useAuth() {
-  const context = useContext(AuthContext)
-  if (!context) throw new Error('useAuth doit être utilisé dans AuthProvider')
-  return context
+  return useContext(AuthContext)
 }

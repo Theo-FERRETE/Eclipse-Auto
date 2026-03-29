@@ -1,12 +1,10 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { login } from '@/lib/auth'
-import { useAuth } from '@/lib/AuthContext'
 import './Login.css'
 
 export default function Login() {
   const navigate = useNavigate()
-  const { isAdmin } = useAuth()
   const [form, setForm] = useState({ email: '', password: '' })
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -21,11 +19,9 @@ export default function Login() {
     setLoading(true)
     try {
       await login(form.email, form.password)
-      if (isAdmin) {
-        navigate('/admin')
-      } else {
+      setTimeout(() => {
         navigate('/dashboard')
-      }
+      }, 500)
     } catch (err) {
       setError('Email ou mot de passe incorrect.')
     } finally {

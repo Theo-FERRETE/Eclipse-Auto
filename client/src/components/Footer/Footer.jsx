@@ -33,7 +33,6 @@ export default function Footer() {
           <div className="footer-nav">
             <div className="footer-nav-title">Légal</div>
             <Link to="/mentions-legales">Mentions légales</Link>
-            <Link to="/confidentialite">Confidentialité</Link>
           </div>
         </div>
       </div>
