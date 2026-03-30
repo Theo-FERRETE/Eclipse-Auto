@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import VehicleCard from '@/components/VehicleCard/VehicleCard'
 import Filters from '@/components/Filters/Filters'
+import Pagination from '@/components/Pagination/Pagination'
 import { supabase } from '@/lib/supabase'
 import './Catalogue.css'
 
@@ -26,20 +27,37 @@ export default function Catalogue() {
 
   useEffect(() => {
     async function fetchVehicles() {
-      setLoading(true)
       const { data, error } = await supabase
         .from('vehicles')
         .select('*')
         .order('created_at', { ascending: false })
 
-      if (error) {
-        setError(error.message)
-      } else {
-        setVehicles(data)
-      }
+      if (error) setError(error.message)
+      else setVehicles(data)
       setLoading(false)
     }
+
     fetchVehicles()
+
+    // Refetch au retour sur l'onglet
+    window.addEventListener('focus', fetchVehicles)
+
+    // Polling toutes les 15s (fallback fiable si Realtime ne fonctionne pas)
+    const interval = setInterval(fetchVehicles, 15000)
+
+    // Realtime si activé côté Supabase
+    const channel = supabase
+      .channel('catalogue-vehicles')
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'vehicles' }, payload => {
+        setVehicles(prev => prev.map(v => v.id === payload.new.id ? { ...v, ...payload.new } : v))
+      })
+      .subscribe()
+
+    return () => {
+      window.removeEventListener('focus', fetchVehicles)
+      clearInterval(interval)
+      supabase.removeChannel(channel)
+    }
   }, [])
 
   function handleFilterChange(key, value) {
@@ -53,6 +71,10 @@ export default function Catalogue() {
     setSort('default')
     setPage(1)
   }
+
+  const brands = useMemo(() =>
+    [...new Set(vehicles.map(v => v.brand))].sort()
+  , [vehicles])
 
   const filtered = useMemo(() => {
     let result = [...vehicles]
@@ -97,7 +119,7 @@ export default function Catalogue() {
       <div className="divider"></div>
 
       <div className="container catalogue-layout">
-        <Filters filters={filters} onChange={handleFilterChange} onReset={handleReset} />
+        <Filters filters={filters} onChange={handleFilterChange} onReset={handleReset} brands={brands} />
 
         <div className="catalogue-main">
           <div className="catalogue-toolbar">
@@ -157,33 +179,7 @@ export default function Catalogue() {
             </div>
           )}
 
-          {totalPages > 1 && (
-            <div className="pagination">
-              <button
-                className="page-btn"
-                onClick={() => setPage(p => p - 1)}
-                disabled={page === 1}
-              >
-                ←
-              </button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
-                <button
-                  key={p}
-                  className={`page-btn ${p === page ? 'active' : ''}`}
-                  onClick={() => setPage(p)}
-                >
-                  {p}
-                </button>
-              ))}
-              <button
-                className="page-btn"
-                onClick={() => setPage(p => p + 1)}
-                disabled={page === totalPages}
-              >
-                →
-              </button>
-            </div>
-          )}
+          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
         </div>
       </div>
     </main>

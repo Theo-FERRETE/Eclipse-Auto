@@ -1,6 +1,6 @@
 import './Filters.css'
 
-export default function Filters({ filters, onChange, onReset }) {
+export default function Filters({ filters, onChange, onReset, brands = [] }) {
   return (
     <aside className="filters">
       <div className="filters-header">
@@ -18,13 +18,7 @@ export default function Filters({ filters, onChange, onReset }) {
           onChange={e => onChange('brand', e.target.value)}
         >
           <option value="">Toutes</option>
-          <option value="Ferrari">Ferrari</option>
-          <option value="Lamborghini">Lamborghini</option>
-          <option value="Porsche">Porsche</option>
-          <option value="McLaren">McLaren</option>
-          <option value="Aston Martin">Aston Martin</option>
-          <option value="Bugatti">Bugatti</option>
-          <option value="Maserati">Maserati</option>
+          {brands.map(b => <option key={b} value={b}>{b}</option>)}
         </select>
       </div>
 

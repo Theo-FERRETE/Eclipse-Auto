@@ -1,14 +1,6 @@
 import { Link } from 'react-router-dom'
+import { toSlug } from '@/lib/utils'
 import './VehicleCard.css'
-
-function toSlug(brand, model) {
-  return `${brand}-${model}`
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/[^a-z0-9-]/g, '')
-}
 
 export default function VehicleCard({ vehicle, index }) {
   const { id, brand, model, year, price, fuel_type, mileage, power, images, status } = vehicle

@@ -15,6 +15,7 @@ import AdminVehicles from '@/pages/admin/AdminVehicles/AdminVehicles'
 import AdminReservations from '@/pages/admin/AdminReservations/AdminReservations'
 import AdminUsers from '@/pages/admin/AdminUsers/AdminUsers'
 import ProtectedRoute from '@/components/ProtectedRoute/ProtectedRoute'
+import NotFound from '@/pages/NotFound/NotFound'
 
 function App() {
   return (
@@ -46,6 +47,7 @@ function App() {
         <Route path="/admin/users" element={
           <ProtectedRoute requireAdmin><AdminUsers /></ProtectedRoute>
         } />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
     </BrowserRouter>

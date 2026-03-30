@@ -15,8 +15,8 @@
   --border: #1e1e1e;
   --border-light: #2a2a2a;
   --white: #ffffff;
-  --gray: #888888;
-  --gray-dark: #444444;
+  --gray: #c0c0c0;
+  --gray-dark: #999999;
   --font-display: 'Barlow Condensed', Arial Narrow, sans-serif;
   --font-body: 'Barlow', Arial, sans-serif;
   --clip-btn: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
@@ -29,7 +29,7 @@ body {
   background: var(--black);
   color: var(--white);
   font-family: var(--font-body);
-  font-size: 16px;
+  font-size: 17px;
   line-height: 1.6;
   min-height: 100vh;
 }
@@ -44,7 +44,7 @@ img { max-width: 100%; display: block; }
   border: none;
   padding: 12px 28px;
   font-family: var(--font-display);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: 3px;
   text-transform: uppercase;
@@ -59,7 +59,7 @@ img { max-width: 100%; display: block; }
   border: 1px solid var(--border-light);
   padding: 12px 28px;
   font-family: var(--font-display);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   letter-spacing: 3px;
   text-transform: uppercase;
@@ -74,7 +74,7 @@ img { max-width: 100%; display: block; }
   border: none;
   padding: 12px 28px;
   font-family: var(--font-display);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: 3px;
   text-transform: uppercase;
@@ -88,8 +88,8 @@ img { max-width: 100%; display: block; }
   align-items: center;
   gap: 8px;
   font-family: var(--font-display);
-  font-size: 11px;
-  letter-spacing: 4px;
+  font-size: 13px;
+  letter-spacing: 3px;
   text-transform: uppercase;
   color: var(--cyan);
 }
@@ -108,31 +108,32 @@ img { max-width: 100%; display: block; }
   background: var(--red);
   color: var(--white);
   font-family: var(--font-display);
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 2px;
-  padding: 3px 10px;
+  padding: 4px 10px;
   text-transform: uppercase;
   font-weight: 700;
   display: inline-block;
 }
 .badge-reserved {
-  background: #222;
-  color: var(--gray);
+  background: rgba(0, 212, 255, 0.12);
+  color: var(--cyan);
+  border: 1px solid rgba(0, 212, 255, 0.3);
   font-family: var(--font-display);
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 2px;
-  padding: 3px 10px;
+  padding: 4px 10px;
   text-transform: uppercase;
   display: inline-block;
 }
 .badge-sold {
-  background: transparent;
-  color: var(--gray-dark);
-  border: 1px solid var(--gray-dark);
+  background: rgba(160, 160, 160, 0.1);
+  color: #cccccc;
+  border: 1px solid rgba(160, 160, 160, 0.3);
   font-family: var(--font-display);
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 2px;
-  padding: 3px 10px;
+  padding: 4px 10px;
   text-transform: uppercase;
   display: inline-block;
 }
@@ -140,5 +141,5 @@ img { max-width: 100%; display: block; }
 .divider {
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--red), transparent);
-  opacity: 0.3;
+  opacity: 0.5;
 }

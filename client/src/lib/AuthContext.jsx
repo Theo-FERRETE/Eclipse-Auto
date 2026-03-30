@@ -8,19 +8,20 @@ export function AuthProvider({ children }) {
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
 
+  async function loadProfile(userId) {
+    const { data } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single()
+    setProfile(data ?? null)
+  }
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
       if (session?.user) {
-        supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .single()
-          .then(({ data }) => {
-            setProfile(data ?? null)
-            setLoading(false)
-          })
+        loadProfile(session.user.id).then(() => setLoading(false))
       } else {
         setLoading(false)
       }
@@ -29,12 +30,7 @@ export function AuthProvider({ children }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
       if (session?.user) {
-        supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .single()
-          .then(({ data }) => setProfile(data ?? null))
+        loadProfile(session.user.id)
       } else {
         setProfile(null)
       }
@@ -43,6 +39,10 @@ export function AuthProvider({ children }) {
     return () => subscription.unsubscribe()
   }, [])
 
+  async function refreshProfile() {
+    if (user) await loadProfile(user.id)
+  }
+
   return (
     <AuthContext.Provider value={{
       user,
@@ -50,6 +50,7 @@ export function AuthProvider({ children }) {
       loading,
       isAdmin: profile?.role === 'admin',
       isClient: profile?.role === 'client',
+      refreshProfile,
     }}>
       {!loading && children}
     </AuthContext.Provider>

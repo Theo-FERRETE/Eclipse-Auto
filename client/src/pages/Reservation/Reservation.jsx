@@ -2,16 +2,8 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '@/lib/AuthContext'
 import { supabase } from '@/lib/supabase'
+import { toSlug } from '@/lib/utils'
 import './Reservation.css'
-
-function toSlug(brand, model) {
-  return `${brand}-${model}`
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/[^a-z0-9-]/g, '')
-}
 
 export default function Reservation() {
   const { slug } = useParams()
@@ -79,11 +71,6 @@ export default function Reservation() {
         })
 
       if (error) throw error
-
-      await supabase
-        .from('vehicles')
-        .update({ status: 'reserved' })
-        .eq('id', vehicle.id)
 
       setSuccess(true)
       setTimeout(() => navigate('/dashboard'), 3000)

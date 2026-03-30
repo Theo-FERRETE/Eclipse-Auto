@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
+import AdminSidebar from '@/components/AdminSidebar/AdminSidebar'
 import './AdminDashboard.css'
 
 export default function AdminDashboard() {
@@ -41,15 +42,7 @@ export default function AdminDashboard() {
       </div>
       <div className="divider"></div>
       <div className="container admin-layout">
-        <aside className="admin-sidebar">
-          <nav className="sidebar-nav">
-            <Link to="/admin" className="sidebar-link active">Dashboard</Link>
-            <Link to="/admin/vehicles" className="sidebar-link">Véhicules</Link>
-            <Link to="/admin/reservations" className="sidebar-link">Réservations</Link>
-            <Link to="/admin/users" className="sidebar-link">Clients</Link>
-            <Link to="/dashboard" className="sidebar-link">Espace client</Link>
-          </nav>
-        </aside>
+        <AdminSidebar />
         <div className="admin-main">
           {loading ? (
             <div className="dashboard-loading"><div className="loader"></div></div>

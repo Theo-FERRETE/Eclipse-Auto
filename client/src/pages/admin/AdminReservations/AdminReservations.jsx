@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
+import { RESERVATION_STATUS } from '@/lib/utils'
+import AdminSidebar from '@/components/AdminSidebar/AdminSidebar'
+import Pagination from '@/components/Pagination/Pagination'
 import './AdminReservations.css'
 
 const ITEMS_PER_PAGE = 8
@@ -15,7 +17,6 @@ export default function AdminReservations() {
 
   async function fetchReservations() {
     setLoading(true)
-
     const { data, error } = await supabase
       .from('reservations')
       .select('*, vehicles(brand, model, images, price)')
@@ -36,7 +37,10 @@ export default function AdminReservations() {
   }
 
   async function handleStatus(id, status) {
-    await supabase.from('reservations').update({ status }).eq('id', id)
+    // Le trigger PostgreSQL sync_vehicle_status_on_reservation
+    // met à jour vehicles.status automatiquement côté DB
+    const { error } = await supabase.from('reservations').update({ status }).eq('id', id)
+    if (error) { console.error(error); return }
     fetchReservations()
   }
 
@@ -47,11 +51,6 @@ export default function AdminReservations() {
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE)
   const paginated = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE)
 
-  const statusConfig = {
-    pending: { label: 'En attente', class: 'status-pending' },
-    confirmed: { label: 'Confirmée', class: 'status-confirmed' },
-    cancelled: { label: 'Annulée', class: 'status-cancelled' },
-  }
 
   return (
     <main className="admin">
@@ -65,15 +64,7 @@ export default function AdminReservations() {
       <div className="divider"></div>
 
       <div className="container admin-layout">
-        <aside className="admin-sidebar">
-          <nav className="sidebar-nav">
-            <Link to="/admin" className="sidebar-link">Dashboard</Link>
-            <Link to="/admin/vehicles" className="sidebar-link">Véhicules</Link>
-            <Link to="/admin/reservations" className="sidebar-link active">Réservations</Link>
-            <Link to="/admin/users" className="sidebar-link">Clients</Link>
-            <Link to="/dashboard" className="sidebar-link">Espace client</Link>
-          </nav>
-        </aside>
+        <AdminSidebar />
 
         <div className="admin-content">
           <div className="ar-toolbar">
@@ -83,7 +74,7 @@ export default function AdminReservations() {
                 className={`ar-filter-btn ${filter === f ? 'active' : ''}`}
                 onClick={() => { setFilter(f); setPage(1) }}
               >
-                {f === 'all' ? 'Toutes' : statusConfig[f]?.label}
+                {f === 'all' ? 'Toutes' : RESERVATION_STATUS[f]?.label}
                 <span className="ar-filter-count">
                   {f === 'all' ? reservations.length : reservations.filter(r => r.status === f).length}
                 </span>
@@ -130,8 +121,8 @@ export default function AdminReservations() {
                     </div>
 
                     <div className="ar-actions">
-                      <span className={`reservation-status ${statusConfig[r.status]?.class}`}>
-                        {statusConfig[r.status]?.label}
+                      <span className={`reservation-status ${RESERVATION_STATUS[r.status]?.class}`}>
+                        {RESERVATION_STATUS[r.status]?.label}
                       </span>
                       {r.status === 'pending' && (
                         <>
@@ -159,15 +150,7 @@ export default function AdminReservations() {
                 )}
               </div>
 
-              {totalPages > 1 && (
-                <div className="pagination" style={{ marginTop: '16px' }}>
-                  <button className="page-btn" onClick={() => setPage(p => p - 1)} disabled={page === 1}>←</button>
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
-                    <button key={p} className={`page-btn ${p === page ? 'active' : ''}`} onClick={() => setPage(p)}>{p}</button>
-                  ))}
-                  <button className="page-btn" onClick={() => setPage(p => p + 1)} disabled={page === totalPages}>→</button>
-                </div>
-              )}
+              <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
             </>
           )}
         </div>

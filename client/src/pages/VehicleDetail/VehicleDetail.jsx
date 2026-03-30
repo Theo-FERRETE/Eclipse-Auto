@@ -1,16 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
+import { toSlug } from '@/lib/utils'
 import './VehicleDetail.css'
-
-function toSlug(brand, model) {
-  return `${brand}-${model}`
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/[^a-z0-9-]/g, '')
-}
 
 export default function VehicleDetail() {
   const { slug } = useParams()

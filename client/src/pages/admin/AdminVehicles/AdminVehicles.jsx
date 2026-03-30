@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
+import AdminSidebar from '@/components/AdminSidebar/AdminSidebar'
+import Pagination from '@/components/Pagination/Pagination'
 import './AdminVehicles.css'
 
 const EMPTY_FORM = {
@@ -111,7 +112,8 @@ export default function AdminVehicles() {
 
   async function handleDelete(id) {
     if (!confirm('Supprimer ce véhicule ?')) return
-    await supabase.from('vehicles').delete().eq('id', id)
+    const { error } = await supabase.from('vehicles').delete().eq('id', id)
+    if (error) { alert('Impossible de supprimer ce véhicule.'); return }
     fetchVehicles()
   }
 
@@ -138,14 +140,7 @@ export default function AdminVehicles() {
       <div className="divider"></div>
 
       <div className="container admin-layout">
-        <aside className="admin-sidebar">
-          <nav className="sidebar-nav">
-            <Link to="/admin" className="sidebar-link">Dashboard</Link>
-            <Link to="/admin/vehicles" className="sidebar-link active">Véhicules</Link>
-            <Link to="/admin/reservations" className="sidebar-link">Réservations</Link>
-            <Link to="/dashboard" className="sidebar-link">Espace client</Link>
-          </nav>
-        </aside>
+        <AdminSidebar />
 
         <div className="admin-content">
           <div className="admin-vehicles-wrap">
@@ -159,9 +154,7 @@ export default function AdminVehicles() {
                   onChange={e => { setSearch(e.target.value); setPage(1) }}
                   style={{ flex: 1 }}
                 />
-                <button className="btn-primary" onClick={openCreate}>
-                  + Ajouter
-                </button>
+                <button className="btn-primary" onClick={openCreate}>+ Ajouter</button>
               </div>
 
               {loading ? (
@@ -170,10 +163,7 @@ export default function AdminVehicles() {
                 <>
                   <div className="admin-vehicles-list">
                     {paginated.map(v => (
-                      <div
-                        key={v.id}
-                        className={`admin-vehicle-card ${editing === v.id ? 'active' : ''}`}
-                      >
+                      <div key={v.id} className={`admin-vehicle-card ${editing === v.id ? 'active' : ''}`}>
                         <div className="avc-img">
                           {v.images?.[0]
                             ? <img src={v.images[0]} alt={`${v.brand} ${v.model}`} />
@@ -181,7 +171,6 @@ export default function AdminVehicles() {
                           }
                           <div className="gallery-bar"></div>
                         </div>
-
                         <div className="avc-info">
                           <div className="vcard-brand">{v.brand}</div>
                           <div className="avc-model">{v.model}</div>
@@ -191,11 +180,8 @@ export default function AdminVehicles() {
                             <span>{v.fuel_type}</span>
                           </div>
                         </div>
-
                         <div className="avc-right">
-                          <div className="avc-price">
-                            € {v.price?.toLocaleString('fr-FR')}
-                          </div>
+                          <div className="avc-price">€ {v.price?.toLocaleString('fr-FR')}</div>
                           <select
                             className="status-select"
                             value={v.status}
@@ -206,33 +192,18 @@ export default function AdminVehicles() {
                             <option value="sold">Vendu</option>
                           </select>
                           <div className="avc-actions">
-                            <button className="action-btn edit" onClick={() => openEdit(v)}>
-                              Modifier
-                            </button>
-                            <button className="action-btn delete" onClick={() => handleDelete(v.id)}>
-                              Supprimer
-                            </button>
+                            <button className="action-btn edit" onClick={() => openEdit(v)}>Modifier</button>
+                            <button className="action-btn delete" onClick={() => handleDelete(v.id)}>Supprimer</button>
                           </div>
                         </div>
                       </div>
                     ))}
-
                     {filtered.length === 0 && (
-                      <div className="catalogue-empty">
-                        <p>Aucun véhicule trouvé.</p>
-                      </div>
+                      <div className="catalogue-empty"><p>Aucun véhicule trouvé.</p></div>
                     )}
                   </div>
 
-                  {totalPages > 1 && (
-                    <div className="pagination" style={{ marginTop: '16px' }}>
-                      <button className="page-btn" onClick={() => setPage(p => p - 1)} disabled={page === 1}>←</button>
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
-                        <button key={p} className={`page-btn ${p === page ? 'active' : ''}`} onClick={() => setPage(p)}>{p}</button>
-                      ))}
-                      <button className="page-btn" onClick={() => setPage(p => p + 1)} disabled={page === totalPages}>→</button>
-                    </div>
-                  )}
+                  <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
                 </>
               )}
             </div>
@@ -243,7 +214,6 @@ export default function AdminVehicles() {
                   <div className="tag">{editing ? 'Modifier' : 'Nouveau'}</div>
                   <button className="filters-reset" onClick={closeForm}>✕</button>
                 </div>
-
                 <form className="admin-form" onSubmit={handleSubmit}>
                   <div className="form-group">
                     <label className="form-label">Marque *</label>
@@ -305,10 +275,8 @@ export default function AdminVehicles() {
                     <label className="form-label">Description</label>
                     <textarea name="description" className="form-input form-textarea" value={form.description} onChange={handleChange} placeholder="Description..." rows={3} />
                   </div>
-
                   {error && <div className="form-error">{error}</div>}
                   {success && <div className="form-success">{success}</div>}
-
                   <div className="form-actions">
                     <button type="submit" className="btn-primary" style={{ flex: 1 }} disabled={submitting}>
                       {submitting ? 'Enregistrement...' : editing ? 'Modifier' : 'Ajouter'}

@@ -26,7 +26,7 @@ export default function Navbar() {
           <NavLink to="/catalogue" className={({ isActive }) => isActive ? 'active' : ''}>
             Catalogue
           </NavLink>
-          <NavLink to="/reservations" className={({ isActive }) => isActive ? 'active' : ''}>
+          <NavLink to="/dashboard" className={({ isActive }) => isActive ? 'active' : ''}>
             Réservations
           </NavLink>
           <NavLink to="/contact" className={({ isActive }) => isActive ? 'active' : ''}>
@@ -46,7 +46,7 @@ export default function Navbar() {
                 to={isAdmin ? '/admin' : '/dashboard'}
                 className="navbar-username"
               >
-                {profile?.first_name || 'Mon compte'}
+                {profile?.first_name || user?.email?.split('@')[0] || 'Mon compte'}
               </Link>
               <button
                 className="btn-ghost"

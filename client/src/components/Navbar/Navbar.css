@@ -36,10 +36,10 @@
 
 .navbar-links a {
   font-family: var(--font-display);
-  font-size: 12px;
-  letter-spacing: 3px;
+  font-size: 13px;
+  letter-spacing: 2px;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.75);
   font-weight: 600;
   transition: color 0.2s;
   position: relative;
@@ -67,7 +67,7 @@
 
 .navbar-username {
   font-family: var(--font-display);
-  font-size: 12px;
+  font-size: 13px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--cyan);

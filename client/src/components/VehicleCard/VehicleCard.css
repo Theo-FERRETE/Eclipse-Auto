@@ -23,9 +23,9 @@
 
 .vcard-num {
   font-family: var(--font-display);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 900;
-  color: var(--border-light);
+  color: var(--gray-dark);
   letter-spacing: 2px;
 }
 
@@ -73,7 +73,7 @@
 
 .vcard-brand {
   font-family: var(--font-display);
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 3px;
   text-transform: uppercase;
   color: var(--cyan);
@@ -94,7 +94,7 @@
   align-items: center;
   gap: 8px;
   font-family: var(--font-display);
-  font-size: 11px;
+  font-size: 13px;
   color: var(--gray);
   letter-spacing: 1px;
   margin-top: 4px;
@@ -110,7 +110,7 @@
 
 .vcard-mileage {
   font-family: var(--font-display);
-  font-size: 11px;
+  font-size: 13px;
   color: var(--gray-dark);
   letter-spacing: 1px;
 }
