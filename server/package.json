@@ -1,13 +1,14 @@
 {
-  "name": "server",
+  "name": "eclipse-auto-server",
   "version": "1.0.0",
-  "description": "",
+  "description": "Eclipse Auto — API Express",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "dev": "node --watch index.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Théo Ferreté",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
