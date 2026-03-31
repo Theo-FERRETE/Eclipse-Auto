@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import AdminSidebar from '@/components/AdminSidebar/AdminSidebar'
+import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import './AdminUsers.css'
 
 export default function AdminUsers() {
   const [clients, setClients] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [confirmId, setConfirmId] = useState(null)
 
   useEffect(() => { fetchClients() }, [])
 
@@ -22,9 +24,9 @@ export default function AdminUsers() {
     setLoading(false)
   }
 
-  async function handleDelete(id) {
-    if (!confirm('Supprimer ce client ?')) return
-    await supabase.from('profiles').delete().eq('id', id)
+  async function confirmDelete() {
+    await supabase.from('profiles').delete().eq('id', confirmId)
+    setConfirmId(null)
     fetchClients()
   }
 
@@ -76,7 +78,7 @@ export default function AdminUsers() {
                     <span className="badge-available">Client</span>
                     <button
                       className="action-btn delete"
-                      onClick={() => handleDelete(c.id)}
+                      onClick={() => setConfirmId(c.id)}
                     >
                       Supprimer
                     </button>
@@ -92,6 +94,13 @@ export default function AdminUsers() {
           )}
         </div>
       </div>
+      {confirmId && (
+        <ConfirmModal
+          message="Supprimer ce client définitivement ?"
+          onConfirm={confirmDelete}
+          onCancel={() => setConfirmId(null)}
+        />
+      )}
     </main>
   )
 }

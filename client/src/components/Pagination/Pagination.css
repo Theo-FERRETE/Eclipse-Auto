@@ -35,3 +35,13 @@
   opacity: 0.3;
   cursor: not-allowed;
 }
+
+.page-ellipsis {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray-dark);
+  font-size: 12px;
+}

@@ -26,9 +26,11 @@ export default function Navbar() {
           <NavLink to="/catalogue" className={({ isActive }) => isActive ? 'active' : ''}>
             Catalogue
           </NavLink>
-          <NavLink to="/dashboard" className={({ isActive }) => isActive ? 'active' : ''}>
-            Réservations
-          </NavLink>
+          {user && (
+            <NavLink to="/dashboard" className={({ isActive }) => isActive ? 'active' : ''}>
+              Réservations
+            </NavLink>
+          )}
           <NavLink to="/contact" className={({ isActive }) => isActive ? 'active' : ''}>
             Contact
           </NavLink>
@@ -71,10 +73,11 @@ export default function Navbar() {
           className="navbar-burger"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Menu"
+          aria-expanded={menuOpen}
         >
-          <span className={menuOpen ? 'open' : ''}></span>
-          <span className={menuOpen ? 'open' : ''}></span>
-          <span className={menuOpen ? 'open' : ''}></span>
+          <span className={menuOpen ? 'open' : ''} aria-hidden="true"></span>
+          <span className={menuOpen ? 'open' : ''} aria-hidden="true"></span>
+          <span className={menuOpen ? 'open' : ''} aria-hidden="true"></span>
         </button>
 
       </div>

@@ -12,3 +12,12 @@ export const RESERVATION_STATUS = {
   confirmed: { label: 'Confirmée',  class: 'status-confirmed' },
   cancelled: { label: 'Annulée',    class: 'status-cancelled' },
 }
+
+export const VEHICLE_STATUS = {
+  available: { label: 'Disponible', badge: 'badge-available' },
+  reserved:  { label: 'Réservé',    badge: 'badge-reserved' },
+  sold:      { label: 'Vendu',      badge: 'badge-sold' },
+}
+
+export const FUEL_TYPES = ['Essence', 'Diesel', 'Hybride', 'Électrique']
+export const TRANSMISSIONS = ['Automatique', 'Manuelle']

@@ -24,13 +24,22 @@ export default function AdminReservations() {
 
     if (error) { console.error(error); setLoading(false); return }
 
-    const enriched = await Promise.all(
-      (data || []).map(async r => {
-        const { data: name } = await supabase
-          .rpc('get_profile_name', { profile_id: r.client_id })
-        return { ...r, client_name: name || 'Client inconnu' }
-      })
-    )
+    const rows = data || []
+    const clientIds = [...new Set(rows.map(r => r.client_id).filter(Boolean))]
+
+    const { data: profiles } = clientIds.length
+      ? await supabase.from('profiles').select('id, first_name, last_name').in('id', clientIds)
+      : { data: [] }
+
+    const profileMap = Object.fromEntries((profiles || []).map(p => [p.id, p]))
+
+    const enriched = rows.map(r => {
+      const p = profileMap[r.client_id]
+      const client_name = p
+        ? `${p.first_name || ''} ${p.last_name || ''}`.trim() || 'Client inconnu'
+        : 'Client inconnu'
+      return { ...r, client_name }
+    })
 
     setReservations(enriched)
     setLoading(false)

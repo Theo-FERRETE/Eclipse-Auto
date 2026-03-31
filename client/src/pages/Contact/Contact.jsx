@@ -5,6 +5,7 @@ export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' })
   const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
 
   function handleChange(e) {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
@@ -13,9 +14,21 @@ export default function Contact() {
   async function handleSubmit(e) {
     e.preventDefault()
     setLoading(true)
-    await new Promise(r => setTimeout(r, 1000))
-    setSuccess(true)
-    setLoading(false)
+    setError(null)
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.error || 'Erreur lors de l\'envoi.')
+      setSuccess(true)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -53,7 +66,7 @@ export default function Contact() {
             </div>
           </div>
           <div className="contact-note">
-            Ce formulaire est à titre démonstratif — aucun email n'est envoyé dans cette version.
+            Réponse sous 24h en jours ouvrés.
           </div>
         </div>
 
@@ -119,6 +132,7 @@ export default function Contact() {
                 />
               </div>
 
+              {error && <div className="form-error">{error}</div>}
               <button
                 type="submit"
                 className="btn-primary"

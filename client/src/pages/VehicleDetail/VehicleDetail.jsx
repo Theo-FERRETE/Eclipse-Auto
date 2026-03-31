@@ -82,9 +82,14 @@ export default function VehicleDetail() {
         <div className="detail-gallery">
           <div className="gallery-main">
             {images && images[activeImg]
-              ? <img src={images[activeImg]} alt={`${brand} ${model}`} />
-              : <div className="gallery-placeholder"></div>
+              ? <img
+                  src={images[activeImg]}
+                  alt={`${year} ${brand} ${model}`}
+                  onError={e => { e.currentTarget.style.display = 'none'; e.currentTarget.nextSibling.style.display = 'flex' }}
+                />
+              : null
             }
+            <div className="gallery-placeholder" style={images && images[activeImg] ? { display: 'none' } : {}}></div>
             <div className="gallery-bar"></div>
           </div>
 
@@ -96,7 +101,11 @@ export default function VehicleDetail() {
                   className={`gallery-thumb ${i === activeImg ? 'active' : ''}`}
                   onClick={() => setActiveImg(i)}
                 >
-                  <img src={img} alt={`${brand} ${model} ${i + 1}`} />
+                  <img
+                    src={img}
+                    alt={`${brand} ${model}, image ${i + 1}`}
+                    onError={e => { e.currentTarget.parentElement.style.opacity = '0.3' }}
+                  />
                 </button>
               ))}
             </div>

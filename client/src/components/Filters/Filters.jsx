@@ -31,6 +31,7 @@ export default function Filters({ filters, onChange, onReset, brands = [] }) {
         >
           <option value="">Tous</option>
           <option value="Essence">Essence</option>
+          <option value="Diesel">Diesel</option>
           <option value="Hybride">Hybride</option>
           <option value="Électrique">Électrique</option>
         </select>

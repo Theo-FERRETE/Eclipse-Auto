@@ -42,9 +42,6 @@ export default function Catalogue() {
     // Refetch au retour sur l'onglet
     window.addEventListener('focus', fetchVehicles)
 
-    // Polling toutes les 15s (fallback fiable si Realtime ne fonctionne pas)
-    const interval = setInterval(fetchVehicles, 15000)
-
     // Realtime si activé côté Supabase
     const channel = supabase
       .channel('catalogue-vehicles')
@@ -55,7 +52,6 @@ export default function Catalogue() {
 
     return () => {
       window.removeEventListener('focus', fetchVehicles)
-      clearInterval(interval)
       supabase.removeChannel(channel)
     }
   }, [])

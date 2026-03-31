@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import AdminSidebar from '@/components/AdminSidebar/AdminSidebar'
 import Pagination from '@/components/Pagination/Pagination'
+import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import './AdminVehicles.css'
 
 const EMPTY_FORM = {
@@ -23,6 +24,7 @@ export default function AdminVehicles() {
   const [success, setSuccess] = useState(null)
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
+  const [confirmId, setConfirmId] = useState(null)
 
   useEffect(() => { fetchVehicles() }, [])
 
@@ -110,9 +112,9 @@ export default function AdminVehicles() {
     }
   }
 
-  async function handleDelete(id) {
-    if (!confirm('Supprimer ce véhicule ?')) return
-    const { error } = await supabase.from('vehicles').delete().eq('id', id)
+  async function confirmDelete() {
+    const { error } = await supabase.from('vehicles').delete().eq('id', confirmId)
+    setConfirmId(null)
     if (error) { alert('Impossible de supprimer ce véhicule.'); return }
     fetchVehicles()
   }
@@ -193,7 +195,7 @@ export default function AdminVehicles() {
                           </select>
                           <div className="avc-actions">
                             <button className="action-btn edit" onClick={() => openEdit(v)}>Modifier</button>
-                            <button className="action-btn delete" onClick={() => handleDelete(v.id)}>Supprimer</button>
+                            <button className="action-btn delete" onClick={() => setConfirmId(v.id)}>Supprimer</button>
                           </div>
                         </div>
                       </div>
@@ -289,6 +291,13 @@ export default function AdminVehicles() {
           </div>
         </div>
       </div>
+      {confirmId && (
+        <ConfirmModal
+          message="Supprimer ce véhicule définitivement ?"
+          onConfirm={confirmDelete}
+          onCancel={() => setConfirmId(null)}
+        />
+      )}
     </main>
   )
 }
