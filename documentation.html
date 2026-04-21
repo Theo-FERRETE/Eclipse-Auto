@@ -255,6 +255,72 @@
   .note.blue { background: #e8f4fd; border-color: #3498db; }
   .note.green { background: #eafaf1; border-color: #27ae60; }
 
+  /* ── PERSONAS ── */
+  .persona-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 14px 0 28px;
+  }
+  .persona-card {
+    border: 1px solid #e8e8e8;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .persona-header {
+    background: #111;
+    color: white;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .persona-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #e8000d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13pt;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+  }
+  .persona-name { font-size: 11pt; font-weight: 600; }
+  .persona-role { font-size: 8pt; color: #aaa; letter-spacing: 1px; text-transform: uppercase; margin-top: 1px; }
+  .persona-body { padding: 14px 16px; background: #fafafa; }
+  .persona-detail { font-size: 9pt; color: #555; margin-bottom: 6px; line-height: 1.5; }
+  .persona-detail strong { color: #111; }
+  .persona-tag {
+    display: inline-block;
+    background: #f0f0f0;
+    color: #444;
+    font-size: 7.5pt;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin: 2px 2px 0 0;
+  }
+
+  /* ── USER STORIES ── */
+  .us-table { width: 100%; border-collapse: collapse; margin: 12px 0 24px; font-size: 9.5pt; }
+  .us-table th { background: #111; color: white; padding: 9px 14px; text-align: left; font-weight: 600; font-size: 8.5pt; }
+  .us-table td { padding: 9px 14px; border-bottom: 1px solid #f0f0f0; vertical-align: top; color: #444; }
+  .us-table tr:nth-child(even) td { background: #fafafa; }
+  .us-id { font-family: 'Courier New', monospace; font-size: 8pt; color: #e8000d; font-weight: 700; white-space: nowrap; }
+  .us-role-badge {
+    display: inline-block;
+    font-size: 7.5pt;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .badge-visiteur { background: #e8f4fd; color: #1a6fa0; }
+  .badge-client   { background: #eafaf1; color: #1a7a4a; }
+  .badge-admin    { background: #fdf0e8; color: #a04a1a; }
+
   /* ── PRINT ── */
   @media print {
     .cover { min-height: 100vh; }
@@ -327,10 +393,227 @@
   </div>
 </div>
 
-<!-- 02 — STRUCTURE FRONTEND -->
+<!-- 02 — PERSONAS -->
 <div class="page page-break">
   <div class="section-header">
     <div class="section-tag">02</div>
+    <div class="section-title">Personas</div>
+  </div>
+
+  <p>
+    Trois profils utilisateurs ont été identifiés pour guider les choix fonctionnels et d'interface d'Eclipse Auto.
+    Chaque persona représente un type d'utilisateur réel avec ses objectifs, ses contraintes et ses habitudes.
+  </p>
+
+  <div class="persona-grid">
+    <div class="persona-card">
+      <div class="persona-header">
+        <div class="persona-avatar">L</div>
+        <div>
+          <div class="persona-name">Lucas, 28 ans</div>
+          <div class="persona-role">Visiteur — Passionné</div>
+        </div>
+      </div>
+      <div class="persona-body">
+        <div class="persona-detail"><strong>Situation :</strong> Ingénieur en informatique, célibataire, vit à Lyon.</div>
+        <div class="persona-detail"><strong>Objectif :</strong> Explorer les voitures de sport disponibles, comparer les modèles et les prix sans forcément acheter.</div>
+        <div class="persona-detail"><strong>Frustrations :</strong> Sites lents, manque de filtres pertinents, photos de mauvaise qualité.</div>
+        <div class="persona-detail"><strong>Comportement :</strong> Navigue depuis son téléphone, lit les fiches techniques en détail.</div>
+        <div style="margin-top: 10px;">
+          <span class="persona-tag">Catalogue</span>
+          <span class="persona-tag">Filtres</span>
+          <span class="persona-tag">Fiche véhicule</span>
+          <span class="persona-tag">Contact</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="persona-card">
+      <div class="persona-header">
+        <div class="persona-avatar">C</div>
+        <div>
+          <div class="persona-name">Camille, 34 ans</div>
+          <div class="persona-role">Cliente — Acheteuse</div>
+        </div>
+      </div>
+      <div class="persona-body">
+        <div class="persona-detail"><strong>Situation :</strong> Directrice commerciale, deux enfants, vit à Paris.</div>
+        <div class="persona-detail"><strong>Objectif :</strong> Trouver et réserver rapidement un véhicule qui correspond à son budget et son usage, suivre l'avancement de sa demande.</div>
+        <div class="persona-detail"><strong>Frustrations :</strong> Processus de réservation trop long, manque de visibilité sur le statut de sa demande.</div>
+        <div class="persona-detail"><strong>Comportement :</strong> Utilise principalement desktop, veut de la rapidité et de la clarté.</div>
+        <div style="margin-top: 10px;">
+          <span class="persona-tag">Inscription</span>
+          <span class="persona-tag">Réservation</span>
+          <span class="persona-tag">Dashboard</span>
+          <span class="persona-tag">Profil</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="persona-card">
+      <div class="persona-header">
+        <div class="persona-avatar">T</div>
+        <div>
+          <div class="persona-name">Théo, 27 ans</div>
+          <div class="persona-role">Admin — Gestionnaire</div>
+        </div>
+      </div>
+      <div class="persona-body">
+        <div class="persona-detail"><strong>Situation :</strong> Responsable de la concession, gère seul le parc automobile et les demandes clients.</div>
+        <div class="persona-detail"><strong>Objectif :</strong> Gérer efficacement les véhicules et les réservations depuis une interface centralisée, sans erreurs.</div>
+        <div class="persona-detail"><strong>Frustrations :</strong> Outils dispersés, risque d'erreur lors des mises à jour manuelles de statut.</div>
+        <div class="persona-detail"><strong>Comportement :</strong> Utilise exclusivement desktop, besoin d'aller vite sur les tâches répétitives.</div>
+        <div style="margin-top: 10px;">
+          <span class="persona-tag">CRUD véhicules</span>
+          <span class="persona-tag">Réservations</span>
+          <span class="persona-tag">Statistiques</span>
+          <span class="persona-tag">Clients</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 03 — USER STORIES -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-tag">03</div>
+    <div class="section-title">User Stories</div>
+  </div>
+
+  <p>
+    Les user stories décrivent les fonctionnalités du point de vue de chaque utilisateur.
+    Elles suivent le format : <em>En tant que [rôle], je veux [action] afin de [bénéfice].</em>
+  </p>
+
+  <h2>Parcours Visiteur</h2>
+  <table class="us-table">
+    <thead><tr><th>ID</th><th>Rôle</th><th>User Story</th><th>Page</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="us-id">US-01</td>
+        <td><span class="us-role-badge badge-visiteur">Visiteur</span></td>
+        <td>En tant que visiteur, je veux parcourir le catalogue de véhicules afin de découvrir les modèles disponibles.</td>
+        <td><code>/catalogue</code></td>
+      </tr>
+      <tr>
+        <td class="us-id">US-02</td>
+        <td><span class="us-role-badge badge-visiteur">Visiteur</span></td>
+        <td>En tant que visiteur, je veux filtrer les véhicules par marque, carburant et prix afin de trouver rapidement ce qui correspond à mon budget.</td>
+        <td><code>/catalogue</code></td>
+      </tr>
+      <tr>
+        <td class="us-id">US-03</td>
+        <td><span class="us-role-badge badge-visiteur">Visiteur</span></td>
+        <td>En tant que visiteur, je veux consulter la fiche détaillée d'un véhicule (photos, specs, prix) afin d'évaluer si il m'intéresse.</td>
+        <td><code>/vehicles/:slug</code></td>
+      </tr>
+      <tr>
+        <td class="us-id">US-04</td>
+        <td><span class="us-role-badge badge-visiteur">Visiteur</span></td>
+        <td>En tant que visiteur, je veux envoyer un message via le formulaire de contact afin d'obtenir des informations sans créer de compte.</td>
+        <td><code>/contact</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Parcours Client</h2>
+  <table class="us-table">
+    <thead><tr><th>ID</th><th>Rôle</th><th>User Story</th><th>Page</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="us-id">US-05</td>
+        <td><span class="us-role-badge badge-client">Client</span></td>
+        <td>En tant que client, je veux créer un compte avec mon email et un mot de passe afin d'accéder aux fonctionnalités de réservation.</td>
+        <td><code>/register</code></td>
+      </tr>
+      <tr>
+        <td class="us-id">US-06</td>
+        <td><span class="us-role-badge badge-client">Client</span></td>
+        <td>En tant que client, je veux me connecter à mon espace personnel afin de retrouver mes réservations.</td>
+        <td><code>/login</code></td>
+      </tr>
+      <tr>
+        <td class="us-id">US-07</td>
+        <td><span class="us-role-badge badge-client">Client</span></td>
+        <td>En tant que client, je veux réserver un véhicule disponible en précisant une date de RDV et un message afin de formaliser ma demande.</td>
+        <td><code>/reserve/:slug</code></td>
+      </tr>
+      <tr>
+        <td class="us-id">US-08</td>
+        <td><span class="us-role-badge badge-client">Client</span></td>
+        <td>En tant que client, je veux consulter l'état de mes réservations (en attente, confirmée, annulée) afin de suivre l'avancement de mes demandes.</td>
+        <td><code>/dashboard</code></td>
+      </tr>
+      <tr>
+        <td class="us-id">US-09</td>
+        <td><span class="us-role-badge badge-client">Client</span></td>
+        <td>En tant que client, je veux annuler une réservation en attente afin de me désengager si je change d'avis.</td>
+        <td><code>/dashboard</code></td>
+      </tr>
+      <tr>
+        <td class="us-id">US-10</td>
+        <td><span class="us-role-badge badge-client">Client</span></td>
+        <td>En tant que client, je veux modifier mon prénom, nom et téléphone afin de garder mes informations à jour.</td>
+        <td><code>/dashboard</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Parcours Administrateur</h2>
+  <table class="us-table">
+    <thead><tr><th>ID</th><th>Rôle</th><th>User Story</th><th>Page</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="us-id">US-11</td>
+        <td><span class="us-role-badge badge-admin">Admin</span></td>
+        <td>En tant qu'admin, je veux visualiser les statistiques clés (véhicules, réservations, clients, CA) afin d'avoir une vue d'ensemble de l'activité.</td>
+        <td><code>/admin</code></td>
+      </tr>
+      <tr>
+        <td class="us-id">US-12</td>
+        <td><span class="us-role-badge badge-admin">Admin</span></td>
+        <td>En tant qu'admin, je veux ajouter un nouveau véhicule au catalogue afin d'enrichir l'offre disponible.</td>
+        <td><code>/admin/vehicles</code></td>
+      </tr>
+      <tr>
+        <td class="us-id">US-13</td>
+        <td><span class="us-role-badge badge-admin">Admin</span></td>
+        <td>En tant qu'admin, je veux modifier les informations d'un véhicule existant afin de maintenir le catalogue à jour.</td>
+        <td><code>/admin/vehicles</code></td>
+      </tr>
+      <tr>
+        <td class="us-id">US-14</td>
+        <td><span class="us-role-badge badge-admin">Admin</span></td>
+        <td>En tant qu'admin, je veux supprimer un véhicule du catalogue afin de retirer les modèles qui ne sont plus disponibles.</td>
+        <td><code>/admin/vehicles</code></td>
+      </tr>
+      <tr>
+        <td class="us-id">US-15</td>
+        <td><span class="us-role-badge badge-admin">Admin</span></td>
+        <td>En tant qu'admin, je veux confirmer une réservation afin de valider la demande du client et mettre à jour le statut du véhicule automatiquement.</td>
+        <td><code>/admin/reservations</code></td>
+      </tr>
+      <tr>
+        <td class="us-id">US-16</td>
+        <td><span class="us-role-badge badge-admin">Admin</span></td>
+        <td>En tant qu'admin, je veux annuler une réservation afin de libérer le véhicule et en informer le client.</td>
+        <td><code>/admin/reservations</code></td>
+      </tr>
+      <tr>
+        <td class="us-id">US-17</td>
+        <td><span class="us-role-badge badge-admin">Admin</span></td>
+        <td>En tant qu'admin, je veux consulter la liste des clients inscrits et supprimer un compte afin de gérer la base utilisateurs.</td>
+        <td><code>/admin/clients</code></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 04 — STRUCTURE FRONTEND (anciennement 02) -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-tag">04</div>
     <div class="section-title">Structure Frontend</div>
   </div>
 
@@ -408,7 +691,7 @@
 <!-- 03 — COMPOSANTS -->
 <div class="page page-break">
   <div class="section-header">
-    <div class="section-tag">03</div>
+    <div class="section-tag">05</div>
     <div class="section-title">Composants</div>
   </div>
 
@@ -500,7 +783,7 @@
 <!-- 04 — STRUCTURE BACKEND -->
 <div class="page page-break">
   <div class="section-header">
-    <div class="section-tag">04</div>
+    <div class="section-tag">06</div>
     <div class="section-title">Structure Backend</div>
   </div>
 
@@ -573,7 +856,7 @@
 <!-- 05 — FLUX D'AUTHENTIFICATION -->
 <div class="page page-break">
   <div class="section-header">
-    <div class="section-tag">05</div>
+    <div class="section-tag">07</div>
     <div class="section-title">Flux d'authentification</div>
   </div>
 
@@ -613,7 +896,7 @@
 <!-- 06 — BASE DE DONNÉES -->
 <div class="page page-break">
   <div class="section-header">
-    <div class="section-tag">06</div>
+    <div class="section-tag">08</div>
     <div class="section-title">Base de données</div>
   </div>
 
@@ -686,7 +969,7 @@
 <!-- 07 — DÉPLOIEMENT -->
 <div class="page page-break">
   <div class="section-header">
-    <div class="section-tag">07</div>
+    <div class="section-tag">09</div>
     <div class="section-title">Déploiement</div>
   </div>
 
