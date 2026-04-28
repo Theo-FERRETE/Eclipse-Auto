@@ -1,7 +1,21 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { supabase } from '@/lib/supabase'
+import { toSlug } from '@/lib/utils'
 import './Home.css'
 
 export default function Home() {
+  const [featured, setFeatured] = useState([])
+
+  useEffect(() => {
+    supabase
+      .from('vehicles')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(3)
+      .then(({ data }) => { if (data) setFeatured(data) })
+  }, [])
+
   return (
     <main className="home">
 
@@ -56,36 +70,44 @@ export default function Home() {
           </div>
 
           <div className="featured-grid">
-            {[
-              { num: '01', brand: 'Ferrari', model: 'Roma Spider', year: 2024, power: '620 CH', speed: '320 km/h', price: '248 000' },
-              { num: '02', brand: 'Lamborghini', model: 'Huracán EVO', year: 2023, power: '640 CH', speed: '325 km/h', price: '265 000' },
-              { num: '03', brand: 'Porsche', model: '911 GT3', year: 2024, power: '510 CH', speed: '318 km/h', price: '189 000' },
-            ].map((car) => (
-              <div className="featured-card" key={car.num}>
-                <div className="featured-card-top">
-                  <span className="car-num">{car.num}</span>
-                  <span className="badge-available">Disponible</span>
-                </div>
-                <div className="featured-card-img"></div>
-                <div className="featured-card-body">
-                  <div className="car-brand">{car.brand}</div>
-                  <div className="car-model">{car.model}</div>
-                  <div className="car-specs">
-                    <span>{car.year}</span>
-                    <span className="spec-dot"></span>
-                    <span>{car.power}</span>
-                    <span className="spec-dot"></span>
-                    <span>{car.speed}</span>
+            {featured.map((car, i) => {
+              const statusBadge = {
+                available: <span className="badge-available">Disponible</span>,
+                reserved: <span className="badge-reserved">Réservé</span>,
+                sold: <span className="badge-sold">Vendu</span>,
+              }
+              return (
+                <div className="featured-card" key={car.id}>
+                  <div className="featured-card-top">
+                    <span className="car-num">{String(i + 1).padStart(2, '0')}</span>
+                    {statusBadge[car.status] || statusBadge.available}
                   </div>
-                  <div className="car-footer">
-                    <div className="car-price">€ {car.price}</div>
-                    <Link to="/catalogue" className="btn-cyan" style={{ padding: '8px 18px', fontSize: '11px' }}>
-                      Voir
-                    </Link>
+                  <div className="featured-card-img">
+                    {car.images && car.images[0]
+                      ? <img src={car.images[0]} alt={`${car.brand} ${car.model}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      : null
+                    }
+                  </div>
+                  <div className="featured-card-body">
+                    <div className="car-brand">{car.brand}</div>
+                    <div className="car-model">{car.model}</div>
+                    <div className="car-specs">
+                      <span>{car.year}</span>
+                      {car.power && <><span className="spec-dot"></span><span>{car.power}</span></>}
+                      {car.fuel_type && <><span className="spec-dot"></span><span>{car.fuel_type}</span></>}
+                    </div>
+                    <div className="car-footer">
+                      <div className="car-price">
+                        {car.price ? `€ ${car.price.toLocaleString('fr-FR')}` : 'Prix sur demande'}
+                      </div>
+                      <Link to={`/vehicles/${toSlug(car.brand, car.model)}`} className="btn-cyan" style={{ padding: '8px 18px', fontSize: '11px' }}>
+                        Voir
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
 
           <div className="featured-cta">
