@@ -39,6 +39,35 @@ export default function Navbar() {
               Admin
             </NavLink>
           )}
+          <div className="navbar-mobile-actions">
+            {user ? (
+              <>
+                <Link
+                  to={isAdmin ? '/admin' : '/dashboard'}
+                  className="navbar-username"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {profile?.first_name || user?.email?.split('@')[0] || 'Mon compte'}
+                </Link>
+                <button
+                  className="btn-ghost"
+                  onClick={() => { handleLogout(); setMenuOpen(false) }}
+                  style={{ padding: '8px 20px', fontSize: '11px' }}
+                >
+                  Déconnexion
+                </button>
+              </>
+            ) : (
+              <Link
+                to="/login"
+                className="btn-ghost"
+                onClick={() => setMenuOpen(false)}
+                style={{ padding: '8px 20px', fontSize: '11px' }}
+              >
+                Connexion
+              </Link>
+            )}
+          </div>
         </nav>
 
         <div className="navbar-actions">

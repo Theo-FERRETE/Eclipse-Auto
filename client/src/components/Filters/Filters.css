@@ -133,6 +133,6 @@
   letter-spacing: 2px;
   text-transform: uppercase;
 }
-.check-available { color: var(--red); }
+.check-available { color: var(--red-text); }
 .check-reserved { color: var(--gray); }
 .check-sold { color: var(--gray-dark); }

@@ -67,7 +67,7 @@
 
 .mentions-key {
   font-family: var(--font-display);
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 3px;
   text-transform: uppercase;
   color: var(--cyan);
@@ -79,4 +79,9 @@
   font-size: 14px;
   color: var(--white);
   font-family: var(--font-body);
+}
+
+@media (max-width: 480px) {
+  .mentions-row { flex-direction: column; gap: 4px; }
+  .mentions-key { min-width: unset; }
 }

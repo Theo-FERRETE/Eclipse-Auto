@@ -182,6 +182,26 @@
 }
 
 @media (max-width: 768px) {
-  .avc-right { flex-wrap: wrap; gap: 8px; }
-  .admin-toolbar { flex-direction: column; }
+  .admin-toolbar { flex-direction: column; align-items: stretch; }
+  .admin-toolbar .btn-primary { align-self: flex-start; }
+
+  .admin-vehicle-card {
+    grid-template-columns: 80px 1fr;
+    grid-template-rows: auto auto;
+    gap: 12px;
+  }
+
+  .avc-img { height: 56px; }
+
+  .avc-right {
+    grid-column: 1 / -1;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+  }
+
+  .status-select { flex: 1; min-width: 120px; }
+
+  .avc-actions { flex: 1; justify-content: flex-end; }
 }

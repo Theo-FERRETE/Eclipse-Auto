@@ -102,7 +102,7 @@
 
 .stat-l {
   font-family: var(--font-display);
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 3px;
   text-transform: uppercase;
   color: var(--gray-dark);
@@ -181,7 +181,7 @@
 
 .car-brand {
   font-family: var(--font-display);
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 3px;
   text-transform: uppercase;
   color: var(--cyan);
@@ -287,4 +287,11 @@
   .stat-n { font-size: 28px; }
   .featured-grid { grid-template-columns: 1fr; }
   .why-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  .stat { padding: 16px 10px; }
+  .stat-n { font-size: 22px; }
+  .stat-n em { font-size: 14px; }
+  .stat-l { font-size: 9px; letter-spacing: 1px; }
 }
