@@ -1,19 +1,16 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { supabase } from '@/lib/supabase'
-import { toSlug } from '@/lib/utils'
+import { toSlug, optimizeImageUrl } from '@/lib/utils'
+import { getVehicles } from '@/lib/vehiclesCache'
 import './Home.css'
 
 export default function Home() {
   const [featured, setFeatured] = useState([])
 
   useEffect(() => {
-    supabase
-      .from('vehicles')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(3)
-      .then(({ data }) => { if (data) setFeatured(data) })
+    getVehicles().then(({ data }) => {
+      if (data) setFeatured(data.slice(0, 3))
+    })
   }, [])
 
   return (
@@ -84,7 +81,14 @@ export default function Home() {
                   </div>
                   <div className="featured-card-img">
                     {car.images && car.images[0]
-                      ? <img src={car.images[0]} alt={`${car.brand} ${car.model}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      ? <img
+                          src={optimizeImageUrl(car.images[0], 600)}
+                          alt={`${car.brand} ${car.model}`}
+                          loading="lazy"
+                          decoding="async"
+                          style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0, transition: 'opacity 0.4s ease' }}
+                          onLoad={e => { e.currentTarget.style.opacity = '1' }}
+                        />
                       : null
                     }
                   </div>

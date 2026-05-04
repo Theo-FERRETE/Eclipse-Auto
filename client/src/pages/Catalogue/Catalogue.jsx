@@ -3,6 +3,7 @@ import VehicleCard from '@/components/VehicleCard/VehicleCard'
 import Filters from '@/components/Filters/Filters'
 import Pagination from '@/components/Pagination/Pagination'
 import { supabase } from '@/lib/supabase'
+import { getVehicles, patchCachedVehicle } from '@/lib/vehiclesCache'
 import './Catalogue.css'
 
 const INITIAL_FILTERS = {
@@ -27,11 +28,7 @@ export default function Catalogue() {
 
   useEffect(() => {
     async function fetchVehicles() {
-      const { data, error } = await supabase
-        .from('vehicles')
-        .select('*')
-        .order('created_at', { ascending: false })
-
+      const { data, error } = await getVehicles()
       if (error) setError(error.message)
       else setVehicles(data)
       setLoading(false)
@@ -39,13 +36,12 @@ export default function Catalogue() {
 
     fetchVehicles()
 
-    // Refetch au retour sur l'onglet
     window.addEventListener('focus', fetchVehicles)
 
-    // Realtime si activé côté Supabase
     const channel = supabase
       .channel('catalogue-vehicles')
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'vehicles' }, payload => {
+        patchCachedVehicle(payload.new)
         setVehicles(prev => prev.map(v => v.id === payload.new.id ? { ...v, ...payload.new } : v))
       })
       .subscribe()

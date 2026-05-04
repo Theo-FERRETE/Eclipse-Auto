@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
+import { optimizeImageUrl } from '@/lib/utils'
 import AdminSidebar from '@/components/AdminSidebar/AdminSidebar'
 import Pagination from '@/components/Pagination/Pagination'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
@@ -168,7 +169,14 @@ export default function AdminVehicles() {
                       <div key={v.id} className={`admin-vehicle-card ${editing === v.id ? 'active' : ''}`}>
                         <div className="avc-img">
                           {v.images?.[0]
-                            ? <img src={v.images[0]} alt={`${v.brand} ${v.model}`} />
+                            ? <img
+                                src={optimizeImageUrl(v.images[0], 200)}
+                                alt={`${v.brand} ${v.model}`}
+                                loading="lazy"
+                                decoding="async"
+                                style={{ opacity: 0, transition: 'opacity 0.3s ease' }}
+                                onLoad={e => { e.currentTarget.style.opacity = '1' }}
+                              />
                             : <div className="avc-img-placeholder"></div>
                           }
                           <div className="gallery-bar"></div>

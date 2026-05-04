@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '@/lib/AuthContext'
 import { supabase } from '@/lib/supabase'
-import { RESERVATION_STATUS } from '@/lib/utils'
+import { RESERVATION_STATUS, optimizeImageUrl } from '@/lib/utils'
 import './Dashboard.css'
 
 export default function Dashboard() {
@@ -194,7 +194,14 @@ export default function Dashboard() {
                     <div className="reservation-card" key={r.id}>
                       <div className="reservation-img">
                         {r.vehicles?.images?.[0]
-                          ? <img src={r.vehicles.images[0]} alt={`${r.vehicles.brand} ${r.vehicles.model}`} />
+                          ? <img
+                              src={optimizeImageUrl(r.vehicles.images[0], 400)}
+                              alt={`${r.vehicles.brand} ${r.vehicles.model}`}
+                              loading="lazy"
+                              decoding="async"
+                              style={{ opacity: 0, transition: 'opacity 0.4s ease' }}
+                              onLoad={e => { e.currentTarget.style.opacity = '1' }}
+                            />
                           : <div className="reservation-img-placeholder"></div>
                         }
                       </div>

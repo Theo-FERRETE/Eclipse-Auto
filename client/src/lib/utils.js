@@ -1,3 +1,30 @@
+/**
+ * Réduit le poids des images en utilisant les API de transformation
+ * de Supabase Storage (/render/image) et Unsplash (imgix).
+ * Pour toute autre source, retourne l'URL d'origine.
+ *
+ * @param {string} url     URL d'origine
+ * @param {number} width   Largeur cible en px (2x la taille d'affichage pour retina)
+ * @param {number} quality Qualité 1-100 (défaut 75)
+ */
+export function optimizeImageUrl(url, width = 800, quality = 75) {
+  if (!url) return url
+
+  if (url.includes('supabase.co/storage/v1/object/public/')) {
+    return url.replace(
+      '/storage/v1/object/public/',
+      '/storage/v1/render/image/public/'
+    ) + `?width=${width}&quality=${quality}&format=webp`
+  }
+
+  if (url.includes('images.unsplash.com')) {
+    const sep = url.includes('?') ? '&' : '?'
+    return `${url}${sep}w=${width}&q=${quality}&fm=webp&fit=crop`
+  }
+
+  return url
+}
+
 export function toSlug(brand, model) {
   return `${brand}-${model}`
     .toLowerCase()

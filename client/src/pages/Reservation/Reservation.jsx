@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '@/lib/AuthContext'
 import { supabase } from '@/lib/supabase'
-import { toSlug } from '@/lib/utils'
+import { toSlug, optimizeImageUrl } from '@/lib/utils'
 import './Reservation.css'
 
 export default function Reservation() {
@@ -132,7 +132,14 @@ export default function Reservation() {
 
           <div className="reservation-img">
             {vehicle.images?.[0]
-              ? <img src={vehicle.images[0]} alt={`${vehicle.brand} ${vehicle.model}`} />
+              ? <img
+                  src={optimizeImageUrl(vehicle.images[0], 800)}
+                  alt={`${vehicle.brand} ${vehicle.model}`}
+                  loading="eager"
+                  decoding="async"
+                  style={{ opacity: 0, transition: 'opacity 0.4s ease' }}
+                  onLoad={e => { e.currentTarget.style.opacity = '1' }}
+                />
               : <div className="reservation-img-placeholder"></div>
             }
             <div className="gallery-bar"></div>

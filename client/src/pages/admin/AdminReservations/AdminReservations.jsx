@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
-import { RESERVATION_STATUS } from '@/lib/utils'
+import { RESERVATION_STATUS, optimizeImageUrl } from '@/lib/utils'
 import AdminSidebar from '@/components/AdminSidebar/AdminSidebar'
 import Pagination from '@/components/Pagination/Pagination'
 import './AdminReservations.css'
@@ -100,7 +100,14 @@ export default function AdminReservations() {
                   <div className="ar-card" key={r.id}>
                     <div className="ar-img">
                       {r.vehicles?.images?.[0]
-                        ? <img src={r.vehicles.images[0]} alt="" />
+                        ? <img
+                            src={optimizeImageUrl(r.vehicles.images[0], 200)}
+                            alt={`${r.vehicles?.brand} ${r.vehicles?.model}`}
+                            loading="lazy"
+                            decoding="async"
+                            style={{ opacity: 0, transition: 'opacity 0.3s ease' }}
+                            onLoad={e => { e.currentTarget.style.opacity = '1' }}
+                          />
                         : <div className="avc-img-placeholder"></div>
                       }
                       <div className="gallery-bar"></div>

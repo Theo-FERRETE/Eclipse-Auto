@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { supabase } from '@/lib/supabase'
-import { toSlug } from '@/lib/utils'
+import { toSlug, optimizeImageUrl } from '@/lib/utils'
+import { getVehicles } from '@/lib/vehiclesCache'
 import './VehicleDetail.css'
 
 export default function VehicleDetail() {
@@ -14,9 +14,7 @@ export default function VehicleDetail() {
   useEffect(() => {
     async function fetchVehicle() {
       setLoading(true)
-      const { data, error } = await supabase
-        .from('vehicles')
-        .select('*')
+      const { data, error } = await getVehicles()
 
       if (error || !data) {
         navigate('/catalogue')
@@ -83,8 +81,12 @@ export default function VehicleDetail() {
           <div className="gallery-main">
             {images && images[activeImg]
               ? <img
-                  src={images[activeImg]}
+                  src={optimizeImageUrl(images[activeImg], 1200)}
                   alt={`${year} ${brand} ${model}`}
+                  loading="eager"
+                  decoding="async"
+                  style={{ opacity: 0, transition: 'opacity 0.4s ease' }}
+                  onLoad={e => { e.currentTarget.style.opacity = '1' }}
                   onError={e => { e.currentTarget.style.display = 'none'; e.currentTarget.nextSibling.style.display = 'flex' }}
                 />
               : null
@@ -102,8 +104,12 @@ export default function VehicleDetail() {
                   onClick={() => setActiveImg(i)}
                 >
                   <img
-                    src={img}
+                    src={optimizeImageUrl(img, 200)}
                     alt={`${brand} ${model}, image ${i + 1}`}
+                    loading="lazy"
+                    decoding="async"
+                    style={{ opacity: 0, transition: 'opacity 0.3s ease' }}
+                    onLoad={e => { e.currentTarget.style.opacity = '1' }}
                     onError={e => { e.currentTarget.parentElement.style.opacity = '0.3' }}
                   />
                 </button>

@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom'
-import { toSlug } from '@/lib/utils'
+import { toSlug, optimizeImageUrl } from '@/lib/utils'
 import './VehicleCard.css'
 
 export default function VehicleCard({ vehicle, index }) {
-  const { id, brand, model, year, price, fuel_type, mileage, power, images, status } = vehicle
+  const { brand, model, year, price, fuel_type, mileage, power, images, status } = vehicle
 
   const slug = toSlug(brand, model)
 
@@ -22,7 +22,14 @@ export default function VehicleCard({ vehicle, index }) {
 
       <div className="vcard-img">
         {images && images[0]
-          ? <img src={images[0]} alt={`${brand} ${model}`} />
+          ? <img
+              src={optimizeImageUrl(images[0], 800)}
+              alt={`${brand} ${model}`}
+              loading="lazy"
+              decoding="async"
+              style={{ opacity: 0, transition: 'opacity 0.4s ease' }}
+              onLoad={e => { e.currentTarget.style.opacity = '1' }}
+            />
           : <div className="vcard-img-placeholder"></div>
         }
         <div className="vcard-img-bar"></div>
