@@ -47,15 +47,15 @@ export default function Contact() {
         <div className="contact-info">
           <div className="info-block">
             <div className="info-label">Adresse</div>
-            <div className="info-value">123 Avenue de la Performance<br />75008 Paris, France</div>
+            <div className="info-value">12 Avenue de la Promenade<br />06000 Nice, France</div>
           </div>
           <div className="info-block">
             <div className="info-label">Téléphone</div>
-            <div className="info-value">+33 1 23 45 67 89</div>
+            <div className="info-value">+33 4 93 47 82 10</div>
           </div>
           <div className="info-block">
             <div className="info-label">Email</div>
-            <div className="info-value">contact@eclipse-auto.fr</div>
+            <div className="info-value">theo.ferrete@gmail.com</div>
           </div>
           <div className="info-block">
             <div className="info-label">Horaires</div>
