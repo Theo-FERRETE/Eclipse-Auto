@@ -22,6 +22,10 @@ export function optimizeImageUrl(url, width = 800, quality = 75) {
     return `${url}${sep}w=${width}&q=${quality}&fm=webp&fit=crop`
   }
 
+  if (url.startsWith('/img/')) {
+    return url.replace(/\.(jpg|jpeg|png)$/i, '.webp')
+  }
+
   return url
 }
 

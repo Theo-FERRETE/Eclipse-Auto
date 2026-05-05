@@ -84,9 +84,8 @@ export default function VehicleDetail() {
                   src={optimizeImageUrl(images[activeImg], 1200)}
                   alt={`${year} ${brand} ${model}`}
                   loading="eager"
-                  decoding="async"
-                  style={{ opacity: 0, transition: 'opacity 0.4s ease' }}
-                  onLoad={e => { e.currentTarget.style.opacity = '1' }}
+                  fetchPriority="high"
+                  decoding="sync"
                   onError={e => { e.currentTarget.style.display = 'none'; e.currentTarget.nextSibling.style.display = 'flex' }}
                 />
               : null

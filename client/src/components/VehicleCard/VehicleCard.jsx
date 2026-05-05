@@ -6,6 +6,7 @@ export default function VehicleCard({ vehicle, index }) {
   const { brand, model, year, price, fuel_type, mileage, power, images, status } = vehicle
 
   const slug = toSlug(brand, model)
+  const isPriority = index < 3
 
   const badge = {
     available: <span className="badge-available">Disponible</span>,
@@ -23,12 +24,13 @@ export default function VehicleCard({ vehicle, index }) {
       <div className="vcard-img">
         {images && images[0]
           ? <img
-              src={optimizeImageUrl(images[0], 800)}
+              src={optimizeImageUrl(images[0], 560)}
               alt={`${brand} ${model}`}
-              loading="lazy"
-              decoding="async"
-              style={{ opacity: 0, transition: 'opacity 0.4s ease' }}
-              onLoad={e => { e.currentTarget.style.opacity = '1' }}
+              loading={isPriority ? 'eager' : 'lazy'}
+              fetchPriority={isPriority ? 'high' : 'auto'}
+              decoding={isPriority ? 'sync' : 'async'}
+              style={isPriority ? {} : { opacity: 0, transition: 'opacity 0.4s ease' }}
+              onLoad={isPriority ? undefined : e => { e.currentTarget.style.opacity = '1' }}
             />
           : <div className="vcard-img-placeholder"></div>
         }

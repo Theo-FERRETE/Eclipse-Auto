@@ -4,12 +4,19 @@ import { toSlug, optimizeImageUrl } from '@/lib/utils'
 import { getVehicles } from '@/lib/vehiclesCache'
 import './Home.css'
 
+const YEARS_EXPERTISE = 12
+const SATISFACTION_PCT = 100
+
 export default function Home() {
   const [featured, setFeatured] = useState([])
+  const [vehicleCount, setVehicleCount] = useState(null)
 
   useEffect(() => {
     getVehicles().then(({ data }) => {
-      if (data) setFeatured(data.slice(0, 3))
+      if (data) {
+        setFeatured(data.slice(0, 3))
+        setVehicleCount(data.length)
+      }
     })
   }, [])
 
@@ -43,15 +50,15 @@ export default function Home() {
 
         <div className="hero-stats">
           <div className="stat">
-            <span className="stat-n">48<em>+</em></span>
+            <span className="stat-n">{vehicleCount ?? '—'}<em>+</em></span>
             <span className="stat-l">Véhicules</span>
           </div>
           <div className="stat">
-            <span className="stat-n">12<em>ans</em></span>
+            <span className="stat-n">{YEARS_EXPERTISE}<em>ans</em></span>
             <span className="stat-l">D'expertise</span>
           </div>
           <div className="stat">
-            <span className="stat-n">100<em>%</em></span>
+            <span className="stat-n">{SATISFACTION_PCT}<em>%</em></span>
             <span className="stat-l">Satisfaction</span>
           </div>
         </div>
@@ -82,12 +89,12 @@ export default function Home() {
                   <div className="featured-card-img">
                     {car.images && car.images[0]
                       ? <img
-                          src={optimizeImageUrl(car.images[0], 600)}
+                          src={optimizeImageUrl(car.images[0], 420)}
                           alt={`${car.brand} ${car.model}`}
-                          loading="lazy"
-                          decoding="async"
-                          style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0, transition: 'opacity 0.4s ease' }}
-                          onLoad={e => { e.currentTarget.style.opacity = '1' }}
+                          loading="eager"
+                          fetchPriority={i === 0 ? 'high' : 'auto'}
+                          decoding="sync"
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                         />
                       : null
                     }
