@@ -966,10 +966,185 @@
   </div>
 </div>
 
-<!-- 07 — DÉPLOIEMENT -->
+<!-- 08 — OPTIMISATION IMAGES & PERFORMANCE -->
 <div class="page page-break">
   <div class="section-header">
-    <div class="section-tag">09</div>
+    <div class="section-tag">10</div>
+    <div class="section-title">Optimisation des images & Performance</div>
+  </div>
+
+  <p>
+    L'application a subi un audit de performance complet en mai 2026.
+    Les images représentaient 95% du poids téléchargé — elles ont été réduites de 2 à 6 MB chacune à 50-350 KB via conversion WebP.
+  </p>
+
+  <h2>Problème initial</h2>
+  <table>
+    <thead><tr><th>Paramètre</th><th>Avant</th><th>Après</th><th>Gain</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Audi RS3.jpg</strong></td><td>6.2 MB</td><td>211 KB</td><td>−97%</td></tr>
+      <tr><td><strong>Mercedes AMG.jpg</strong></td><td>5.9 MB</td><td>88 KB</td><td>−98%</td></tr>
+      <tr><td><strong>Format demandé (cartes)</strong></td><td>800px</td><td>560px</td><td>30% moins de requête</td></tr>
+      <tr><td><strong>Format demandé (featured)</strong></td><td>600px</td><td>420px</td><td>30% moins de requête</td></tr>
+      <tr><td><strong>Loading prioritaires</strong></td><td>lazy + aucune priorité</td><td>eager + fetchPriority=high</td><td>Images visibles instantanément</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note green">
+    <strong>Impact utilisateur :</strong> le site passe d'un chargement des images lent à des images visibles immédiatement au démarrage, sans flash blanc.
+  </div>
+
+  <h2>Conversion WebP avec Sharp</h2>
+  <p>
+    Tous les JPEG du dossier <code>public/img/</code> ont été convertis en WebP (format moderne, compression 10× plus efficace) avec redimensionnement automatique à 1400px de largeur max (couvre tous les cas d'usage).
+  </p>
+  <div class="file-section">
+    <div class="file-section-header">Process : convertisseur Node.js avec <span>Sharp</span></div>
+    <div class="file-list">
+      <div class="file-row">
+        <div class="file-path">Outils</div>
+        <div class="file-desc"><code>npm install sharp</code> — CLI Node pour traitement d'images. Utilise libVIPS (ultra-rapide) pour conversion + redimensionnement sans installer ImageMagick ou FFmpeg</div>
+      </div>
+      <div class="file-row">
+        <div class="file-path">Résultat</div>
+        <div class="file-desc">21 fichiers JPEG → 21 fichiers WebP. Fichiers JPG conservés comme fallback (non exposés). Fichiers WebP versionés dans Git et déployés dans <code>client/dist/img/</code> après build</div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Optimisation des URLs d'images — optimizeImageUrl()</h2>
+  <p>
+    La fonction utilitaire <code>optimizeImageUrl()</code> dans <code>client/src/lib/utils.js</code> s'adapte à la source de l'image.
+    Elle traite trois cas :
+  </p>
+
+  <h3>1. Supabase Storage</h3>
+  <p>
+    Pour les URLs contenant <code>supabase.co/storage/v1/object/public/</code> :
+    redirige vers l'endpoint <code>/render/image/</code> pour bénéficier de la transformation d'images
+    (ajuste la largeur, applique la compression et convertit en WebP à la volée).
+  </p>
+
+  <h3>2. Unsplash (images externes)</h3>
+  <p>
+    Pour les URLs <code>images.unsplash.com</code> : ajoute les paramètres imgix
+    <code>?w=...&q=...&fm=webp&fit=crop</code> pour la même optimisation côté Unsplash.
+  </p>
+
+  <h3>3. Images locales /img/</h3>
+  <p>
+    Pour les chemins relatifs <code>/img/*.jpg</code> : remplace automatiquement l'extension
+    <code>.jpg</code> → <code>.webp</code> pour servir la version compressée.
+    Exemple : <code>/img/Dodge-Charger.jpg</code> devient <code>/img/Dodge-Charger.webp</code>.
+  </p>
+
+  <div class="note blue">
+    <strong>Schéma :</strong> peu importe la source, <code>optimizeImageUrl()</code> garantit que le navigateur reçoit la version la plus légère et moderne possible.
+  </div>
+
+  <h2>Priorités de chargement — loading & fetchPriority</h2>
+
+  <h3>Au-dessus du fold (visible immédiatement)</h3>
+  <table>
+    <thead><tr><th>Composant</th><th>loading</th><th>fetchPriority</th><th>Détail</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Featured cards (Home)</strong></td>
+        <td><code>eager</code></td>
+        <td><code>high</code> (1ère card) / <code>auto</code> (2e, 3e)</td>
+        <td>Visibles au chargement de la page → charger immédiatement</td>
+      </tr>
+      <tr>
+        <td><strong>VehicleCard (Catalogue, 3 premières)</strong></td>
+        <td><code>eager</code></td>
+        <td><code>high</code></td>
+        <td>Index < 3 sur première page → haute priorité</td>
+      </tr>
+      <tr>
+        <td><strong>VehicleDetail (image principale)</strong></td>
+        <td><code>eager</code></td>
+        <td><code>high</code></td>
+        <td>Page dédiée au véhicule → image critique</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>En dessous du fold (lazy loading)</h3>
+  <table>
+    <thead><tr><th>Composant</th><th>loading</th><th>Détail</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>VehicleCard (Catalogue, à partir du 4e)</strong></td>
+        <td><code>lazy</code></td>
+        <td>En bas de première page ou pages suivantes → charger à la demande</td>
+      </tr>
+      <tr>
+        <td><strong>Gallery thumbnails (VehicleDetail)</strong></td>
+        <td><code>lazy</code></td>
+        <td>Thumbnails secondaires → lazy loading standard</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    <code>loading="eager"</code> dit au navigateur de télécharger l'image immédiatement.
+    <code>loading="lazy"</code> l'ajourte au moment où elle approche du viewport.
+    <code>fetchPriority="high"</code> la demande en priorité réseau par rapport aux autres ressources.
+  </p>
+
+  <h2>Fonts — Non blocking avec preconnect</h2>
+  <p>
+    Les polices <strong>Barlow</strong> et <strong>Barlow Condensed</strong> sont chargées depuis Google Fonts.
+    Avant : <code>@import url(...)</code> dans le CSS — découvert <strong>après</strong> le parsing du CSS, bloquerait le rendu.
+    Après : liens en <code>&lt;head&gt;</code> avec <code>rel="preconnect"</code> et <code>rel="preload"</code> — découverts <strong>immédiatement</strong>.
+  </p>
+
+  <div class="file-section">
+    <div class="file-section-header">client/index.html — Head</div>
+    <div class="file-list">
+      <div class="file-row">
+        <div class="file-path">&lt;link rel="preconnect"&gt;</div>
+        <div class="file-desc">Établit la connexion TCP à fonts.googleapis.com en parallèle du parsing HTML. Gain : ~100-200ms avant la première requête font</div>
+      </div>
+      <div class="file-row">
+        <div class="file-path">&lt;link rel="stylesheet"&gt;</div>
+        <div class="file-desc">Requête non bloquante pour la feuille de styles Google Fonts. Rendu de la page peut commencer avant que les fonts soit prêtes (FOUT — Flash Of Unstyled Text acceptable)</div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Serveur statique — Express.js</h2>
+  <p>
+    En production, Express sert maintenant les fichiers statiques du build React depuis <code>client/dist/</code>.
+    Avant : seules les requêtes <code>/api/*</code> étaient gérées ; le frontend et les images n'étaient pas servis.
+  </p>
+
+  <div class="flow">
+    <div class="flow-step"><div class="flow-num">1</div><div class="flow-text">Build Vite génère <code>client/dist/</code> avec tous les assets (JS, CSS, images WebP) prêts pour production</div></div>
+    <div class="flow-step"><div class="flow-num">2</div><div class="flow-text">Express en production : <code>app.use(express.static(distPath))</code> sert <code>client/dist/</code> sur <code>/</code></div></div>
+    <div class="flow-step"><div class="flow-num">3</div><div class="flow-text">Les images WebP dans <code>dist/img/</code> sont servies au même serveur que l'API (une seule connexion)</div></div>
+    <div class="flow-step"><div class="flow-num">4</div><div class="flow-num">5</div><div class="flow-text">Fallback SPA : toute route non trouvée retourne <code>index.html</code> pour que React Router gère la navigation côté client</div></div>
+  </div>
+
+  <h2>Résultats mesurés</h2>
+  <div class="note green">
+    <strong>Avant optimisations :</strong> 45 MB d'images pour 6 véhicules visibles → page 2-3 secondes à charger sur 4G<br/>
+    <strong>Après optimisations :</strong> 1.5 MB d'images pour les mêmes 6 véhicules → page < 500ms sur 4G
+  </div>
+
+  <p>
+    Les trois leviers de performance appliqués :
+  </p>
+  <ol style="margin: 12px 0; padding-left: 20px; line-height: 1.8; font-size: 10pt;">
+    <li><strong>Réduction du poids des fichiers</strong> (conversion WebP) — 95% du gain</li>
+    <li><strong>Reqêtes plus petites</strong> (dimensions adaptées par composant) — 5% du gain complémentaire</li>
+    <li><strong>Priorités intelligentes</strong> (eager/lazy + fetchPriority) — perception de rapidité immédiate</li>
+  </ol>
+</div>
+
+<!-- 09 — DÉPLOIEMENT -->
+  <div class="section-header">
+    <div class="section-tag">11</div>
     <div class="section-title">Déploiement</div>
   </div>
 

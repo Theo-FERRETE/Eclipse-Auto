@@ -1,36 +1,16 @@
 require('dotenv').config()
 const express = require('express')
-const cors = require('cors')
 const path = require('path')
-
-const vehiclesRouter     = require('./routes/vehicles')
-const reservationsRouter = require('./routes/reservations')
-const adminRouter        = require('./routes/admin')
-const contactRouter      = require('./routes/contact')
+const setupMiddleware = require('./middleware/setup')
+const apiRouter = require('./routes/api')
 
 const app = express()
 const PORT = process.env.PORT || 3001
-const isProd = process.env.NODE_ENV === 'production'
 
-if (!isProd) {
-  app.use(cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
-    credentials: true,
-  }))
-}
-
-app.use(express.json())
+setupMiddleware(app)
 
 // Routes API
-app.use('/api/vehicles',     vehiclesRouter)
-app.use('/api/reservations', reservationsRouter)
-app.use('/api/admin',        adminRouter)
-app.use('/api/contact',      contactRouter)
-
-// Health check
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', app: 'Eclipse Auto API', timestamp: new Date().toISOString() })
-})
+app.use('/api', apiRouter)
 
 // Frontend statique (production)
 const distPath = path.join(__dirname, '../client/dist')
