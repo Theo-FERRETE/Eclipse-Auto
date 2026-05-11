@@ -213,81 +213,95 @@ export default function AdminVehicles() {
             </div>
 
             {showForm && (
-              <div className="admin-panel">
-                <div className="admin-panel-header">
-                  <div className="tag">{editing ? 'Modifier' : 'Nouveau'}</div>
-                  <button className="filters-reset" onClick={closeForm}>✕</button>
+              <div className="vehicle-modal-overlay" onClick={e => { if (e.target === e.currentTarget) closeForm() }}>
+                <div className="vehicle-modal">
+                  <div className="vehicle-modal-header">
+                    <div>
+                      <div className="tag">{editing ? 'Modifier le véhicule' : 'Nouveau véhicule'}</div>
+                    </div>
+                    <button className="vehicle-modal-close" onClick={closeForm}>✕</button>
+                  </div>
+
+                  <form className="vehicle-modal-form" onSubmit={handleSubmit}>
+                    <div className="vmf-row">
+                      <div className="vmf-group">
+                        <label className="vmf-label">Marque *</label>
+                        <input name="brand" className="vmf-input" value={form.brand} onChange={handleChange} required placeholder="Ferrari" />
+                      </div>
+                      <div className="vmf-group">
+                        <label className="vmf-label">Modèle *</label>
+                        <input name="model" className="vmf-input" value={form.model} onChange={handleChange} required placeholder="Roma Spider" />
+                      </div>
+                    </div>
+
+                    <div className="vmf-row">
+                      <div className="vmf-group">
+                        <label className="vmf-label">Année *</label>
+                        <input name="year" type="number" className="vmf-input" value={form.year} onChange={handleChange} required placeholder="2024" />
+                      </div>
+                      <div className="vmf-group">
+                        <label className="vmf-label">Prix (€) *</label>
+                        <input name="price" type="number" className="vmf-input" value={form.price} onChange={handleChange} required placeholder="248000" />
+                      </div>
+                    </div>
+
+                    <div className="vmf-row">
+                      <div className="vmf-group">
+                        <label className="vmf-label">Carburant *</label>
+                        <select name="fuel_type" className="vmf-input" value={form.fuel_type} onChange={handleChange} required>
+                          <option value="">Sélectionner</option>
+                          <option value="Essence">Essence</option>
+                          <option value="Diesel">Diesel</option>
+                          <option value="Hybride">Hybride</option>
+                          <option value="Électrique">Électrique</option>
+                        </select>
+                      </div>
+                      <div className="vmf-group">
+                        <label className="vmf-label">Transmission *</label>
+                        <select name="transmission" className="vmf-input" value={form.transmission} onChange={handleChange} required>
+                          <option value="">Sélectionner</option>
+                          <option value="Automatique">Automatique</option>
+                          <option value="Manuelle">Manuelle</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="vmf-row">
+                      <div className="vmf-group">
+                        <label className="vmf-label">Kilométrage</label>
+                        <input name="mileage" type="number" className="vmf-input" value={form.mileage} onChange={handleChange} placeholder="0" />
+                      </div>
+                      <div className="vmf-group">
+                        <label className="vmf-label">Puissance</label>
+                        <input name="power" className="vmf-input" value={form.power} onChange={handleChange} placeholder="620 CH" />
+                      </div>
+                    </div>
+
+                    <div className="vmf-group">
+                      <label className="vmf-label">Statut</label>
+                      <select name="status" className="vmf-input" value={form.status} onChange={handleChange}>
+                        <option value="available">Disponible</option>
+                        <option value="reserved">Réservé</option>
+                        <option value="sold">Vendu</option>
+                      </select>
+                    </div>
+
+                    <div className="vmf-group">
+                      <label className="vmf-label">Description</label>
+                      <textarea name="description" className="vmf-input vmf-textarea" value={form.description} onChange={handleChange} placeholder="Description du véhicule..." rows={3} />
+                    </div>
+
+                    {error && <div className="vmf-error">{error}</div>}
+                    {success && <div className="vmf-success">{success}</div>}
+
+                    <div className="vmf-actions">
+                      <button type="button" className="btn-ghost" onClick={closeForm}>Annuler</button>
+                      <button type="submit" className="btn-primary" disabled={submitting}>
+                        {submitting ? 'Enregistrement...' : editing ? 'Enregistrer' : 'Ajouter'}
+                      </button>
+                    </div>
+                  </form>
                 </div>
-                <form className="admin-form" onSubmit={handleSubmit}>
-                  <div className="form-group">
-                    <label className="form-label">Marque *</label>
-                    <input name="brand" className="form-input" value={form.brand} onChange={handleChange} required placeholder="Ferrari" />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Modèle *</label>
-                    <input name="model" className="form-input" value={form.model} onChange={handleChange} required placeholder="Roma Spider" />
-                  </div>
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label className="form-label">Année *</label>
-                      <input name="year" type="number" className="form-input" value={form.year} onChange={handleChange} required placeholder="2024" />
-                    </div>
-                    <div className="form-group">
-                      <label className="form-label">Prix (€) *</label>
-                      <input name="price" type="number" className="form-input" value={form.price} onChange={handleChange} required placeholder="248000" />
-                    </div>
-                  </div>
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label className="form-label">Carburant *</label>
-                      <select name="fuel_type" className="form-input" value={form.fuel_type} onChange={handleChange} required>
-                        <option value="">Sélectionner</option>
-                        <option value="Essence">Essence</option>
-                        <option value="Diesel">Diesel</option>
-                        <option value="Hybride">Hybride</option>
-                        <option value="Électrique">Électrique</option>
-                      </select>
-                    </div>
-                    <div className="form-group">
-                      <label className="form-label">Transmission *</label>
-                      <select name="transmission" className="form-input" value={form.transmission} onChange={handleChange} required>
-                        <option value="">Sélectionner</option>
-                        <option value="Automatique">Automatique</option>
-                        <option value="Manuelle">Manuelle</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label className="form-label">Kilométrage</label>
-                      <input name="mileage" type="number" className="form-input" value={form.mileage} onChange={handleChange} placeholder="0" />
-                    </div>
-                    <div className="form-group">
-                      <label className="form-label">Puissance</label>
-                      <input name="power" className="form-input" value={form.power} onChange={handleChange} placeholder="620 CH" />
-                    </div>
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Statut</label>
-                    <select name="status" className="form-input" value={form.status} onChange={handleChange}>
-                      <option value="available">Disponible</option>
-                      <option value="reserved">Réservé</option>
-                      <option value="sold">Vendu</option>
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Description</label>
-                    <textarea name="description" className="form-input form-textarea" value={form.description} onChange={handleChange} placeholder="Description..." rows={3} />
-                  </div>
-                  {error && <div className="form-error">{error}</div>}
-                  {success && <div className="form-success">{success}</div>}
-                  <div className="form-actions">
-                    <button type="submit" className="btn-primary" style={{ flex: 1 }} disabled={submitting}>
-                      {submitting ? 'Enregistrement...' : editing ? 'Modifier' : 'Ajouter'}
-                    </button>
-                    <button type="button" className="btn-ghost" onClick={closeForm}>✕</button>
-                  </div>
-                </form>
               </div>
             )}
           </div>
