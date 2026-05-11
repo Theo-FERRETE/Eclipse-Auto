@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import AdminSidebar from '@/components/AdminSidebar/AdminSidebar'
+import AdminPageHeader from '@/components/AdminPageHeader/AdminPageHeader'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import './AdminUsers.css'
 
@@ -36,13 +37,7 @@ export default function AdminUsers() {
 
   return (
     <main className="admin">
-      <div className="admin-hero">
-        <div className="container">
-          <div className="tag">Administration</div>
-          <h1 className="admin-title">Clients</h1>
-        </div>
-      </div>
-      <div className="divider"></div>
+      <AdminPageHeader title="Clients" />
       <div className="container admin-layout">
         <AdminSidebar />
 

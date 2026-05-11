@@ -52,3 +52,8 @@ export const VEHICLE_STATUS = {
 
 export const FUEL_TYPES = ['Essence', 'Diesel', 'Hybride', 'Électrique']
 export const TRANSMISSIONS = ['Automatique', 'Manuelle']
+
+export function formatPrice(price) {
+  if (price == null) return 'Prix sur demande'
+  return `€ ${Number(price).toLocaleString('fr-FR')}`
+}

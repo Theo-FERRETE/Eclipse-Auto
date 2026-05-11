@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '@/lib/AuthContext'
 import { supabase } from '@/lib/supabase'
-import { toSlug, optimizeImageUrl } from '@/lib/utils'
+import { toSlug, optimizeImageUrl, formatPrice } from '@/lib/utils'
 import './Reservation.css'
 
 export default function Reservation() {
@@ -162,7 +162,7 @@ export default function Reservation() {
           <div className="reservation-price-block">
             <span className="reservation-price-label">Prix</span>
             <span className="reservation-price">
-              € {vehicle.price?.toLocaleString('fr-FR')}
+              {formatPrice(vehicle.price)}
             </span>
           </div>
         </div>

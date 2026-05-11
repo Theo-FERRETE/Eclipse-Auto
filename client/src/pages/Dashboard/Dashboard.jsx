@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '@/lib/AuthContext'
 import { supabase } from '@/lib/supabase'
-import { RESERVATION_STATUS, optimizeImageUrl } from '@/lib/utils'
+import { RESERVATION_STATUS, optimizeImageUrl, formatPrice } from '@/lib/utils'
 import './Dashboard.css'
 
 export default function Dashboard() {
@@ -212,9 +212,7 @@ export default function Dashboard() {
                             {r.vehicles?.model}
                           </span>
                         </div>
-                        <div className="reservation-price">
-                          € {r.vehicles?.price?.toLocaleString('fr-FR')}
-                        </div>
+                        <div className="reservation-price">{formatPrice(r.vehicles?.price)}</div>
                         {r.message && (
                           <div className="reservation-message">"{r.message}"</div>
                         )}

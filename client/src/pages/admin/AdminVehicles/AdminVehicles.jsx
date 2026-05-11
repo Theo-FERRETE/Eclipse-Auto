@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
-import { optimizeImageUrl } from '@/lib/utils'
+import { optimizeImageUrl, formatPrice } from '@/lib/utils'
 import AdminSidebar from '@/components/AdminSidebar/AdminSidebar'
+import AdminPageHeader from '@/components/AdminPageHeader/AdminPageHeader'
 import Pagination from '@/components/Pagination/Pagination'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import './AdminVehicles.css'
@@ -133,14 +134,7 @@ export default function AdminVehicles() {
 
   return (
     <main className="admin">
-      <div className="admin-hero">
-        <div className="container">
-          <div className="tag">Administration</div>
-          <h1 className="admin-title">Véhicules</h1>
-        </div>
-      </div>
-
-      <div className="divider"></div>
+      <AdminPageHeader title="Véhicules" />
 
       <div className="container admin-layout">
         <AdminSidebar />
@@ -191,7 +185,7 @@ export default function AdminVehicles() {
                           </div>
                         </div>
                         <div className="avc-right">
-                          <div className="avc-price">€ {v.price?.toLocaleString('fr-FR')}</div>
+                          <div className="avc-price">{formatPrice(v.price)}</div>
                           <select
                             className="status-select"
                             value={v.status}

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import AdminSidebar from '@/components/AdminSidebar/AdminSidebar'
+import AdminPageHeader from '@/components/AdminPageHeader/AdminPageHeader'
 import './AdminDashboard.css'
 
 export default function AdminDashboard() {
@@ -34,13 +35,7 @@ export default function AdminDashboard() {
 
   return (
     <main className="admin">
-      <div className="admin-hero">
-        <div className="container">
-          <div className="tag">Administration</div>
-          <h1 className="admin-title">Dashboard</h1>
-        </div>
-      </div>
-      <div className="divider"></div>
+      <AdminPageHeader title="Dashboard" />
       <div className="container admin-layout">
         <AdminSidebar />
         <div className="admin-main">

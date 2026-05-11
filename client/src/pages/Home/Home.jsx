@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { toSlug, optimizeImageUrl } from '@/lib/utils'
+import { toSlug, optimizeImageUrl, formatPrice } from '@/lib/utils'
 import { getVehicles } from '@/lib/vehiclesCache'
 import './Home.css'
 
@@ -109,7 +109,7 @@ export default function Home() {
                     </div>
                     <div className="car-footer">
                       <div className="car-price">
-                        {car.price ? `€ ${car.price.toLocaleString('fr-FR')}` : 'Prix sur demande'}
+                        {formatPrice(car.price)}
                       </div>
                       <Link to={`/vehicles/${toSlug(car.brand, car.model)}`} className="btn-cyan" style={{ padding: '8px 18px', fontSize: '11px' }}>
                         Voir

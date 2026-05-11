@@ -6,6 +6,8 @@ import Catalogue from '@/pages/Catalogue/Catalogue'
 import VehicleDetail from '@/pages/VehicleDetail/VehicleDetail'
 import Login from '@/pages/Login/Login'
 import Register from '@/pages/Register/Register'
+import ForgotPassword from '@/pages/ForgotPassword/ForgotPassword'
+import ResetPassword from '@/pages/ResetPassword/ResetPassword'
 import Dashboard from '@/pages/Dashboard/Dashboard'
 import Reservation from '@/pages/Reservation/Reservation'
 import Contact from '@/pages/Contact/Contact'
@@ -28,6 +30,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/mentions-legales" element={<MentionsLegales />} />
         <Route path="/reserve/:slug" element={
           <ProtectedRoute><Reservation /></ProtectedRoute>

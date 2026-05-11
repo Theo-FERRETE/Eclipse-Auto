@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { toSlug, optimizeImageUrl } from '@/lib/utils'
+import { toSlug, optimizeImageUrl, formatPrice, VEHICLE_STATUS } from '@/lib/utils'
 import './VehicleCard.css'
 
 export default function VehicleCard({ vehicle, index }) {
@@ -7,18 +7,13 @@ export default function VehicleCard({ vehicle, index }) {
 
   const slug = toSlug(brand, model)
   const isPriority = index < 3
-
-  const badge = {
-    available: <span className="badge-available">Disponible</span>,
-    reserved: <span className="badge-reserved">Réservé</span>,
-    sold: <span className="badge-sold">Vendu</span>,
-  }
+  const statusInfo = VEHICLE_STATUS[status] || VEHICLE_STATUS.available
 
   return (
     <Link to={`/vehicles/${slug}`} className="vcard">
       <div className="vcard-top">
         <span className="vcard-num">{String(index + 1).padStart(2, '0')}</span>
-        {badge[status] || badge.available}
+        <span className={statusInfo.badge}>{statusInfo.label}</span>
       </div>
 
       <div className="vcard-img">
@@ -65,7 +60,7 @@ export default function VehicleCard({ vehicle, index }) {
 
         <div className="vcard-footer">
           <div className="vcard-price">
-            {price ? `€ ${price.toLocaleString('fr-FR')}` : 'Prix sur demande'}
+            {formatPrice(price)}
           </div>
           <div className="vcard-arrow">→</div>
         </div>

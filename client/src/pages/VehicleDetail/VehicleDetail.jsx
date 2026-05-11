@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { toSlug, optimizeImageUrl } from '@/lib/utils'
+import { toSlug, optimizeImageUrl, formatPrice, VEHICLE_STATUS } from '@/lib/utils'
 import { getVehicles } from '@/lib/vehiclesCache'
 import './VehicleDetail.css'
 
@@ -49,11 +49,7 @@ export default function VehicleDetail() {
     images, status
   } = vehicle
 
-  const badge = {
-    available: <span className="badge-available">Disponible</span>,
-    reserved: <span className="badge-reserved">Réservé</span>,
-    sold: <span className="badge-sold">Vendu</span>,
-  }
+  const statusInfo = VEHICLE_STATUS[status] || VEHICLE_STATUS.available
 
   const specs = [
     { label: 'Année', value: year },
@@ -61,7 +57,7 @@ export default function VehicleDetail() {
     { label: 'Transmission', value: transmission },
     { label: 'Kilométrage', value: mileage === 0 ? 'Neuf' : mileage ? `${mileage.toLocaleString('fr-FR')} km` : 'N/A' },
     { label: 'Puissance', value: power || 'N/A' },
-    { label: 'Statut', value: badge[status] || badge.available },
+    { label: 'Statut', value: <span className={statusInfo.badge}>{statusInfo.label}</span> },
   ]
 
   return (
@@ -126,9 +122,9 @@ export default function VehicleDetail() {
 
           <div className="detail-price-block">
             <div className="detail-price">
-              {price ? `€ ${price.toLocaleString('fr-FR')}` : 'Prix sur demande'}
+              {formatPrice(price)}
             </div>
-            {badge[status] || badge.available}
+            <span className={statusInfo.badge}>{statusInfo.label}</span>
           </div>
 
           <div className="detail-specs">

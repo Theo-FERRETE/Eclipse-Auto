@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<title>Eclipse Auto — Cahier des charges</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    font-size: 11pt;
+    color: #1a1a1a;
+    background: white;
+    line-height: 1.65;
+  }
+
+  /* ── COUVERTURE ── */
+  .cover {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 70px 80px;
+    border-bottom: 4px solid #e8000d;
+    page-break-after: always;
+  }
+  .cover-top {
+    font-size: 11pt;
+    font-weight: 600;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #e8000d;
+  }
+  .cover-center { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+  .cover-title {
+    font-size: 58pt;
+    font-weight: 700;
+    letter-spacing: -2px;
+    line-height: 1;
+    color: #111;
+    margin-bottom: 16px;
+  }
+  .cover-title span { color: #e8000d; }
+  .cover-desc {
+    font-size: 14pt;
+    color: #777;
+    font-weight: 300;
+    max-width: 480px;
+    margin-bottom: 40px;
+  }
+  .cover-line {
+    width: 50px;
+    height: 3px;
+    background: #e8000d;
+    margin-bottom: 36px;
+  }
+  .cover-meta {
+    display: flex;
+    gap: 48px;
+  }
+  .cover-meta-item .label {
+    font-size: 8pt;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #bbb;
+    margin-bottom: 3px;
+  }
+  .cover-meta-item .value {
+    font-size: 11pt;
+    font-weight: 600;
+    color: #333;
+  }
+  .cover-bottom {
+    font-size: 9pt;
+    color: #bbb;
+    letter-spacing: 1px;
+  }
+
+  /* ── PAGE ── */
+  .page {
+    padding: 50px 80px;
+  }
+
+  .page-break { page-break-before: always; }
+
+  /* ── TITRES ── */
+  .section-header {
+    margin-bottom: 32px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid #f0f0f0;
+  }
+  .section-tag {
+    font-size: 8pt;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #e8000d;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .section-title {
+    font-size: 26pt;
+    font-weight: 700;
+    color: #111;
+  }
+
+  h2 {
+    font-size: 13pt;
+    font-weight: 600;
+    color: #111;
+    margin: 30px 0 12px;
+    padding-left: 12px;
+    border-left: 3px solid #e8000d;
+  }
+
+  h3 {
+    font-size: 10.5pt;
+    font-weight: 600;
+    color: #333;
+    margin: 20px 0 8px;
+  }
+
+  p { margin-bottom: 10px; color: #444; font-size: 10.5pt; }
+
+  ul {
+    margin: 6px 0 14px 20px;
+    color: #444;
+    font-size: 10.5pt;
+  }
+  ul li { margin-bottom: 5px; line-height: 1.6; }
+
+  /* ── TABLEAUX ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 24px;
+    font-size: 9.5pt;
+  }
+  th {
+    background: #111;
+    color: white;
+    padding: 9px 14px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 8.5pt;
+    letter-spacing: 0.5px;
+  }
+  td {
+    padding: 9px 14px;
+    border-bottom: 1px solid #f0f0f0;
+    vertical-align: top;
+    color: #444;
+  }
+  tr:nth-child(even) td { background: #fafafa; }
+  code {
+    font-family: 'Courier New', monospace;
+    font-size: 8.5pt;
+    background: #f5f5f5;
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: #c0392b;
+  }
+
+  /* ── STACK GRID ── */
+  .stack-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 14px 0 24px;
+  }
+  .stack-item {
+    border: 1px solid #e8e8e8;
+    border-top: 3px solid #e8000d;
+    padding: 12px 14px;
+    border-radius: 0 0 4px 4px;
+  }
+  .stack-item .tech { font-weight: 600; font-size: 10pt; color: #111; }
+  .stack-item .role { font-size: 8.5pt; color: #888; margin-top: 2px; }
+
+  /* ── FLOW ── */
+  .flow {
+    border: 1px solid #e8e8e8;
+    border-radius: 6px;
+    padding: 18px 20px;
+    margin: 14px 0 20px;
+    background: #fafafa;
+  }
+  .flow-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .flow-step:last-child { margin-bottom: 0; }
+  .flow-num {
+    background: #e8000d;
+    color: white;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    font-size: 8pt;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .flow-text { font-size: 10pt; color: #444; line-height: 1.5; }
+
+  /* ── NOTE ── */
+  .note {
+    background: #fff8e1;
+    border-left: 4px solid #f59e0b;
+    padding: 12px 16px;
+    border-radius: 0 4px 4px 0;
+    margin: 14px 0;
+    font-size: 9.5pt;
+    color: #555;
+  }
+  .note.blue  { background: #e8f4fd; border-color: #3498db; }
+  .note.green { background: #eafaf1; border-color: #27ae60; }
+  .note.red   { background: #fdf0f0; border-color: #e8000d; }
+
+  /* ── PERSONAS ── */
+  .persona-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 14px 0 28px;
+  }
+  .persona-card {
+    border: 1px solid #e8e8e8;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .persona-header {
+    background: #111;
+    color: white;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .persona-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #e8000d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13pt;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+  }
+  .persona-name { font-size: 11pt; font-weight: 600; }
+  .persona-role { font-size: 8pt; color: #aaa; letter-spacing: 1px; text-transform: uppercase; margin-top: 1px; }
+  .persona-body { padding: 14px 16px; background: #fafafa; }
+  .persona-detail { font-size: 9pt; color: #555; margin-bottom: 6px; line-height: 1.5; }
+  .persona-detail strong { color: #111; }
+  .persona-tag {
+    display: inline-block;
+    background: #f0f0f0;
+    color: #444;
+    font-size: 7.5pt;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin: 2px 2px 0 0;
+  }
+
+  /* ── USER STORIES ── */
+  .us-table { width: 100%; border-collapse: collapse; margin: 12px 0 24px; font-size: 9.5pt; }
+  .us-table th { background: #111; color: white; padding: 9px 14px; text-align: left; font-weight: 600; font-size: 8.5pt; }
+  .us-table td { padding: 9px 14px; border-bottom: 1px solid #f0f0f0; vertical-align: top; color: #444; }
+  .us-table tr:nth-child(even) td { background: #fafafa; }
+  .us-id { font-family: 'Courier New', monospace; font-size: 8pt; color: #e8000d; font-weight: 700; white-space: nowrap; }
+  .us-role-badge {
+    display: inline-block;
+    font-size: 7.5pt;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .badge-visiteur { background: #e8f4fd; color: #1a6fa0; }
+  .badge-client   { background: #eafaf1; color: #1a7a4a; }
+  .badge-admin    { background: #fdf0e8; color: #a04a1a; }
+
+  /* ── PRIORITY BADGE ── */
+  .prio {
+    display: inline-block;
+    font-size: 7.5pt;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .prio-haute    { background: #fdf0f0; color: #c0392b; }
+  .prio-moyenne  { background: #fff8e1; color: #b07d00; }
+  .prio-basse    { background: #eafaf1; color: #1a7a4a; }
+
+  /* ── LIVRABLES ── */
+  .livrable-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin: 14px 0 24px;
+  }
+  .livrable-item {
+    border: 1px solid #e8e8e8;
+    border-radius: 6px;
+    padding: 14px 16px;
+    background: #fafafa;
+  }
+  .livrable-item .lv-title { font-weight: 600; font-size: 10pt; color: #111; margin-bottom: 4px; }
+  .livrable-item .lv-desc  { font-size: 8.5pt; color: #666; line-height: 1.5; }
+
+  /* ── PRINT ── */
+  @media print {
+    .cover { min-height: 100vh; }
+    .page-break { page-break-before: always; }
+    h2 { page-break-after: avoid; }
+    table, .persona-grid, .stack-grid { page-break-inside: avoid; }
+    @page { margin: 12mm 15mm; size: A4; }
+    .cover { margin: -12mm -15mm; padding: 60px 70px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     COUVERTURE
+════════════════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-top">Cahier des charges</div>
+  <div class="cover-center">
+    <div class="cover-title">Eclipse<br><span>Auto</span></div>
+    <div class="cover-desc">Application web de gestion d'une concession automobile premium</div>
+    <div class="cover-line"></div>
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <div class="label">Étudiant</div>
+        <div class="value">Théo Ferreté</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Formation</div>
+        <div class="value">DWWM</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Examen</div>
+        <div class="value">Août 2026</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="label">Version</div>
+        <div class="value">2.0</div>
+      </div>
+    </div>
+  </div>
+  <div class="cover-bottom">Eclipse Auto — Cahier des charges v2.0 — Mai 2026</div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     1. PRÉSENTATION DU PROJET
+════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-tag">01 — Contexte</div>
+    <div class="section-title">Présentation du projet</div>
+  </div>
+
+  <h2>Contexte et origine</h2>
+  <p>
+    Eclipse Auto est un projet réalisé dans le cadre de la formation <strong>Développeur Web et Web Mobile (DWWM)</strong>.
+    Il s'agit de concevoir et développer une application web complète simulant le système d'information d'une concession automobile premium fictive.
+  </p>
+  <p>
+    Le projet couvre l'intégralité du cycle de développement : analyse du besoin, conception, développement frontend et backend,
+    sécurisation des accès et mise en production — compétences directement évaluées lors de l'examen de certification en août 2026.
+  </p>
+
+  <h2>Objectif général</h2>
+  <p>
+    Fournir une plateforme web qui permet à une concession automobile de gérer son catalogue de véhicules,
+    de traiter les demandes de réservation des clients, et d'administrer l'ensemble via un back-office sécurisé.
+    Le tout accessible depuis n'importe quel navigateur moderne, sans installation côté client.
+  </p>
+
+  <h2>Périmètre</h2>
+  <div class="note blue">
+    Le projet couvre uniquement le périmètre web (SPA + API REST). Une application mobile native, un système de paiement en ligne
+    et un module de facturation automatisée sont hors périmètre pour cette version.
+  </div>
+
+  <table>
+    <thead><tr><th>Dans le périmètre</th><th>Hors périmètre</th></tr></thead>
+    <tbody>
+      <tr><td>Catalogue de véhicules consultable publiquement</td><td>Application mobile native (iOS / Android)</td></tr>
+      <tr><td>Inscription et connexion des clients</td><td>Paiement en ligne / e-commerce</td></tr>
+      <tr><td>Système de réservation d'essai / d'achat</td><td>Génération automatique de contrats PDF</td></tr>
+      <tr><td>Formulaire de contact avec envoi d'e-mail</td><td>Chat en direct (live chat)</td></tr>
+      <tr><td>Back-office administrateur complet</td><td>Intégration comptable / ERP</td></tr>
+      <tr><td>Déploiement en production (serveur Linux)</td><td>Gestion multi-concessions</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     2. ACTEURS
+════════════════════════════════════════════ -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-tag">02 — Acteurs</div>
+    <div class="section-title">Utilisateurs de l'application</div>
+  </div>
+
+  <h2>Identification des acteurs</h2>
+  <p>Trois profils d'utilisateurs interagissent avec l'application, avec des niveaux d'accès distincts.</p>
+
+  <div class="persona-grid">
+    <div class="persona-card">
+      <div class="persona-header">
+        <div class="persona-avatar">V</div>
+        <div>
+          <div class="persona-name">Visiteur</div>
+          <div class="persona-role">Non authentifié</div>
+        </div>
+      </div>
+      <div class="persona-body">
+        <div class="persona-detail"><strong>Accès :</strong> Pages publiques uniquement</div>
+        <div class="persona-detail"><strong>Besoins :</strong> Parcourir le catalogue, consulter le détail d'un véhicule, envoyer un message via le formulaire de contact</div>
+        <div class="persona-detail"><strong>Objectif :</strong> S'informer et potentiellement s'inscrire pour réserver</div>
+        <div>
+          <span class="persona-tag">Catalogue</span>
+          <span class="persona-tag">Fiche véhicule</span>
+          <span class="persona-tag">Contact</span>
+          <span class="persona-tag">Inscription</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="persona-card">
+      <div class="persona-header">
+        <div class="persona-avatar">C</div>
+        <div>
+          <div class="persona-name">Client</div>
+          <div class="persona-role">Authentifié — rôle client</div>
+        </div>
+      </div>
+      <div class="persona-body">
+        <div class="persona-detail"><strong>Accès :</strong> Pages publiques + espace personnel</div>
+        <div class="persona-detail"><strong>Besoins :</strong> Réserver un véhicule, suivre l'état de ses réservations, annuler une demande en attente</div>
+        <div class="persona-detail"><strong>Objectif :</strong> Gérer ses démarches d'achat depuis chez lui</div>
+        <div>
+          <span class="persona-tag">Réservation</span>
+          <span class="persona-tag">Dashboard client</span>
+          <span class="persona-tag">Annulation</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="persona-card">
+      <div class="persona-header">
+        <div class="persona-avatar">A</div>
+        <div>
+          <div class="persona-name">Administrateur</div>
+          <div class="persona-role">Authentifié — rôle admin</div>
+        </div>
+      </div>
+      <div class="persona-body">
+        <div class="persona-detail"><strong>Accès :</strong> Toutes les pages + back-office</div>
+        <div class="persona-detail"><strong>Besoins :</strong> Gérer le catalogue, traiter les réservations, consulter les statistiques, administrer les comptes clients</div>
+        <div class="persona-detail"><strong>Objectif :</strong> Piloter l'activité de la concession en temps réel</div>
+        <div>
+          <span class="persona-tag">Back-office</span>
+          <span class="persona-tag">CRUD véhicules</span>
+          <span class="persona-tag">Stats</span>
+          <span class="persona-tag">Gestion clients</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Matrice des droits d'accès</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Fonctionnalité</th>
+        <th>Visiteur</th>
+        <th>Client</th>
+        <th>Administrateur</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Consulter le catalogue</td><td>✓</td><td>✓</td><td>✓</td></tr>
+      <tr><td>Voir le détail d'un véhicule</td><td>✓</td><td>✓</td><td>✓</td></tr>
+      <tr><td>Formulaire de contact</td><td>✓</td><td>✓</td><td>✓</td></tr>
+      <tr><td>Créer un compte</td><td>✓</td><td>—</td><td>—</td></tr>
+      <tr><td>Se connecter</td><td>✓</td><td>✓</td><td>✓</td></tr>
+      <tr><td>Réserver un véhicule</td><td>—</td><td>✓</td><td>—</td></tr>
+      <tr><td>Voir ses réservations</td><td>—</td><td>✓</td><td>—</td></tr>
+      <tr><td>Annuler une réservation</td><td>—</td><td>✓ (si en attente)</td><td>—</td></tr>
+      <tr><td>Tableau de bord statistiques</td><td>—</td><td>—</td><td>✓</td></tr>
+      <tr><td>Créer / modifier / supprimer un véhicule</td><td>—</td><td>—</td><td>✓</td></tr>
+      <tr><td>Gérer toutes les réservations</td><td>—</td><td>—</td><td>✓</td></tr>
+      <tr><td>Gérer les comptes clients</td><td>—</td><td>—</td><td>✓</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     3. EXIGENCES FONCTIONNELLES
+════════════════════════════════════════════ -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-tag">03 — Fonctionnel</div>
+    <div class="section-title">Exigences fonctionnelles</div>
+  </div>
+
+  <h2>EF-01 — Catalogue de véhicules</h2>
+  <p>Le catalogue constitue la vitrine principale de l'application. Il doit être accessible sans authentification.</p>
+  <table>
+    <thead><tr><th>ID</th><th>Exigence</th><th>Priorité</th></tr></thead>
+    <tbody>
+      <tr><td><code>EF-01.1</code></td><td>Afficher la liste de tous les véhicules disponibles avec photo, marque, modèle, année, prix et carburant</td><td><span class="prio prio-haute">Haute</span></td></tr>
+      <tr><td><code>EF-01.2</code></td><td>Filtrer le catalogue par statut (disponible, réservé, vendu), marque et type de carburant</td><td><span class="prio prio-haute">Haute</span></td></tr>
+      <tr><td><code>EF-01.3</code></td><td>Afficher la fiche détaillée d'un véhicule (caractéristiques complètes, galerie photos, description)</td><td><span class="prio prio-haute">Haute</span></td></tr>
+      <tr><td><code>EF-01.4</code></td><td>Indiquer visuellement le statut du véhicule sur la carte et la fiche</td><td><span class="prio prio-moyenne">Moyenne</span></td></tr>
+      <tr><td><code>EF-01.5</code></td><td>Afficher un bouton « Réserver » sur la fiche, accessible uniquement aux clients connectés</td><td><span class="prio prio-haute">Haute</span></td></tr>
+    </tbody>
+  </table>
+
+  <h2>EF-02 — Authentification</h2>
+  <p>L'authentification est déléguée à Supabase Auth (JWT). Aucun mot de passe n'est stocké côté application.</p>
+  <table>
+    <thead><tr><th>ID</th><th>Exigence</th><th>Priorité</th></tr></thead>
+    <tbody>
+      <tr><td><code>EF-02.1</code></td><td>Permettre l'inscription d'un nouveau client via formulaire (nom, e-mail, mot de passe)</td><td><span class="prio prio-haute">Haute</span></td></tr>
+      <tr><td><code>EF-02.2</code></td><td>Permettre la connexion par e-mail / mot de passe</td><td><span class="prio prio-haute">Haute</span></td></tr>
+      <tr><td><code>EF-02.3</code></td><td>Maintenir la session via token JWT stocké côté client</td><td><span class="prio prio-haute">Haute</span></td></tr>
+      <tr><td><code>EF-02.4</code></td><td>Permettre la déconnexion explicite avec destruction de la session</td><td><span class="prio prio-haute">Haute</span></td></tr>
+      <tr><td><code>EF-02.5</code></td><td>Rediriger automatiquement les pages protégées vers la connexion si non authentifié</td><td><span class="prio prio-haute">Haute</span></td></tr>
+    </tbody>
+  </table>
+
+  <h2>EF-03 — Réservations (côté client)</h2>
+  <table>
+    <thead><tr><th>ID</th><th>Exigence</th><th>Priorité</th></tr></thead>
+    <tbody>
+      <tr><td><code>EF-03.1</code></td><td>Permettre à un client connecté de soumettre une demande de réservation pour un véhicule disponible</td><td><span class="prio prio-haute">Haute</span></td></tr>
+      <tr><td><code>EF-03.2</code></td><td>Permettre de renseigner un message optionnel et une date de rendez-vous souhaitée</td><td><span class="prio prio-moyenne">Moyenne</span></td></tr>
+      <tr><td><code>EF-03.3</code></td><td>Bloquer la réservation si le véhicule n'est plus disponible</td><td><span class="prio prio-haute">Haute</span></td></tr>
+      <tr><td><code>EF-03.4</code></td><td>Afficher dans le dashboard client la liste de ses réservations avec leur statut (en attente, confirmée, annulée)</td><td><span class="prio prio-haute">Haute</span></td></tr>
+      <tr><td><code>EF-03.5</code></td><td>Permettre au client d'annuler une réservation en statut « en attente » uniquement</td><td><span class="prio prio-haute">Haute</span></td></tr>
+    </tbody>
+  </table>
+
+  <h2>EF-04 — Contact</h2>
+  <table>
+    <thead><tr><th>ID</th><th>Exigence</th><th>Priorité</th></tr></thead>
+    <tbody>
+      <tr><td><code>EF-04.1</code></td><td>Mettre à disposition un formulaire de contact public (nom, e-mail, téléphone optionnel, sujet, message)</td><td><span class="prio prio-haute">Haute</span></td></tr>
+      <tr><td><code>EF-04.2</code></td><td>Envoyer le message par e-mail à l'adresse de la concession via Gmail / Nodemailer</td><td><span class="prio prio-haute">Haute</span></td></tr>
+      <tr><td><code>EF-04.3</code></td><td>Afficher un retour visuel de confirmation ou d'erreur à l'utilisateur</td><td><span class="prio prio-moyenne">Moyenne</span></td></tr>
+    </tbody>
+  </table>
+
+  <h2>EF-05 — Back-office administrateur</h2>
+  <h3>EF-05.1 — Tableau de bord</h3>
+  <table>
+    <thead><tr><th>ID</th><th>Exigence</th><th>Priorité</th></tr></thead>
+    <tbody>
+      <tr><td><code>EF-05.1.1</code></td><td>Afficher le nombre total de véhicules, répartis par statut (disponible, réservé, vendu)</td><td><span class="prio prio-haute">Haute</span></td></tr>
+      <tr><td><code>EF-05.1.2</code></td><td>Afficher le nombre total de réservations, réparties par statut (en attente, confirmées)</td><td><span class="prio prio-haute">Haute</span></td></tr>
+      <tr><td><code>EF-05.1.3</code></td><td>Afficher le nombre total de clients inscrits</td><td><span class="prio prio-moyenne">Moyenne</span></td></tr>
+    </tbody>
+  </table>
+
+  <h3>EF-05.2 — Gestion des véhicules</h3>
+  <table>
+    <thead><tr><th>ID</th><th>Exigence</th><th>Priorité</th></tr></thead>
+    <tbody>
+      <tr><td><code>EF-05.2.1</code></td><td>Lister tous les véhicules avec filtres (statut, marque, carburant)</td><td><span class="prio prio-haute">Haute</span></td></tr>
+      <tr><td><code>EF-05.2.2</code></td><td>Créer un nouveau véhicule (marque, modèle, année, prix, carburant, boîte, kilométrage, puissance, description, statut)</td><td><span class="prio prio-haute">Haute</span></td></tr>
+      <tr><td><code>EF-05.2.3</code></td><td>Modifier toutes les informations d'un véhicule existant</td><td><span class="prio prio-haute">Haute</span></td></tr>
+      <tr><td><code>EF-05.2.4</code></td><td>Supprimer un véhicule</td><td><span class="prio prio-haute">Haute</span></td></tr>
+    </tbody>
+  </table>
+
+  <h3>EF-05.3 — Gestion des réservations</h3>
+  <table>
+    <thead><tr><th>ID</th><th>Exigence</th><th>Priorité</th></tr></thead>
+    <tbody>
+      <tr><td><code>EF-05.3.1</code></td><td>Lister toutes les réservations avec filtre par statut</td><td><span class="prio prio-haute">Haute</span></td></tr>
+      <tr><td><code>EF-05.3.2</code></td><td>Modifier le statut d'une réservation : en attente → confirmée ou annulée</td><td><span class="prio prio-haute">Haute</span></td></tr>
+      <tr><td><code>EF-05.3.3</code></td><td>Répercuter automatiquement le changement de statut sur le statut du véhicule associé (via trigger PostgreSQL)</td><td><span class="prio prio-haute">Haute</span></td></tr>
+    </tbody>
+  </table>
+
+  <h3>EF-05.4 — Gestion des clients</h3>
+  <table>
+    <thead><tr><th>ID</th><th>Exigence</th><th>Priorité</th></tr></thead>
+    <tbody>
+      <tr><td><code>EF-05.4.1</code></td><td>Lister tous les comptes clients inscrits</td><td><span class="prio prio-haute">Haute</span></td></tr>
+      <tr><td><code>EF-05.4.2</code></td><td>Supprimer un compte client</td><td><span class="prio prio-moyenne">Moyenne</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     4. USER STORIES
+════════════════════════════════════════════ -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-tag">04 — User Stories</div>
+    <div class="section-title">Récits utilisateurs</div>
+  </div>
+
+  <p>Les user stories sont formulées selon le format : <em>En tant que [rôle], je veux [action] afin de [bénéfice].</em></p>
+
+  <table class="us-table">
+    <thead>
+      <tr>
+        <th style="width:70px">ID</th>
+        <th style="width:90px">Rôle</th>
+        <th>User Story</th>
+        <th style="width:90px">Priorité</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="us-id">US-01</span></td>
+        <td><span class="us-role-badge badge-visiteur">Visiteur</span></td>
+        <td>En tant que visiteur, je veux parcourir le catalogue sans me connecter afin de découvrir les véhicules disponibles.</td>
+        <td><span class="prio prio-haute">Haute</span></td>
+      </tr>
+      <tr>
+        <td><span class="us-id">US-02</span></td>
+        <td><span class="us-role-badge badge-visiteur">Visiteur</span></td>
+        <td>En tant que visiteur, je veux filtrer le catalogue par marque et carburant afin de trouver rapidement le type de véhicule qui m'intéresse.</td>
+        <td><span class="prio prio-haute">Haute</span></td>
+      </tr>
+      <tr>
+        <td><span class="us-id">US-03</span></td>
+        <td><span class="us-role-badge badge-visiteur">Visiteur</span></td>
+        <td>En tant que visiteur, je veux consulter la fiche complète d'un véhicule afin de connaître ses caractéristiques techniques et son prix.</td>
+        <td><span class="prio prio-haute">Haute</span></td>
+      </tr>
+      <tr>
+        <td><span class="us-id">US-04</span></td>
+        <td><span class="us-role-badge badge-visiteur">Visiteur</span></td>
+        <td>En tant que visiteur, je veux m'inscrire avec mon e-mail afin d'accéder aux fonctionnalités de réservation.</td>
+        <td><span class="prio prio-haute">Haute</span></td>
+      </tr>
+      <tr>
+        <td><span class="us-id">US-05</span></td>
+        <td><span class="us-role-badge badge-visiteur">Visiteur</span></td>
+        <td>En tant que visiteur, je veux envoyer un message à la concession via le formulaire de contact afin d'obtenir des informations complémentaires.</td>
+        <td><span class="prio prio-haute">Haute</span></td>
+      </tr>
+      <tr>
+        <td><span class="us-id">US-06</span></td>
+        <td><span class="us-role-badge badge-client">Client</span></td>
+        <td>En tant que client, je veux réserver un véhicule disponible afin d'initier une démarche d'achat auprès de la concession.</td>
+        <td><span class="prio prio-haute">Haute</span></td>
+      </tr>
+      <tr>
+        <td><span class="us-id">US-07</span></td>
+        <td><span class="us-role-badge badge-client">Client</span></td>
+        <td>En tant que client, je veux préciser une date de rendez-vous souhaitée lors de ma réservation afin de planifier ma visite.</td>
+        <td><span class="prio prio-moyenne">Moyenne</span></td>
+      </tr>
+      <tr>
+        <td><span class="us-id">US-08</span></td>
+        <td><span class="us-role-badge badge-client">Client</span></td>
+        <td>En tant que client, je veux voir l'état de mes réservations dans mon dashboard afin de suivre l'avancement de mes démarches.</td>
+        <td><span class="prio prio-haute">Haute</span></td>
+      </tr>
+      <tr>
+        <td><span class="us-id">US-09</span></td>
+        <td><span class="us-role-badge badge-client">Client</span></td>
+        <td>En tant que client, je veux annuler une réservation en attente afin de libérer le véhicule si je change d'avis.</td>
+        <td><span class="prio prio-haute">Haute</span></td>
+      </tr>
+      <tr>
+        <td><span class="us-id">US-10</span></td>
+        <td><span class="us-role-badge badge-admin">Admin</span></td>
+        <td>En tant qu'administrateur, je veux consulter les statistiques de l'activité afin d'avoir une vue d'ensemble rapide.</td>
+        <td><span class="prio prio-haute">Haute</span></td>
+      </tr>
+      <tr>
+        <td><span class="us-id">US-11</span></td>
+        <td><span class="us-role-badge badge-admin">Admin</span></td>
+        <td>En tant qu'administrateur, je veux ajouter, modifier et supprimer des véhicules afin de maintenir le catalogue à jour.</td>
+        <td><span class="prio prio-haute">Haute</span></td>
+      </tr>
+      <tr>
+        <td><span class="us-id">US-12</span></td>
+        <td><span class="us-role-badge badge-admin">Admin</span></td>
+        <td>En tant qu'administrateur, je veux confirmer ou refuser les réservations afin de valider les dossiers clients.</td>
+        <td><span class="prio prio-haute">Haute</span></td>
+      </tr>
+      <tr>
+        <td><span class="us-id">US-13</span></td>
+        <td><span class="us-role-badge badge-admin">Admin</span></td>
+        <td>En tant qu'administrateur, je veux voir la liste des clients inscrits afin de gérer les comptes utilisateurs.</td>
+        <td><span class="prio prio-moyenne">Moyenne</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     5. EXIGENCES NON FONCTIONNELLES
+════════════════════════════════════════════ -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-tag">05 — Non fonctionnel</div>
+    <div class="section-title">Exigences non fonctionnelles</div>
+  </div>
+
+  <h2>Sécurité</h2>
+  <table>
+    <thead><tr><th>ID</th><th>Exigence</th></tr></thead>
+    <tbody>
+      <tr><td><code>ENF-SEC-01</code></td><td>Toutes les routes API sensibles sont protégées par vérification du token JWT Supabase côté serveur</td></tr>
+      <tr><td><code>ENF-SEC-02</code></td><td>Les routes d'administration vérifient en plus le rôle <code>admin</code> en base de données</td></tr>
+      <tr><td><code>ENF-SEC-03</code></td><td>Un client ne peut accéder qu'à ses propres réservations (isolation par <code>client_id</code>)</td></tr>
+      <tr><td><code>ENF-SEC-04</code></td><td>Les variables sensibles (clés API, credentials) sont stockées dans des fichiers <code>.env</code> non versionnés</td></tr>
+      <tr><td><code>ENF-SEC-05</code></td><td>Le backend active CORS avec une origine stricte en production</td></tr>
+      <tr><td><code>ENF-SEC-06</code></td><td>Les mots de passe ne sont jamais stockés dans l'application — gestion déléguée à Supabase Auth</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Performance</h2>
+  <table>
+    <thead><tr><th>ID</th><th>Exigence</th></tr></thead>
+    <tbody>
+      <tr><td><code>ENF-PERF-01</code></td><td>Temps de réponse API inférieur à 500 ms pour les opérations de lecture courantes</td></tr>
+      <tr><td><code>ENF-PERF-02</code></td><td>Le frontend est compilé et optimisé (Vite build) pour un chargement initial rapide</td></tr>
+      <tr><td><code>ENF-PERF-03</code></td><td>Les images de véhicules sont servies depuis Supabase Storage avec compression automatique</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Disponibilité &amp; maintenabilité</h2>
+  <table>
+    <thead><tr><th>ID</th><th>Exigence</th></tr></thead>
+    <tbody>
+      <tr><td><code>ENF-DISP-01</code></td><td>L'application est déployée sur un serveur Linux accessible via HTTPS</td></tr>
+      <tr><td><code>ENF-DISP-02</code></td><td>Le frontend est servi statiquement par le serveur Express en production (SPA intégrée)</td></tr>
+      <tr><td><code>ENF-DISP-03</code></td><td>Le code source est versionné sur Git avec un historique de commits lisible</td></tr>
+      <tr><td><code>ENF-DISP-04</code></td><td>La structure du projet sépare clairement le client et le serveur (<code>client/</code> / <code>server/</code>)</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Compatibilité &amp; accessibilité</h2>
+  <table>
+    <thead><tr><th>ID</th><th>Exigence</th></tr></thead>
+    <tbody>
+      <tr><td><code>ENF-ACC-01</code></td><td>L'interface est responsive (mobile, tablette, desktop) sans installation native</td></tr>
+      <tr><td><code>ENF-ACC-02</code></td><td>L'application fonctionne sur les navigateurs modernes (Chrome, Firefox, Safari, Edge — versions N-1)</td></tr>
+      <tr><td><code>ENF-ACC-03</code></td><td>Les pages légales (mentions légales) sont accessibles depuis toutes les pages via le footer</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Intégrité des données</h2>
+  <table>
+    <thead><tr><th>ID</th><th>Exigence</th></tr></thead>
+    <tbody>
+      <tr><td><code>ENF-DATA-01</code></td><td>Un trigger PostgreSQL répercute automatiquement le changement de statut d'une réservation sur le véhicule associé</td></tr>
+      <tr><td><code>ENF-DATA-02</code></td><td>Il est impossible de réserver un véhicule non disponible — vérification effectuée côté serveur avant insertion</td></tr>
+      <tr><td><code>ENF-DATA-03</code></td><td>Un client ne peut annuler que ses propres réservations et uniquement si elles sont en statut « en attente »</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     6. ARCHITECTURE TECHNIQUE
+════════════════════════════════════════════ -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-tag">06 — Architecture</div>
+    <div class="section-title">Architecture technique</div>
+  </div>
+
+  <h2>Stack technologique</h2>
+
+  <div class="stack-grid">
+    <div class="stack-item">
+      <div class="tech">React 19</div>
+      <div class="role">Interface utilisateur (SPA)</div>
+    </div>
+    <div class="stack-item">
+      <div class="tech">React Router 7</div>
+      <div class="role">Navigation côté client</div>
+    </div>
+    <div class="stack-item">
+      <div class="tech">Vite 8</div>
+      <div class="role">Build tool & dev server</div>
+    </div>
+    <div class="stack-item">
+      <div class="tech">Express 5</div>
+      <div class="role">Serveur API REST (Node.js)</div>
+    </div>
+    <div class="stack-item">
+      <div class="tech">Supabase</div>
+      <div class="role">Base de données PostgreSQL + Auth + Storage</div>
+    </div>
+    <div class="stack-item">
+      <div class="tech">Nodemailer</div>
+      <div class="role">Envoi d'e-mails (Gmail SMTP)</div>
+    </div>
+  </div>
+
+  <h2>Modèle de données principal</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Table</th>
+        <th>Champs principaux</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>vehicles</code></td>
+        <td><code>id, brand, model, year, price, fuel_type, transmission, mileage, power, description, status, images, created_at</code></td>
+        <td>Catalogue des véhicules. Statut : <code>available</code> | <code>reserved</code> | <code>sold</code></td>
+      </tr>
+      <tr>
+        <td><code>reservations</code></td>
+        <td><code>id, vehicle_id, client_id, status, message, rdv_date, created_at</code></td>
+        <td>Demandes de réservation. Statut : <code>pending</code> | <code>confirmed</code> | <code>cancelled</code></td>
+      </tr>
+      <tr>
+        <td><code>profiles</code></td>
+        <td><code>id, role, full_name, created_at</code></td>
+        <td>Profils utilisateurs liés aux comptes Supabase Auth. Rôle : <code>client</code> | <code>admin</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Architecture de déploiement</h2>
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-num">1</div>
+      <div class="flow-text"><strong>Client (navigateur) :</strong> La SPA React compilée est servie statiquement par Express depuis <code>client/dist/</code>. Toutes les routes non-API retournent <code>index.html</code> (mode SPA).</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">2</div>
+      <div class="flow-text"><strong>Serveur Express (Node.js) :</strong> Expose les routes API sous le préfixe <code>/api</code>. Vérifie les tokens JWT sur chaque requête protégée. Tourne sur le port 3001 (ou variable d'environnement <code>PORT</code>).</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">3</div>
+      <div class="flow-text"><strong>Supabase (cloud) :</strong> Héberge la base PostgreSQL, le service d'authentification (JWT) et le stockage des images. Le serveur y accède via la clé de service ; le client via la clé anonyme.</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">4</div>
+      <div class="flow-text"><strong>Gmail SMTP (Nodemailer) :</strong> Relais d'envoi pour le formulaire de contact. Credentials stockés en variables d'environnement, jamais dans le code source.</div>
+    </div>
+  </div>
+
+  <h2>Endpoints API</h2>
+  <table>
+    <thead><tr><th>Méthode</th><th>Route</th><th>Accès</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>GET</code></td><td><code>/api/vehicles</code></td><td>Public</td><td>Liste des véhicules (filtres optionnels)</td></tr>
+      <tr><td><code>GET</code></td><td><code>/api/vehicles/:id</code></td><td>Public</td><td>Détail d'un véhicule</td></tr>
+      <tr><td><code>POST</code></td><td><code>/api/vehicles</code></td><td>Admin</td><td>Créer un véhicule</td></tr>
+      <tr><td><code>PUT</code></td><td><code>/api/vehicles/:id</code></td><td>Admin</td><td>Modifier un véhicule</td></tr>
+      <tr><td><code>DELETE</code></td><td><code>/api/vehicles/:id</code></td><td>Admin</td><td>Supprimer un véhicule</td></tr>
+      <tr><td><code>GET</code></td><td><code>/api/reservations</code></td><td>Client</td><td>Réservations du client connecté</td></tr>
+      <tr><td><code>GET</code></td><td><code>/api/reservations/all</code></td><td>Admin</td><td>Toutes les réservations</td></tr>
+      <tr><td><code>POST</code></td><td><code>/api/reservations</code></td><td>Client</td><td>Créer une réservation</td></tr>
+      <tr><td><code>PATCH</code></td><td><code>/api/reservations/:id/status</code></td><td>Admin</td><td>Changer le statut d'une réservation</td></tr>
+      <tr><td><code>PATCH</code></td><td><code>/api/reservations/:id/cancel</code></td><td>Client</td><td>Annuler sa propre réservation</td></tr>
+      <tr><td><code>GET</code></td><td><code>/api/admin/stats</code></td><td>Admin</td><td>Statistiques du dashboard</td></tr>
+      <tr><td><code>GET</code></td><td><code>/api/admin/clients</code></td><td>Admin</td><td>Liste des clients</td></tr>
+      <tr><td><code>DELETE</code></td><td><code>/api/admin/clients/:id</code></td><td>Admin</td><td>Supprimer un client</td></tr>
+      <tr><td><code>POST</code></td><td><code>/api/contact</code></td><td>Public</td><td>Envoi du formulaire de contact</td></tr>
+      <tr><td><code>GET</code></td><td><code>/api/health</code></td><td>Public</td><td>Contrôle de santé du serveur</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     7. LIVRABLES & PLANNING
+════════════════════════════════════════════ -->
+<div class="page page-break">
+  <div class="section-header">
+    <div class="section-tag">07 — Livrables</div>
+    <div class="section-title">Livrables &amp; planning</div>
+  </div>
+
+  <h2>Livrables du projet</h2>
+
+  <div class="livrable-grid">
+    <div class="livrable-item">
+      <div class="lv-title">Code source versionné</div>
+      <div class="lv-desc">Dépôt Git complet avec historique de commits, structuré en <code>client/</code> et <code>server/</code>. Fichier <code>.env.example</code> fourni.</div>
+    </div>
+    <div class="livrable-item">
+      <div class="lv-title">Cahier des charges</div>
+      <div class="lv-desc">Ce document, décrivant le contexte, les acteurs, les exigences fonctionnelles et non fonctionnelles, les user stories et l'architecture.</div>
+    </div>
+    <div class="livrable-item">
+      <div class="lv-title">Documentation technique</div>
+      <div class="lv-desc">Description de l'architecture, de la stack, des routes API, de la structure des fichiers et des flux d'authentification.</div>
+    </div>
+    <div class="livrable-item">
+      <div class="lv-title">Application déployée</div>
+      <div class="lv-desc">Instance en production accessible via HTTPS, avec données de démonstration (véhicules, comptes de test admin et client).</div>
+    </div>
+  </div>
+
+  <h2>Pages de l'application (routes frontend)</h2>
+  <table>
+    <thead><tr><th>Route</th><th>Page</th><th>Accès</th></tr></thead>
+    <tbody>
+      <tr><td><code>/</code></td><td>Accueil</td><td>Public</td></tr>
+      <tr><td><code>/catalogue</code></td><td>Catalogue des véhicules</td><td>Public</td></tr>
+      <tr><td><code>/vehicles/:slug</code></td><td>Fiche détaillée d'un véhicule</td><td>Public</td></tr>
+      <tr><td><code>/login</code></td><td>Connexion</td><td>Public</td></tr>
+      <tr><td><code>/register</code></td><td>Inscription</td><td>Public</td></tr>
+      <tr><td><code>/contact</code></td><td>Formulaire de contact</td><td>Public</td></tr>
+      <tr><td><code>/mentions-legales</code></td><td>Mentions légales</td><td>Public</td></tr>
+      <tr><td><code>/reserve/:slug</code></td><td>Formulaire de réservation</td><td>Client</td></tr>
+      <tr><td><code>/dashboard</code></td><td>Espace personnel (mes réservations)</td><td>Client</td></tr>
+      <tr><td><code>/admin</code></td><td>Dashboard administrateur</td><td>Admin</td></tr>
+      <tr><td><code>/admin/vehicles</code></td><td>Gestion du catalogue</td><td>Admin</td></tr>
+      <tr><td><code>/admin/reservations</code></td><td>Gestion des réservations</td><td>Admin</td></tr>
+      <tr><td><code>/admin/users</code></td><td>Gestion des clients</td><td>Admin</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Contraintes et dépendances</h2>
+  <div class="note red">
+    <strong>Examen de certification DWWM — Août 2026.</strong> L'ensemble du projet (code, documentation, déploiement) doit être finalisé avant la date d'examen.
+  </div>
+
+  <table>
+    <thead><tr><th>Contrainte</th><th>Détail</th></tr></thead>
+    <tbody>
+      <tr><td>Compte Supabase</td><td>Dépendance externe — le projet nécessite un projet Supabase actif (plan gratuit suffisant)</td></tr>
+      <tr><td>Compte Gmail</td><td>L'envoi d'e-mails de contact nécessite un compte Gmail avec mot de passe d'application activé</td></tr>
+      <tr><td>Node.js ≥ 18</td><td>Requis côté serveur pour la compatibilité avec les dépendances (Express 5, Supabase JS v2)</td></tr>
+      <tr><td>Navigateur moderne</td><td>React 19 requiert un navigateur supportant ES2020+ — IE11 non supporté</td></tr>
+      <tr><td>Variables d'environnement</td><td>Le fichier <code>.env</code> doit être configuré avant le lancement (voir <code>.env.example</code>)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note green">
+    <strong>Note d'évaluation :</strong> Ce projet illustre les compétences du référentiel DWWM — concevoir et développer une application web dynamique sécurisée,
+    avec gestion des rôles, persistance des données, et déploiement en conditions réelles.
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
-import { RESERVATION_STATUS, optimizeImageUrl } from '@/lib/utils'
+import { RESERVATION_STATUS, optimizeImageUrl, formatPrice } from '@/lib/utils'
 import AdminSidebar from '@/components/AdminSidebar/AdminSidebar'
+import AdminPageHeader from '@/components/AdminPageHeader/AdminPageHeader'
 import Pagination from '@/components/Pagination/Pagination'
 import './AdminReservations.css'
 
@@ -63,14 +64,7 @@ export default function AdminReservations() {
 
   return (
     <main className="admin">
-      <div className="admin-hero">
-        <div className="container">
-          <div className="tag">Administration</div>
-          <h1 className="admin-title">Réservations</h1>
-        </div>
-      </div>
-
-      <div className="divider"></div>
+      <AdminPageHeader title="Réservations" />
 
       <div className="container admin-layout">
         <AdminSidebar />
@@ -116,9 +110,7 @@ export default function AdminReservations() {
                     <div className="ar-vehicle">
                       <div className="vcard-brand">{r.vehicles?.brand}</div>
                       <div className="avc-model">{r.vehicles?.model}</div>
-                      <div className="ar-price">
-                        € {r.vehicles?.price?.toLocaleString('fr-FR')}
-                      </div>
+                      <div className="ar-price">{formatPrice(r.vehicles?.price)}</div>
                     </div>
 
                     <div className="ar-client">
