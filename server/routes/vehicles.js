@@ -51,7 +51,32 @@ router.get('/', async (req, res) => {
   res.json({ data, total: count, limit: limitNum, offset: offsetNum })
 })
 
-// GET /api/vehicles/:id — détail d'un véhicule
+// GET /api/vehicles/by-slug/:slug — détail par slug (brand-model)
+router.get('/by-slug/:slug', async (req, res) => {
+  const slug = req.params.slug.toLowerCase()
+
+  const { data: vehicles, error } = await supabase
+    .from('vehicles')
+    .select('*')
+    .order('created_at', { ascending: false })
+
+  if (error) return res.status(500).json({ error: error.message })
+
+  const vehicle = vehicles?.find(v => {
+    const vehicleSlug = `${v.brand}-${v.model}`
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[̀-ͯ]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '')
+    return vehicleSlug === slug
+  })
+
+  if (!vehicle) return res.status(404).json({ error: 'Véhicule introuvable.' })
+  res.json(vehicle)
+})
+
+// GET /api/vehicles/:id — détail par UUID
 router.get('/:id', async (req, res) => {
   const { data, error } = await supabase
     .from('vehicles')

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { toSlug, optimizeImageUrl, formatPrice, VEHICLE_STATUS } from '@/lib/utils'
-import { getVehicles } from '@/lib/vehiclesCache'
+import { optimizeImageUrl, formatPrice, VEHICLE_STATUS } from '@/lib/utils'
+import { getVehicleBySlug } from '@/lib/vehiclesCache'
 import './VehicleDetail.css'
 
 export default function VehicleDetail() {
@@ -14,20 +14,14 @@ export default function VehicleDetail() {
   useEffect(() => {
     async function fetchVehicle() {
       setLoading(true)
-      const { data, error } = await getVehicles()
+      const { data, error } = await getVehicleBySlug(slug)
 
       if (error || !data) {
         navigate('/catalogue')
         return
       }
 
-      const found = data.find(v => toSlug(v.brand, v.model) === slug)
-      if (!found) {
-        navigate('/catalogue')
-        return
-      }
-
-      setVehicle(found)
+      setVehicle(data)
       setLoading(false)
     }
     fetchVehicle()

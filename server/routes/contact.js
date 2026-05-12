@@ -34,6 +34,10 @@ function checkRateLimit(ip) {
   return true
 }
 
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email.length <= 254
+}
+
 function escapeHtml(text) {
   const map = {
     '&': '&amp;',
@@ -56,6 +60,10 @@ router.post('/', async (req, res) => {
 
   if (!name || !email || !message) {
     return res.status(400).json({ error: 'Nom, email et message sont obligatoires.' })
+  }
+
+  if (!isValidEmail(email)) {
+    return res.status(400).json({ error: 'Adresse email invalide.' })
   }
 
   if (name.length > 100 || message.length > 5000) {
