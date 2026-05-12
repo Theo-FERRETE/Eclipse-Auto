@@ -18,18 +18,21 @@ router.get('/', requireAuth, async (req, res) => {
 
 // GET /api/reservations/all — toutes les réservations (admin)
 router.get('/all', requireAdmin, async (req, res) => {
-  const { status } = req.query
+  const { status, limit = 50, offset = 0 } = req.query
+
+  const limitNum = Math.min(parseInt(limit) || 50, 100)
+  const offsetNum = Math.max(parseInt(offset) || 0, 0)
 
   let query = supabase
     .from('reservations')
-    .select('*, vehicles(brand, model, images, price)')
+    .select('*, vehicles(brand, model, images, price)', { count: 'exact' })
     .order('created_at', { ascending: false })
 
   if (status) query = query.eq('status', status)
 
-  const { data, error } = await query
+  const { data, error, count } = await query.range(offsetNum, offsetNum + limitNum - 1)
   if (error) return res.status(500).json({ error: error.message })
-  res.json(data)
+  res.json({ data, total: count, limit: limitNum, offset: offsetNum })
 })
 
 // POST /api/reservations — créer une réservation

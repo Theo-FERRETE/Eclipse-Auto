@@ -2,10 +2,11 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8" />
-<title>Eclipse Auto — Documentation</title>
+<title>Eclipse Auto — Documentation technique</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" />
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
@@ -26,300 +27,66 @@
     border-bottom: 4px solid #e8000d;
     page-break-after: always;
   }
-  .cover-top {
-    font-size: 11pt;
-    font-weight: 600;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: #e8000d;
-  }
+  .cover-top { font-size: 11pt; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: #e8000d; }
   .cover-center { flex: 1; display: flex; flex-direction: column; justify-content: center; }
-  .cover-title {
-    font-size: 58pt;
-    font-weight: 700;
-    letter-spacing: -2px;
-    line-height: 1;
-    color: #111;
-    margin-bottom: 16px;
-  }
+  .cover-title { font-size: 58pt; font-weight: 700; letter-spacing: -2px; line-height: 1; color: #111; margin-bottom: 16px; }
   .cover-title span { color: #e8000d; }
-  .cover-desc {
-    font-size: 14pt;
-    color: #777;
-    font-weight: 300;
-    max-width: 420px;
-    margin-bottom: 40px;
-  }
-  .cover-line {
-    width: 50px;
-    height: 3px;
-    background: #e8000d;
-    margin-bottom: 36px;
-  }
-  .cover-meta {
-    display: flex;
-    gap: 48px;
-  }
-  .cover-meta-item .label {
-    font-size: 8pt;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: #bbb;
-    margin-bottom: 3px;
-  }
-  .cover-meta-item .value {
-    font-size: 11pt;
-    font-weight: 600;
-    color: #333;
-  }
-  .cover-bottom {
-    font-size: 9pt;
-    color: #bbb;
-    letter-spacing: 1px;
-  }
+  .cover-desc { font-size: 14pt; color: #777; font-weight: 300; max-width: 420px; margin-bottom: 40px; }
+  .cover-line { width: 50px; height: 3px; background: #e8000d; margin-bottom: 36px; }
+  .cover-meta { display: flex; gap: 48px; }
+  .cover-meta-item .label { font-size: 8pt; letter-spacing: 3px; text-transform: uppercase; color: #bbb; margin-bottom: 3px; }
+  .cover-meta-item .value { font-size: 11pt; font-weight: 600; color: #333; }
+  .cover-bottom { font-size: 9pt; color: #bbb; letter-spacing: 1px; }
 
   /* ── PAGE ── */
-  .page {
-    padding: 50px 80px;
-  }
-
+  .page { padding: 50px 80px; }
   .page-break { page-break-before: always; }
 
   /* ── TITRES ── */
-  .section-header {
-    margin-bottom: 32px;
-    padding-bottom: 14px;
-    border-bottom: 2px solid #f0f0f0;
-  }
-  .section-tag {
-    font-size: 8pt;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: #e8000d;
-    font-weight: 600;
-    margin-bottom: 6px;
-  }
-  .section-title {
-    font-size: 26pt;
-    font-weight: 700;
-    color: #111;
-  }
+  .section-header { margin-bottom: 32px; padding-bottom: 14px; border-bottom: 2px solid #f0f0f0; }
+  .section-tag { font-size: 8pt; letter-spacing: 4px; text-transform: uppercase; color: #e8000d; font-weight: 600; margin-bottom: 6px; }
+  .section-title { font-size: 26pt; font-weight: 700; color: #111; }
 
-  h2 {
-    font-size: 13pt;
-    font-weight: 600;
-    color: #111;
-    margin: 30px 0 12px;
-    padding-left: 12px;
-    border-left: 3px solid #e8000d;
-  }
-
-  h3 {
-    font-size: 10.5pt;
-    font-weight: 600;
-    color: #333;
-    margin: 20px 0 8px;
-  }
-
+  h2 { font-size: 13pt; font-weight: 600; color: #111; margin: 30px 0 12px; padding-left: 12px; border-left: 3px solid #e8000d; }
+  h3 { font-size: 10.5pt; font-weight: 600; color: #333; margin: 20px 0 8px; }
   p { margin-bottom: 10px; color: #444; font-size: 10.5pt; }
+  ol { margin: 6px 0 14px 20px; color: #444; font-size: 10.5pt; }
+  ol li { margin-bottom: 5px; line-height: 1.6; }
 
   /* ── TABLEAUX ── */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 12px 0 24px;
-    font-size: 9.5pt;
-  }
-  th {
-    background: #111;
-    color: white;
-    padding: 9px 14px;
-    text-align: left;
-    font-weight: 600;
-    font-size: 8.5pt;
-    letter-spacing: 0.5px;
-  }
-  td {
-    padding: 9px 14px;
-    border-bottom: 1px solid #f0f0f0;
-    vertical-align: top;
-    color: #444;
-  }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0 24px; font-size: 9.5pt; }
+  th { background: #111; color: white; padding: 9px 14px; text-align: left; font-weight: 600; font-size: 8.5pt; letter-spacing: 0.5px; }
+  td { padding: 9px 14px; border-bottom: 1px solid #f0f0f0; vertical-align: top; color: #444; }
   tr:nth-child(even) td { background: #fafafa; }
-  code {
-    font-family: 'Courier New', monospace;
-    font-size: 8.5pt;
-    background: #f5f5f5;
-    padding: 1px 5px;
-    border-radius: 3px;
-    color: #c0392b;
-  }
+  code { font-family: 'Courier New', monospace; font-size: 8.5pt; background: #f5f5f5; padding: 1px 5px; border-radius: 3px; color: #c0392b; }
 
-  /* ── GRID STACK ── */
-  .stack-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin: 14px 0 24px;
-  }
-  .stack-item {
-    border: 1px solid #e8e8e8;
-    border-top: 3px solid #e8000d;
-    padding: 12px 14px;
-    border-radius: 0 0 4px 4px;
-  }
+  /* ── STACK GRID ── */
+  .stack-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 14px 0 24px; }
+  .stack-item { border: 1px solid #e8e8e8; border-top: 3px solid #e8000d; padding: 12px 14px; border-radius: 0 0 4px 4px; }
   .stack-item .tech { font-weight: 600; font-size: 10pt; color: #111; }
   .stack-item .role { font-size: 8.5pt; color: #888; margin-top: 2px; }
 
   /* ── STRUCTURE FICHIERS ── */
-  .file-section {
-    background: #fafafa;
-    border: 1px solid #e8e8e8;
-    border-radius: 6px;
-    margin: 14px 0 24px;
-    overflow: hidden;
-  }
-  .file-section-header {
-    background: #111;
-    color: white;
-    padding: 10px 18px;
-    font-size: 9pt;
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
+  .file-section { background: #fafafa; border: 1px solid #e8e8e8; border-radius: 6px; margin: 14px 0 24px; overflow: hidden; }
+  .file-section-header { background: #111; color: white; padding: 10px 18px; font-size: 9pt; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; }
   .file-section-header span { color: #e8000d; }
   .file-list { padding: 8px 0; }
-  .file-row {
-    display: flex;
-    align-items: flex-start;
-    padding: 7px 18px;
-    border-bottom: 1px solid #f0f0f0;
-    gap: 16px;
-  }
+  .file-row { display: flex; align-items: flex-start; padding: 7px 18px; border-bottom: 1px solid #f0f0f0; gap: 16px; }
   .file-row:last-child { border-bottom: none; }
-  .file-path {
-    font-family: 'Courier New', monospace;
-    font-size: 8.5pt;
-    color: #c0392b;
-    min-width: 200px;
-    flex-shrink: 0;
-  }
-  .file-desc {
-    font-size: 9pt;
-    color: #555;
-    line-height: 1.5;
-  }
+  .file-path { font-family: 'Courier New', monospace; font-size: 8.5pt; color: #c0392b; min-width: 200px; flex-shrink: 0; }
+  .file-desc { font-size: 9pt; color: #555; line-height: 1.5; }
 
   /* ── FLOW ── */
-  .flow {
-    border: 1px solid #e8e8e8;
-    border-radius: 6px;
-    padding: 18px 20px;
-    margin: 14px 0 20px;
-    background: #fafafa;
-  }
-  .flow-step {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    margin-bottom: 12px;
-  }
+  .flow { border: 1px solid #e8e8e8; border-radius: 6px; padding: 18px 20px; margin: 14px 0 20px; background: #fafafa; }
+  .flow-step { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
   .flow-step:last-child { margin-bottom: 0; }
-  .flow-num {
-    background: #e8000d;
-    color: white;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    font-size: 8pt;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
+  .flow-num { background: #e8000d; color: white; width: 22px; height: 22px; border-radius: 50%; font-size: 8pt; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
   .flow-text { font-size: 10pt; color: #444; line-height: 1.5; }
 
-  /* ── NOTE ── */
-  .note {
-    background: #fff8e1;
-    border-left: 4px solid #f59e0b;
-    padding: 12px 16px;
-    border-radius: 0 4px 4px 0;
-    margin: 14px 0;
-    font-size: 9.5pt;
-    color: #555;
-  }
-  .note.blue { background: #e8f4fd; border-color: #3498db; }
+  /* ── NOTES ── */
+  .note { background: #fff8e1; border-left: 4px solid #f59e0b; padding: 12px 16px; border-radius: 0 4px 4px 0; margin: 14px 0; font-size: 9.5pt; color: #555; }
+  .note.blue  { background: #e8f4fd; border-color: #3498db; }
   .note.green { background: #eafaf1; border-color: #27ae60; }
-
-  /* ── PERSONAS ── */
-  .persona-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    margin: 14px 0 28px;
-  }
-  .persona-card {
-    border: 1px solid #e8e8e8;
-    border-radius: 6px;
-    overflow: hidden;
-  }
-  .persona-header {
-    background: #111;
-    color: white;
-    padding: 14px 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .persona-avatar {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background: #e8000d;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13pt;
-    font-weight: 700;
-    color: white;
-    flex-shrink: 0;
-  }
-  .persona-name { font-size: 11pt; font-weight: 600; }
-  .persona-role { font-size: 8pt; color: #aaa; letter-spacing: 1px; text-transform: uppercase; margin-top: 1px; }
-  .persona-body { padding: 14px 16px; background: #fafafa; }
-  .persona-detail { font-size: 9pt; color: #555; margin-bottom: 6px; line-height: 1.5; }
-  .persona-detail strong { color: #111; }
-  .persona-tag {
-    display: inline-block;
-    background: #f0f0f0;
-    color: #444;
-    font-size: 7.5pt;
-    padding: 2px 8px;
-    border-radius: 20px;
-    margin: 2px 2px 0 0;
-  }
-
-  /* ── USER STORIES ── */
-  .us-table { width: 100%; border-collapse: collapse; margin: 12px 0 24px; font-size: 9.5pt; }
-  .us-table th { background: #111; color: white; padding: 9px 14px; text-align: left; font-weight: 600; font-size: 8.5pt; }
-  .us-table td { padding: 9px 14px; border-bottom: 1px solid #f0f0f0; vertical-align: top; color: #444; }
-  .us-table tr:nth-child(even) td { background: #fafafa; }
-  .us-id { font-family: 'Courier New', monospace; font-size: 8pt; color: #e8000d; font-weight: 700; white-space: nowrap; }
-  .us-role-badge {
-    display: inline-block;
-    font-size: 7.5pt;
-    font-weight: 600;
-    padding: 2px 8px;
-    border-radius: 3px;
-    white-space: nowrap;
-  }
-  .badge-visiteur { background: #e8f4fd; color: #1a6fa0; }
-  .badge-client   { background: #eafaf1; color: #1a7a4a; }
-  .badge-admin    { background: #fdf0e8; color: #a04a1a; }
 
   /* ── PRINT ── */
   @media print {
@@ -342,18 +109,9 @@
     <div class="cover-desc">Application web de concession automobile premium</div>
     <div class="cover-line"></div>
     <div class="cover-meta">
-      <div class="cover-meta-item">
-        <div class="label">Étudiant</div>
-        <div class="value">Théo Ferreté</div>
-      </div>
-      <div class="cover-meta-item">
-        <div class="label">Formation</div>
-        <div class="value">DWWM</div>
-      </div>
-      <div class="cover-meta-item">
-        <div class="label">Année</div>
-        <div class="value">2026</div>
-      </div>
+      <div class="cover-meta-item"><div class="label">Étudiant</div><div class="value">Théo Ferreté</div></div>
+      <div class="cover-meta-item"><div class="label">Formation</div><div class="value">DWWM</div></div>
+      <div class="cover-meta-item"><div class="label">Année</div><div class="value">2026</div></div>
     </div>
   </div>
   <div class="cover-bottom">eclipse-auto.theo-ferrete.fr &nbsp;·&nbsp; Projet de fin de formation</div>
@@ -368,414 +126,111 @@
 
   <p>
     <strong>Eclipse Auto</strong> est une application web full-stack simulant une concession automobile haut de gamme.
-    Les visiteurs peuvent consulter le catalogue, les clients connectés peuvent réserver un véhicule,
-    et les administrateurs disposent d'un back-office complet.
+    Elle repose sur une architecture découplée : SPA React côté client, API REST Express côté serveur, et Supabase comme couche de données et d'authentification.
   </p>
-
-  <h2>Fonctionnalités par rôle</h2>
-  <table>
-    <thead><tr><th>Rôle</th><th>Fonctionnalités</th></tr></thead>
-    <tbody>
-      <tr><td><strong>Visiteur</strong></td><td>Catalogue avec filtres et recherche, fiche véhicule, formulaire de contact</td></tr>
-      <tr><td><strong>Client</strong></td><td>Inscription, connexion, réservation de véhicule, suivi et annulation, modification du profil</td></tr>
-      <tr><td><strong>Admin</strong></td><td>Tableau de bord statistiques, CRUD véhicules, gestion des réservations (confirmer/annuler), liste clients</td></tr>
-    </tbody>
-  </table>
 
   <h2>Stack technique</h2>
   <div class="stack-grid">
-    <div class="stack-item"><div class="tech">React 19 + Vite</div><div class="role">Interface utilisateur SPA</div></div>
-    <div class="stack-item"><div class="tech">React Router v7</div><div class="role">Routage côté client</div></div>
-    <div class="stack-item"><div class="tech">CSS pur</div><div class="role">Design system maison</div></div>
-    <div class="stack-item"><div class="tech">Supabase</div><div class="role">BDD PostgreSQL + Auth + Realtime</div></div>
-    <div class="stack-item"><div class="tech">Express.js 5</div><div class="role">API REST backend</div></div>
-    <div class="stack-item"><div class="tech">PM2 + Apache</div><div class="role">Déploiement VPS OVH</div></div>
+    <div class="stack-item"><div class="tech">React 19 + Vite 8</div><div class="role">Interface SPA — build ultra-rapide</div></div>
+    <div class="stack-item"><div class="tech">React Router v7</div><div class="role">Navigation côté client</div></div>
+    <div class="stack-item"><div class="tech">CSS pur</div><div class="role">Design system maison, pas de framework CSS</div></div>
+    <div class="stack-item"><div class="tech">Express.js 5</div><div class="role">API REST — Node.js, port 3001</div></div>
+    <div class="stack-item"><div class="tech">Supabase</div><div class="role">PostgreSQL + Auth JWT + Realtime</div></div>
+    <div class="stack-item"><div class="tech">Nodemailer</div><div class="role">Envoi d'e-mails via Gmail SMTP</div></div>
+    <div class="stack-item"><div class="tech">PM2</div><div class="role">Process manager — redémarre au reboot</div></div>
+    <div class="stack-item"><div class="tech">Sharp</div><div class="role">Conversion images en WebP (build)</div></div>
+    <div class="stack-item"><div class="tech">VPS OVH</div><div class="role">Ubuntu 22.04 — HTTPS Let's Encrypt</div></div>
+  </div>
+
+  <h2>Architecture globale</h2>
+  <div class="flow">
+    <div class="flow-step"><div class="flow-num">1</div><div class="flow-text"><strong>Navigateur</strong> — charge la SPA React depuis <code>client/dist/</code> servi par Express</div></div>
+    <div class="flow-step"><div class="flow-num">2</div><div class="flow-text"><strong>React Router</strong> — gère la navigation côté client sans rechargement de page</div></div>
+    <div class="flow-step"><div class="flow-num">3</div><div class="flow-text"><strong>Express (port 3001)</strong> — reçoit les requêtes <code>/api/*</code>, valide les tokens JWT, interroge Supabase</div></div>
+    <div class="flow-step"><div class="flow-num">4</div><div class="flow-text"><strong>Supabase Cloud</strong> — PostgreSQL managé, authentification JWT, mises à jour Realtime en push vers les clients</div></div>
   </div>
 </div>
 
-<!-- 02 — PERSONAS -->
+<!-- 02 — STRUCTURE FRONTEND -->
 <div class="page page-break">
   <div class="section-header">
     <div class="section-tag">02</div>
-    <div class="section-title">Personas</div>
-  </div>
-
-  <p>
-    Trois profils utilisateurs ont été identifiés pour guider les choix fonctionnels et d'interface d'Eclipse Auto.
-    Chaque persona représente un type d'utilisateur réel avec ses objectifs, ses contraintes et ses habitudes.
-  </p>
-
-  <div class="persona-grid">
-    <div class="persona-card">
-      <div class="persona-header">
-        <div class="persona-avatar">L</div>
-        <div>
-          <div class="persona-name">Lucas, 28 ans</div>
-          <div class="persona-role">Visiteur — Passionné</div>
-        </div>
-      </div>
-      <div class="persona-body">
-        <div class="persona-detail"><strong>Situation :</strong> Ingénieur en informatique, célibataire, vit à Lyon.</div>
-        <div class="persona-detail"><strong>Objectif :</strong> Explorer les voitures de sport disponibles, comparer les modèles et les prix sans forcément acheter.</div>
-        <div class="persona-detail"><strong>Frustrations :</strong> Sites lents, manque de filtres pertinents, photos de mauvaise qualité.</div>
-        <div class="persona-detail"><strong>Comportement :</strong> Navigue depuis son téléphone, lit les fiches techniques en détail.</div>
-        <div style="margin-top: 10px;">
-          <span class="persona-tag">Catalogue</span>
-          <span class="persona-tag">Filtres</span>
-          <span class="persona-tag">Fiche véhicule</span>
-          <span class="persona-tag">Contact</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="persona-card">
-      <div class="persona-header">
-        <div class="persona-avatar">C</div>
-        <div>
-          <div class="persona-name">Camille, 34 ans</div>
-          <div class="persona-role">Cliente — Acheteuse</div>
-        </div>
-      </div>
-      <div class="persona-body">
-        <div class="persona-detail"><strong>Situation :</strong> Directrice commerciale, deux enfants, vit à Paris.</div>
-        <div class="persona-detail"><strong>Objectif :</strong> Trouver et réserver rapidement un véhicule qui correspond à son budget et son usage, suivre l'avancement de sa demande.</div>
-        <div class="persona-detail"><strong>Frustrations :</strong> Processus de réservation trop long, manque de visibilité sur le statut de sa demande.</div>
-        <div class="persona-detail"><strong>Comportement :</strong> Utilise principalement desktop, veut de la rapidité et de la clarté.</div>
-        <div style="margin-top: 10px;">
-          <span class="persona-tag">Inscription</span>
-          <span class="persona-tag">Réservation</span>
-          <span class="persona-tag">Dashboard</span>
-          <span class="persona-tag">Profil</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="persona-card">
-      <div class="persona-header">
-        <div class="persona-avatar">T</div>
-        <div>
-          <div class="persona-name">Théo, 27 ans</div>
-          <div class="persona-role">Admin — Gestionnaire</div>
-        </div>
-      </div>
-      <div class="persona-body">
-        <div class="persona-detail"><strong>Situation :</strong> Responsable de la concession, gère seul le parc automobile et les demandes clients.</div>
-        <div class="persona-detail"><strong>Objectif :</strong> Gérer efficacement les véhicules et les réservations depuis une interface centralisée, sans erreurs.</div>
-        <div class="persona-detail"><strong>Frustrations :</strong> Outils dispersés, risque d'erreur lors des mises à jour manuelles de statut.</div>
-        <div class="persona-detail"><strong>Comportement :</strong> Utilise exclusivement desktop, besoin d'aller vite sur les tâches répétitives.</div>
-        <div style="margin-top: 10px;">
-          <span class="persona-tag">CRUD véhicules</span>
-          <span class="persona-tag">Réservations</span>
-          <span class="persona-tag">Statistiques</span>
-          <span class="persona-tag">Clients</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- 03 — USER STORIES -->
-<div class="page page-break">
-  <div class="section-header">
-    <div class="section-tag">03</div>
-    <div class="section-title">User Stories</div>
-  </div>
-
-  <p>
-    Les user stories décrivent les fonctionnalités du point de vue de chaque utilisateur.
-    Elles suivent le format : <em>En tant que [rôle], je veux [action] afin de [bénéfice].</em>
-  </p>
-
-  <h2>Parcours Visiteur</h2>
-  <table class="us-table">
-    <thead><tr><th>ID</th><th>Rôle</th><th>User Story</th><th>Page</th></tr></thead>
-    <tbody>
-      <tr>
-        <td class="us-id">US-01</td>
-        <td><span class="us-role-badge badge-visiteur">Visiteur</span></td>
-        <td>En tant que visiteur, je veux parcourir le catalogue de véhicules afin de découvrir les modèles disponibles.</td>
-        <td><code>/catalogue</code></td>
-      </tr>
-      <tr>
-        <td class="us-id">US-02</td>
-        <td><span class="us-role-badge badge-visiteur">Visiteur</span></td>
-        <td>En tant que visiteur, je veux filtrer les véhicules par marque, carburant et prix afin de trouver rapidement ce qui correspond à mon budget.</td>
-        <td><code>/catalogue</code></td>
-      </tr>
-      <tr>
-        <td class="us-id">US-03</td>
-        <td><span class="us-role-badge badge-visiteur">Visiteur</span></td>
-        <td>En tant que visiteur, je veux consulter la fiche détaillée d'un véhicule (photos, specs, prix) afin d'évaluer si il m'intéresse.</td>
-        <td><code>/vehicles/:slug</code></td>
-      </tr>
-      <tr>
-        <td class="us-id">US-04</td>
-        <td><span class="us-role-badge badge-visiteur">Visiteur</span></td>
-        <td>En tant que visiteur, je veux envoyer un message via le formulaire de contact afin d'obtenir des informations sans créer de compte.</td>
-        <td><code>/contact</code></td>
-      </tr>
-    </tbody>
-  </table>
-
-  <h2>Parcours Client</h2>
-  <table class="us-table">
-    <thead><tr><th>ID</th><th>Rôle</th><th>User Story</th><th>Page</th></tr></thead>
-    <tbody>
-      <tr>
-        <td class="us-id">US-05</td>
-        <td><span class="us-role-badge badge-client">Client</span></td>
-        <td>En tant que client, je veux créer un compte avec mon email et un mot de passe afin d'accéder aux fonctionnalités de réservation.</td>
-        <td><code>/register</code></td>
-      </tr>
-      <tr>
-        <td class="us-id">US-06</td>
-        <td><span class="us-role-badge badge-client">Client</span></td>
-        <td>En tant que client, je veux me connecter à mon espace personnel afin de retrouver mes réservations.</td>
-        <td><code>/login</code></td>
-      </tr>
-      <tr>
-        <td class="us-id">US-07</td>
-        <td><span class="us-role-badge badge-client">Client</span></td>
-        <td>En tant que client, je veux réserver un véhicule disponible en précisant une date de RDV et un message afin de formaliser ma demande.</td>
-        <td><code>/reserve/:slug</code></td>
-      </tr>
-      <tr>
-        <td class="us-id">US-08</td>
-        <td><span class="us-role-badge badge-client">Client</span></td>
-        <td>En tant que client, je veux consulter l'état de mes réservations (en attente, confirmée, annulée) afin de suivre l'avancement de mes demandes.</td>
-        <td><code>/dashboard</code></td>
-      </tr>
-      <tr>
-        <td class="us-id">US-09</td>
-        <td><span class="us-role-badge badge-client">Client</span></td>
-        <td>En tant que client, je veux annuler une réservation en attente afin de me désengager si je change d'avis.</td>
-        <td><code>/dashboard</code></td>
-      </tr>
-      <tr>
-        <td class="us-id">US-10</td>
-        <td><span class="us-role-badge badge-client">Client</span></td>
-        <td>En tant que client, je veux modifier mon prénom, nom et téléphone afin de garder mes informations à jour.</td>
-        <td><code>/dashboard</code></td>
-      </tr>
-    </tbody>
-  </table>
-
-  <h2>Parcours Administrateur</h2>
-  <table class="us-table">
-    <thead><tr><th>ID</th><th>Rôle</th><th>User Story</th><th>Page</th></tr></thead>
-    <tbody>
-      <tr>
-        <td class="us-id">US-11</td>
-        <td><span class="us-role-badge badge-admin">Admin</span></td>
-        <td>En tant qu'admin, je veux visualiser les statistiques clés (véhicules, réservations, clients, CA) afin d'avoir une vue d'ensemble de l'activité.</td>
-        <td><code>/admin</code></td>
-      </tr>
-      <tr>
-        <td class="us-id">US-12</td>
-        <td><span class="us-role-badge badge-admin">Admin</span></td>
-        <td>En tant qu'admin, je veux ajouter un nouveau véhicule au catalogue afin d'enrichir l'offre disponible.</td>
-        <td><code>/admin/vehicles</code></td>
-      </tr>
-      <tr>
-        <td class="us-id">US-13</td>
-        <td><span class="us-role-badge badge-admin">Admin</span></td>
-        <td>En tant qu'admin, je veux modifier les informations d'un véhicule existant afin de maintenir le catalogue à jour.</td>
-        <td><code>/admin/vehicles</code></td>
-      </tr>
-      <tr>
-        <td class="us-id">US-14</td>
-        <td><span class="us-role-badge badge-admin">Admin</span></td>
-        <td>En tant qu'admin, je veux supprimer un véhicule du catalogue afin de retirer les modèles qui ne sont plus disponibles.</td>
-        <td><code>/admin/vehicles</code></td>
-      </tr>
-      <tr>
-        <td class="us-id">US-15</td>
-        <td><span class="us-role-badge badge-admin">Admin</span></td>
-        <td>En tant qu'admin, je veux confirmer une réservation afin de valider la demande du client et mettre à jour le statut du véhicule automatiquement.</td>
-        <td><code>/admin/reservations</code></td>
-      </tr>
-      <tr>
-        <td class="us-id">US-16</td>
-        <td><span class="us-role-badge badge-admin">Admin</span></td>
-        <td>En tant qu'admin, je veux annuler une réservation afin de libérer le véhicule et en informer le client.</td>
-        <td><code>/admin/reservations</code></td>
-      </tr>
-      <tr>
-        <td class="us-id">US-17</td>
-        <td><span class="us-role-badge badge-admin">Admin</span></td>
-        <td>En tant qu'admin, je veux consulter la liste des clients inscrits et supprimer un compte afin de gérer la base utilisateurs.</td>
-        <td><code>/admin/clients</code></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-<!-- 04 — STRUCTURE FRONTEND (anciennement 02) -->
-<div class="page page-break">
-  <div class="section-header">
-    <div class="section-tag">04</div>
     <div class="section-title">Structure Frontend</div>
   </div>
 
   <p>Le frontend est une <strong>Single Page Application</strong> React construite avec Vite. Chaque page et composant est isolé dans son propre dossier avec son fichier JSX et son CSS dédié.</p>
 
-  <h2>Pages</h2>
-
+  <h2>Pages publiques &amp; client</h2>
   <div class="file-section">
     <div class="file-section-header">client/src/<span>pages/</span></div>
     <div class="file-list">
-      <div class="file-row">
-        <div class="file-path">Home/</div>
-        <div class="file-desc">Page d'accueil — hero, véhicules mis en avant, sections marketing</div>
-      </div>
-      <div class="file-row">
-        <div class="file-path">Catalogue/</div>
-        <div class="file-desc">Liste paginée des véhicules avec filtres (marque, carburant, prix, statut), recherche texte, tri et mises à jour en temps réel via Supabase Realtime</div>
-      </div>
-      <div class="file-row">
-        <div class="file-path">VehicleDetail/</div>
-        <div class="file-desc">Fiche détaillée d'un véhicule — galerie d'images, spécifications, prix, statut, bouton réserver (si disponible)</div>
-      </div>
-      <div class="file-row">
-        <div class="file-path">Reservation/</div>
-        <div class="file-desc">Formulaire de réservation — message personnalisé, date de RDV souhaitée. Accessible uniquement aux clients connectés</div>
-      </div>
-      <div class="file-row">
-        <div class="file-path">Dashboard/</div>
-        <div class="file-desc">Espace client — deux vues : liste des réservations avec possibilité d'annulation, et modification du profil (prénom, nom, téléphone, mot de passe)</div>
-      </div>
-      <div class="file-row">
-        <div class="file-path">Login/ &amp; Register/</div>
-        <div class="file-desc">Connexion et inscription via Supabase Auth. Création automatique du profil à l'inscription</div>
-      </div>
-      <div class="file-row">
-        <div class="file-path">Contact/</div>
-        <div class="file-desc">Formulaire de contact envoyé au serveur Express via <code>POST /api/contact</code></div>
-      </div>
-      <div class="file-row">
-        <div class="file-path">MentionsLegales/</div>
-        <div class="file-desc">Page des mentions légales — informations sur l'éditeur, l'hébergeur et la politique de confidentialité</div>
-      </div>
-      <div class="file-row">
-        <div class="file-path">NotFound/</div>
-        <div class="file-desc">Page 404 — redirige vers l'accueil ou le catalogue</div>
-      </div>
+      <div class="file-row"><div class="file-path">Home/</div><div class="file-desc">Page d'accueil — hero, véhicules mis en avant (3 premiers), sections marketing</div></div>
+      <div class="file-row"><div class="file-path">Catalogue/</div><div class="file-desc">Liste paginée (6/page) avec filtres, recherche texte, tri, et mises à jour en temps réel via Supabase Realtime</div></div>
+      <div class="file-row"><div class="file-path">VehicleDetail/</div><div class="file-desc">Fiche détaillée — galerie d'images, spécifications, prix, statut, bouton réserver (si disponible)</div></div>
+      <div class="file-row"><div class="file-path">Reservation/</div><div class="file-desc">Formulaire de réservation — message et date de RDV. Accessible uniquement aux clients connectés</div></div>
+      <div class="file-row"><div class="file-path">Dashboard/</div><div class="file-desc">Espace client — liste des réservations avec annulation possible, modification du profil (prénom, nom, téléphone)</div></div>
+      <div class="file-row"><div class="file-path">Login/ &amp; Register/</div><div class="file-desc">Connexion et inscription via Supabase Auth. Création automatique du profil en table <code>profiles</code> à l'inscription</div></div>
+      <div class="file-row"><div class="file-path">Contact/</div><div class="file-desc">Formulaire envoyé au serveur Express via <code>POST /api/contact</code> — relais e-mail via Nodemailer</div></div>
+      <div class="file-row"><div class="file-path">MentionsLegales/</div><div class="file-desc">Mentions légales — éditeur, hébergeur, politique de confidentialité</div></div>
+      <div class="file-row"><div class="file-path">NotFound/</div><div class="file-desc">Page 404 avec redirection vers l'accueil ou le catalogue</div></div>
     </div>
   </div>
 
-  <h2>Pages Admin</h2>
-
+  <h2>Pages admin</h2>
   <div class="file-section">
     <div class="file-section-header">client/src/<span>pages/admin/</span></div>
     <div class="file-list">
-      <div class="file-row">
-        <div class="file-path">AdminDashboard/</div>
-        <div class="file-desc">Statistiques globales — total véhicules, réservations par statut, nombre de clients, CA estimé</div>
-      </div>
-      <div class="file-row">
-        <div class="file-path">AdminVehicles/</div>
-        <div class="file-desc">CRUD complet — ajouter, modifier et supprimer des véhicules via un panneau latéral. Changement de statut rapide. Pagination et recherche</div>
-      </div>
-      <div class="file-row">
-        <div class="file-path">AdminReservations/</div>
-        <div class="file-desc">Gestion des réservations — confirmer ou annuler. Le statut du véhicule est mis à jour automatiquement par un trigger PostgreSQL</div>
-      </div>
-      <div class="file-row">
-        <div class="file-path">AdminUsers/</div>
-        <div class="file-desc">Liste des clients inscrits avec suppression via modale de confirmation</div>
-      </div>
+      <div class="file-row"><div class="file-path">AdminDashboard/</div><div class="file-desc">Statistiques globales — total véhicules par statut, réservations par statut, nombre de clients, CA estimé</div></div>
+      <div class="file-row"><div class="file-path">AdminVehicles/</div><div class="file-desc">CRUD complet via modale centrée — ajouter, modifier, supprimer des véhicules. Changement de statut rapide inline. Pagination et recherche</div></div>
+      <div class="file-row"><div class="file-path">AdminReservations/</div><div class="file-desc">Gestion des réservations — confirmer ou annuler. Le statut du véhicule est mis à jour automatiquement par un trigger PostgreSQL</div></div>
+      <div class="file-row"><div class="file-path">AdminUsers/</div><div class="file-desc">Liste des clients inscrits avec suppression via modale de confirmation</div></div>
     </div>
   </div>
 </div>
 
-<!-- 03 — COMPOSANTS -->
+<!-- 03 — COMPOSANTS & UTILITAIRES -->
 <div class="page page-break">
   <div class="section-header">
-    <div class="section-tag">05</div>
-    <div class="section-title">Composants</div>
+    <div class="section-tag">03</div>
+    <div class="section-title">Composants &amp; utilitaires</div>
   </div>
 
   <p>Les composants sont des blocs d'interface réutilisables, indépendants des pages. Chaque composant expose des <strong>props</strong> pour le personnaliser.</p>
 
+  <h2>Composants</h2>
   <div class="file-section">
     <div class="file-section-header">client/src/<span>components/</span></div>
     <div class="file-list">
-      <div class="file-row">
-        <div class="file-path">Navbar/</div>
-        <div class="file-desc">Navigation principale responsive. Affiche le prénom de l'utilisateur connecté. Le lien "Réservations" est masqué si non connecté. Menu burger sur mobile avec aria-label et aria-expanded</div>
-      </div>
-      <div class="file-row">
-        <div class="file-path">Footer/</div>
-        <div class="file-desc">Pied de page avec liens, mentions légales et informations de contact</div>
-      </div>
-      <div class="file-row">
-        <div class="file-path">VehicleCard/</div>
-        <div class="file-desc">Carte véhicule affichée dans le catalogue — image principale, marque, modèle, année, carburant, prix et badge de disponibilité. Lien vers la fiche détail</div>
-      </div>
-      <div class="file-row">
-        <div class="file-path">Filters/</div>
-        <div class="file-desc">Panneau de filtres du catalogue. Marques générées dynamiquement depuis les véhicules chargés. Filtres : marque, carburant, transmission, prix max (slider), année, statut</div>
-      </div>
-      <div class="file-row">
-        <div class="file-path">Pagination/</div>
-        <div class="file-desc">Pagination intelligente — affiche au maximum 7 boutons avec ellipsis (…) pour les longues séries. Boutons précédent/suivant avec aria-labels pour l'accessibilité</div>
-      </div>
-      <div class="file-row">
-        <div class="file-path">AdminSidebar/</div>
-        <div class="file-desc">Barre de navigation commune à toutes les pages admin. Lien actif détecté automatiquement via l'URL courante</div>
-      </div>
-      <div class="file-row">
-        <div class="file-path">ConfirmModal/</div>
-        <div class="file-desc">Modale de confirmation stylisée. Remplace les boîtes de dialogue natives du navigateur pour les suppressions d'éléments</div>
-      </div>
-      <div class="file-row">
-        <div class="file-path">ProtectedRoute/</div>
-        <div class="file-desc">Composant de protection des routes. Redirige vers /login si non connecté, vers l'accueil si la page requiert un rôle admin et que l'utilisateur ne l'a pas</div>
-      </div>
+      <div class="file-row"><div class="file-path">Navbar/</div><div class="file-desc">Navigation principale responsive. Affiche le prénom de l'utilisateur connecté. Menu burger mobile avec <code>aria-label</code> et <code>aria-expanded</code></div></div>
+      <div class="file-row"><div class="file-path">Footer/</div><div class="file-desc">Pied de page avec liens, mentions légales et coordonnées</div></div>
+      <div class="file-row"><div class="file-path">VehicleCard/</div><div class="file-desc">Carte catalogue — image (WebP optimisé), marque, modèle, année, carburant, prix, badge statut. Les 3 premières cartes utilisent <code>loading="eager"</code> + <code>fetchPriority="high"</code></div></div>
+      <div class="file-row"><div class="file-path">Filters/</div><div class="file-desc">Panneau de filtres — marque (dynamique), carburant, transmission, prix max (slider), année min, statut (multi-sélection)</div></div>
+      <div class="file-row"><div class="file-path">Pagination/</div><div class="file-desc">Pagination intelligente — max 7 boutons avec ellipsis. Boutons précédent/suivant accessibles</div></div>
+      <div class="file-row"><div class="file-path">AdminSidebar/</div><div class="file-desc">Navigation commune aux pages admin — lien actif détecté automatiquement par l'URL courante</div></div>
+      <div class="file-row"><div class="file-path">ConfirmModal/</div><div class="file-desc">Modale de confirmation stylisée — remplace les <code>window.confirm()</code> natifs pour les suppressions</div></div>
+      <div class="file-row"><div class="file-path">ProtectedRoute/</div><div class="file-desc">Protection des routes — redirige vers <code>/login</code> si non connecté, vers <code>/</code> si le rôle est insuffisant</div></div>
     </div>
   </div>
 
-  <h2>Fichiers utilitaires</h2>
-
+  <h2>Utilitaires</h2>
   <div class="file-section">
     <div class="file-section-header">client/src/<span>lib/</span></div>
     <div class="file-list">
-      <div class="file-row">
-        <div class="file-path">AuthContext.jsx</div>
-        <div class="file-desc">Contexte React global d'authentification. Expose à tous les composants : l'utilisateur connecté, son profil, son rôle (isAdmin / isClient), et une fonction refreshProfile() pour recharger les données après modification</div>
-      </div>
-      <div class="file-row">
-        <div class="file-path">supabase.js</div>
-        <div class="file-desc">Initialisation du client Supabase avec la clé publique (anon key). Utilisé pour les requêtes depuis le navigateur</div>
-      </div>
-      <div class="file-row">
-        <div class="file-path">auth.js</div>
-        <div class="file-desc">Fonctions d'authentification — connexion, inscription, déconnexion via Supabase Auth</div>
-      </div>
-      <div class="file-row">
-        <div class="file-path">utils.js</div>
-        <div class="file-desc">Constantes centralisées partagées dans toute l'application — statuts des réservations (RESERVATION_STATUS), statuts des véhicules (VEHICLE_STATUS), types de carburant (FUEL_TYPES), transmissions (TRANSMISSIONS), et la fonction toSlug() pour générer les URLs des véhicules</div>
-      </div>
+      <div class="file-row"><div class="file-path">AuthContext.jsx</div><div class="file-desc">Contexte React global — expose l'utilisateur connecté, son profil, ses rôles (<code>isAdmin</code> / <code>isClient</code>), et <code>refreshProfile()</code></div></div>
+      <div class="file-row"><div class="file-path">vehiclesCache.js</div><div class="file-desc">Cache mémoire des véhicules avec TTL de 3 minutes — évite les requêtes répétées. <code>patchCachedVehicle()</code> met à jour sans re-fetch</div></div>
+      <div class="file-row"><div class="file-path">supabase.js</div><div class="file-desc">Client Supabase initialisé avec la clé publique (anon key) — utilisé pour les requêtes depuis le navigateur</div></div>
+      <div class="file-row"><div class="file-path">auth.js</div><div class="file-desc">Fonctions d'authentification — connexion, inscription, déconnexion via Supabase Auth</div></div>
+      <div class="file-row"><div class="file-path">utils.js</div><div class="file-desc">Constantes partagées (RESERVATION_STATUS, VEHICLE_STATUS, FUEL_TYPES), <code>toSlug()</code> pour les URLs véhicules, <code>optimizeImageUrl()</code> pour la conversion WebP selon la source</div></div>
     </div>
   </div>
 
   <h2>Fichiers racine</h2>
-
   <div class="file-section">
     <div class="file-section-header">client/src/</div>
     <div class="file-list">
-      <div class="file-row">
-        <div class="file-path">main.jsx</div>
-        <div class="file-desc">Point d'entrée React — monte l'application dans le DOM et enveloppe l'arborescence dans <code>&lt;AuthProvider&gt;</code> pour rendre le contexte d'authentification accessible globalement</div>
-      </div>
-      <div class="file-row">
-        <div class="file-path">App.jsx</div>
-        <div class="file-desc">Définition complète du routeur React Router v7 — déclare toutes les routes publiques, protégées (client) et admin. Utilise <code>&lt;ProtectedRoute&gt;</code> pour sécuriser les accès selon le rôle</div>
-      </div>
-      <div class="file-row">
-        <div class="file-path">vite.config.js</div>
-        <div class="file-desc">Configuration Vite — proxy <code>/api/*</code> vers <code>localhost:3001</code> en développement, alias <code>@</code> pour <code>src/</code></div>
-      </div>
+      <div class="file-row"><div class="file-path">main.jsx</div><div class="file-desc">Point d'entrée React — enveloppe l'arbre dans <code>&lt;AuthProvider&gt;</code> pour rendre le contexte d'auth accessible globalement</div></div>
+      <div class="file-row"><div class="file-path">App.jsx</div><div class="file-desc">Routeur React Router v7 complet — routes publiques, protégées (client) et admin via <code>&lt;ProtectedRoute&gt;</code></div></div>
+      <div class="file-row"><div class="file-path">vite.config.js</div><div class="file-desc">Proxy <code>/api/*</code> → <code>localhost:3001</code> en développement, alias <code>@</code> pour <code>src/</code></div></div>
     </div>
   </div>
 </div>
@@ -783,72 +238,48 @@
 <!-- 04 — STRUCTURE BACKEND -->
 <div class="page page-break">
   <div class="section-header">
-    <div class="section-tag">06</div>
+    <div class="section-tag">04</div>
     <div class="section-title">Structure Backend</div>
   </div>
 
   <p>
-    Le backend est un serveur <strong>Express.js 5</strong> qui tourne sur le port 3001.
-    Il gère les opérations sensibles qui ne doivent pas être faites depuis le navigateur —
-    notamment les vérifications métier et l'accès à la base de données avec des droits élevés.
-    Apache redirige automatiquement toutes les requêtes <code>/api/*</code> vers ce serveur.
+    Le backend est un serveur <strong>Express.js 5</strong> sur le port 3001.
+    En production, il sert également le frontend statique depuis <code>client/dist/</code>.
   </p>
 
   <h2>Fichiers du serveur</h2>
-
   <div class="file-section">
     <div class="file-section-header">server/</div>
     <div class="file-list">
-      <div class="file-row">
-        <div class="file-path">index.js</div>
-        <div class="file-desc">Point d'entrée du serveur — initialise Express, configure CORS, branche les routeurs sur leurs préfixes, gère les erreurs 404 et globales</div>
-      </div>
-      <div class="file-row">
-        <div class="file-path">supabase.js</div>
-        <div class="file-desc">Client Supabase avec la clé <code>service_role</code> — cette clé bypass toutes les restrictions RLS de la base de données. Utilisée uniquement côté serveur, jamais exposée au client</div>
-      </div>
-      <div class="file-row">
-        <div class="file-path">middleware/auth.js</div>
-        <div class="file-desc">Deux middlewares de protection des routes — <strong>requireAuth</strong> vérifie le token JWT dans l'en-tête Authorization, <strong>requireAdmin</strong> vérifie en plus que le rôle dans la table profiles est "admin"</div>
-      </div>
-      <div class="file-row">
-        <div class="file-path">routes/vehicles.js</div>
-        <div class="file-desc">Routes véhicules — lecture publique, création/modification/suppression réservées aux admins</div>
-      </div>
-      <div class="file-row">
-        <div class="file-path">routes/reservations.js</div>
-        <div class="file-desc">Routes réservations — création avec vérification de disponibilité en temps réel, annulation client avec contrôle de propriété, gestion admin</div>
-      </div>
-      <div class="file-row">
-        <div class="file-path">routes/admin.js</div>
-        <div class="file-desc">Routes d'administration — statistiques globales (8 requêtes parallèles), liste et suppression de clients</div>
-      </div>
-      <div class="file-row">
-        <div class="file-path">routes/contact.js</div>
-        <div class="file-desc">Réception du formulaire de contact et traitement du message</div>
-      </div>
+      <div class="file-row"><div class="file-path">index.js</div><div class="file-desc">Point d'entrée — initialise Express, configure CORS (dev uniquement), branche les routeurs, sert le frontend statique en production, gère les erreurs globales</div></div>
+      <div class="file-row"><div class="file-path">supabase.js</div><div class="file-desc">Client Supabase avec la clé <code>service_role</code> — bypass toutes les RLS. Utilisée uniquement côté serveur, jamais exposée au client</div></div>
+      <div class="file-row"><div class="file-path">middleware/auth.js</div><div class="file-desc"><strong>requireAuth</strong> — vérifie le JWT dans l'en-tête <code>Authorization</code>. <strong>requireAdmin</strong> — vérifie en plus que <code>profiles.role = "admin"</code></div></div>
+      <div class="file-row"><div class="file-path">routes/vehicles.js</div><div class="file-desc">Lecture publique avec filtres (statut, marque, carburant). Création, modification et suppression réservées aux admins</div></div>
+      <div class="file-row"><div class="file-path">routes/reservations.js</div><div class="file-desc">Création avec vérification de disponibilité en temps réel. Annulation client avec contrôle de propriété. Gestion complète côté admin</div></div>
+      <div class="file-row"><div class="file-path">routes/admin.js</div><div class="file-desc">Statistiques globales via 8 requêtes parallèles (<code>Promise.all</code>). Liste et suppression de clients</div></div>
+      <div class="file-row"><div class="file-path">routes/contact.js</div><div class="file-desc">Réception et envoi du formulaire de contact par e-mail via Nodemailer (Gmail SMTP)</div></div>
     </div>
   </div>
 
-  <h2>Routes API disponibles</h2>
+  <h2>Routes API</h2>
   <table>
     <thead><tr><th>Méthode</th><th>Route</th><th>Accès</th><th>Description</th></tr></thead>
     <tbody>
       <tr><td><code>GET</code></td><td><code>/api/health</code></td><td>Public</td><td>Vérification que le serveur est en ligne</td></tr>
-      <tr><td><code>GET</code></td><td><code>/api/vehicles</code></td><td>Public</td><td>Liste tous les véhicules (filtrable par statut, marque, carburant)</td></tr>
+      <tr><td><code>GET</code></td><td><code>/api/vehicles</code></td><td>Public</td><td>Liste des véhicules (filtres optionnels : statut, marque, carburant)</td></tr>
       <tr><td><code>GET</code></td><td><code>/api/vehicles/:id</code></td><td>Public</td><td>Détail complet d'un véhicule</td></tr>
       <tr><td><code>POST</code></td><td><code>/api/vehicles</code></td><td>Admin</td><td>Créer un véhicule</td></tr>
       <tr><td><code>PUT</code></td><td><code>/api/vehicles/:id</code></td><td>Admin</td><td>Modifier un véhicule</td></tr>
       <tr><td><code>DELETE</code></td><td><code>/api/vehicles/:id</code></td><td>Admin</td><td>Supprimer un véhicule</td></tr>
       <tr><td><code>GET</code></td><td><code>/api/reservations</code></td><td>Client</td><td>Réservations de l'utilisateur connecté</td></tr>
-      <tr><td><code>GET</code></td><td><code>/api/reservations/all</code></td><td>Admin</td><td>Toutes les réservations (avec infos véhicule et client)</td></tr>
+      <tr><td><code>GET</code></td><td><code>/api/reservations/all</code></td><td>Admin</td><td>Toutes les réservations avec infos véhicule et client</td></tr>
       <tr><td><code>POST</code></td><td><code>/api/reservations</code></td><td>Client</td><td>Créer une réservation (vérifie disponibilité en temps réel)</td></tr>
       <tr><td><code>PATCH</code></td><td><code>/api/reservations/:id/status</code></td><td>Admin</td><td>Confirmer ou annuler une réservation</td></tr>
       <tr><td><code>PATCH</code></td><td><code>/api/reservations/:id/cancel</code></td><td>Client</td><td>Annuler sa propre réservation</td></tr>
-      <tr><td><code>GET</code></td><td><code>/api/admin/stats</code></td><td>Admin</td><td>Statistiques du tableau de bord (8 requêtes parallèles)</td></tr>
+      <tr><td><code>GET</code></td><td><code>/api/admin/stats</code></td><td>Admin</td><td>Statistiques du dashboard (8 requêtes parallèles)</td></tr>
       <tr><td><code>GET</code></td><td><code>/api/admin/clients</code></td><td>Admin</td><td>Liste de tous les clients inscrits</td></tr>
       <tr><td><code>DELETE</code></td><td><code>/api/admin/clients/:id</code></td><td>Admin</td><td>Supprimer un client</td></tr>
-      <tr><td><code>POST</code></td><td><code>/api/contact</code></td><td>Public</td><td>Envoyer un message de contact</td></tr>
+      <tr><td><code>POST</code></td><td><code>/api/contact</code></td><td>Public</td><td>Envoi du formulaire de contact par e-mail</td></tr>
     </tbody>
   </table>
 </div>
@@ -856,7 +287,7 @@
 <!-- 05 — FLUX D'AUTHENTIFICATION -->
 <div class="page page-break">
   <div class="section-header">
-    <div class="section-tag">07</div>
+    <div class="section-tag">05</div>
     <div class="section-title">Flux d'authentification</div>
   </div>
 
@@ -875,42 +306,34 @@
 
   <h2>Connexion et accès aux routes protégées</h2>
   <div class="flow">
-    <div class="flow-step"><div class="flow-num">1</div><div class="flow-text">L'utilisateur se connecte via la page <strong>Login</strong> — Supabase Auth retourne un JWT stocké en mémoire</div></div>
-    <div class="flow-step"><div class="flow-num">2</div><div class="flow-text">Le composant <code>ProtectedRoute</code> lit le contexte — redirige vers <code>/login</code> si le token est absent</div></div>
+    <div class="flow-step"><div class="flow-num">1</div><div class="flow-text">L'utilisateur se connecte — Supabase Auth retourne un JWT stocké en mémoire côté client</div></div>
+    <div class="flow-step"><div class="flow-num">2</div><div class="flow-text"><code>ProtectedRoute</code> lit le contexte — redirige vers <code>/login</code> si le token est absent</div></div>
     <div class="flow-step"><div class="flow-num">3</div><div class="flow-text">Chaque appel API inclut le JWT dans l'en-tête : <code>Authorization: Bearer &lt;token&gt;</code></div></div>
-    <div class="flow-step"><div class="flow-num">4</div><div class="flow-text">Le middleware <strong>requireAuth</strong> (server) valide le token via Supabase Admin</div></div>
+    <div class="flow-step"><div class="flow-num">4</div><div class="flow-text">Le middleware <strong>requireAuth</strong> valide le token via Supabase Admin</div></div>
     <div class="flow-step"><div class="flow-num">5</div><div class="flow-text">Pour les routes admin, <strong>requireAdmin</strong> vérifie en plus que <code>profiles.role = "admin"</code></div></div>
   </div>
 
-  <h2>Schéma des rôles et permissions</h2>
-  <table>
-    <thead><tr><th>Rôle</th><th>Token requis</th><th>Accès autorisé</th></tr></thead>
-    <tbody>
-      <tr><td><strong>Visiteur</strong></td><td>Non</td><td>Catalogue, fiches véhicules, contact, mentions légales</td></tr>
-      <tr><td><strong>Client</strong></td><td>JWT valide</td><td>Tout visiteur + créer/annuler réservations, modifier son profil</td></tr>
-      <tr><td><strong>Admin</strong></td><td>JWT + rôle admin en BDD</td><td>Tout client + CRUD véhicules, gestion réservations, liste clients</td></tr>
-    </tbody>
-  </table>
 </div>
 
 <!-- 06 — BASE DE DONNÉES -->
 <div class="page page-break">
   <div class="section-header">
-    <div class="section-tag">08</div>
+    <div class="section-tag">06</div>
     <div class="section-title">Base de données</div>
   </div>
 
   <p>
-    La base de données est hébergée sur <strong>Supabase</strong> (PostgreSQL managé).
-    Les <strong>Row Level Security (RLS)</strong> sont activées sur toutes les tables :
-    chaque utilisateur ne peut accéder qu'à ses propres données, même en appelant Supabase directement depuis le navigateur.
+    Base PostgreSQL hébergée sur <strong>Supabase</strong>.
+    Les <strong>Row Level Security (RLS)</strong> sont activées sur toutes les tables —
+    chaque utilisateur ne peut accéder qu'à ses propres données depuis le navigateur.
+    Le serveur contourne les RLS via la clé <code>service_role</code>.
   </p>
 
   <h2>Table — profiles</h2>
   <table>
     <thead><tr><th>Colonne</th><th>Type</th><th>Description</th></tr></thead>
     <tbody>
-      <tr><td><code>id</code></td><td>uuid</td><td>Lié à auth.users de Supabase (créé à l'inscription)</td></tr>
+      <tr><td><code>id</code></td><td>uuid</td><td>Lié à <code>auth.users</code> de Supabase (créé à l'inscription)</td></tr>
       <tr><td><code>first_name</code></td><td>text</td><td>Prénom</td></tr>
       <tr><td><code>last_name</code></td><td>text</td><td>Nom de famille</td></tr>
       <tr><td><code>phone</code></td><td>text</td><td>Numéro de téléphone (optionnel)</td></tr>
@@ -933,7 +356,7 @@
       <tr><td><code>mileage</code></td><td>integer</td><td>Kilométrage (0 = neuf)</td></tr>
       <tr><td><code>power</code></td><td>text</td><td>Puissance (ex : "620 CH")</td></tr>
       <tr><td><code>status</code></td><td>text</td><td>"available" / "reserved" / "sold" — mis à jour automatiquement par trigger</td></tr>
-      <tr><td><code>images</code></td><td>text[]</td><td>Tableau d'URLs d'images</td></tr>
+      <tr><td><code>images</code></td><td>text[]</td><td>Tableau de chemins d'images (ex : <code>["/img/Ferrari-488-Pista.webp"]</code>)</td></tr>
       <tr><td><code>description</code></td><td>text</td><td>Description libre (optionnel)</td></tr>
     </tbody>
   </table>
@@ -953,208 +376,85 @@
   </table>
 
   <h2>Trigger PostgreSQL — Synchronisation automatique</h2>
-  <p>
-    Un trigger nommé <strong>sync_vehicle_status_on_reservation</strong> s'exécute automatiquement
-    à chaque changement de statut d'une réservation, sans intervention manuelle.
-  </p>
+  <p>Le trigger <strong>sync_vehicle_status_on_reservation</strong> s'exécute à chaque changement de statut d'une réservation.</p>
   <div class="flow">
-    <div class="flow-step"><div class="flow-num">1</div><div class="flow-text">L'admin confirme une réservation → son statut passe à <strong>confirmed</strong></div></div>
-    <div class="flow-step"><div class="flow-num">2</div><div class="flow-text">Le trigger détecte le changement dans la table reservations</div></div>
-    <div class="flow-step"><div class="flow-num">3</div><div class="flow-text">Il met automatiquement <strong>vehicles.status = "reserved"</strong> pour le véhicule concerné</div></div>
-    <div class="flow-step"><div class="flow-num">4</div><div class="flow-text">Si la réservation est annulée, il remet le statut du véhicule à <strong>"available"</strong></div></div>
-    <div class="flow-step"><div class="flow-num">5</div><div class="flow-text">Supabase Realtime propage la mise à jour en direct dans le catalogue pour tous les visiteurs</div></div>
+    <div class="flow-step"><div class="flow-num">1</div><div class="flow-text">L'admin confirme une réservation → statut passe à <strong>confirmed</strong></div></div>
+    <div class="flow-step"><div class="flow-num">2</div><div class="flow-text">Le trigger détecte le changement et met <strong>vehicles.status = "reserved"</strong></div></div>
+    <div class="flow-step"><div class="flow-num">3</div><div class="flow-text">Si la réservation est annulée → le trigger remet le véhicule à <strong>"available"</strong></div></div>
+    <div class="flow-step"><div class="flow-num">4</div><div class="flow-text">Supabase Realtime propage la mise à jour en temps réel dans le catalogue pour tous les visiteurs</div></div>
   </div>
 </div>
 
-<!-- 08 — OPTIMISATION IMAGES & PERFORMANCE -->
+<!-- 07 — OPTIMISATION IMAGES & PERFORMANCE -->
 <div class="page page-break">
   <div class="section-header">
-    <div class="section-tag">10</div>
-    <div class="section-title">Optimisation des images & Performance</div>
+    <div class="section-tag">07</div>
+    <div class="section-title">Optimisation images &amp; performance</div>
   </div>
 
   <p>
-    L'application a subi un audit de performance complet en mai 2026.
-    Les images représentaient 95% du poids téléchargé — elles ont été réduites de 2 à 6 MB chacune à 50-350 KB via conversion WebP.
+    Audit de performance réalisé en mai 2026. Les images JPEG originales pesaient entre 1 et 6 MB chacune —
+    soit 45 MB pour 6 véhicules visibles. Elles ont été converties en WebP avec <strong>Sharp</strong>.
   </p>
 
-  <h2>Problème initial</h2>
+  <h2>Résultats de la conversion WebP</h2>
   <table>
-    <thead><tr><th>Paramètre</th><th>Avant</th><th>Après</th><th>Gain</th></tr></thead>
+    <thead><tr><th>Fichier</th><th>Avant</th><th>Après</th><th>Gain</th></tr></thead>
     <tbody>
-      <tr><td><strong>Audi RS3.jpg</strong></td><td>6.2 MB</td><td>211 KB</td><td>−97%</td></tr>
-      <tr><td><strong>Mercedes AMG.jpg</strong></td><td>5.9 MB</td><td>88 KB</td><td>−98%</td></tr>
-      <tr><td><strong>Format demandé (cartes)</strong></td><td>800px</td><td>560px</td><td>30% moins de requête</td></tr>
-      <tr><td><strong>Format demandé (featured)</strong></td><td>600px</td><td>420px</td><td>30% moins de requête</td></tr>
-      <tr><td><strong>Loading prioritaires</strong></td><td>lazy + aucune priorité</td><td>eager + fetchPriority=high</td><td>Images visibles instantanément</td></tr>
+      <tr><td>Audi-RS3.jpg</td><td>6.2 MB</td><td>211 KB</td><td>−97%</td></tr>
+      <tr><td>Mercedes-AMG-GT.jpg</td><td>5.9 MB</td><td>88 KB</td><td>−98%</td></tr>
+      <tr><td>Lamborghini_Aventador_SVJ.jpg</td><td>5.3 MB</td><td>351 KB</td><td>−93%</td></tr>
+      <tr><td><em>Moyenne sur 21 fichiers</em></td><td><em>~3 MB</em></td><td><em>~190 KB</em></td><td><em>−94%</em></td></tr>
     </tbody>
   </table>
 
   <div class="note green">
-    <strong>Impact utilisateur :</strong> le site passe d'un chargement des images lent à des images visibles immédiatement au démarrage, sans flash blanc.
+    <strong>Impact :</strong> 45 MB → 1.5 MB pour 6 véhicules visibles. Chargement 4G : 2-3s → &lt; 500ms.
   </div>
 
-  <h2>Conversion WebP avec Sharp</h2>
-  <p>
-    Tous les JPEG du dossier <code>public/img/</code> ont été convertis en WebP (format moderne, compression 10× plus efficace) avec redimensionnement automatique à 1400px de largeur max (couvre tous les cas d'usage).
-  </p>
-  <div class="file-section">
-    <div class="file-section-header">Process : convertisseur Node.js avec <span>Sharp</span></div>
-    <div class="file-list">
-      <div class="file-row">
-        <div class="file-path">Outils</div>
-        <div class="file-desc"><code>npm install sharp</code> — CLI Node pour traitement d'images. Utilise libVIPS (ultra-rapide) pour conversion + redimensionnement sans installer ImageMagick ou FFmpeg</div>
-      </div>
-      <div class="file-row">
-        <div class="file-path">Résultat</div>
-        <div class="file-desc">21 fichiers JPEG → 21 fichiers WebP. Fichiers JPG conservés comme fallback (non exposés). Fichiers WebP versionés dans Git et déployés dans <code>client/dist/img/</code> après build</div>
-      </div>
-    </div>
-  </div>
-
-  <h2>Optimisation des URLs d'images — optimizeImageUrl()</h2>
-  <p>
-    La fonction utilitaire <code>optimizeImageUrl()</code> dans <code>client/src/lib/utils.js</code> s'adapte à la source de l'image.
-    Elle traite trois cas :
-  </p>
-
-  <h3>1. Supabase Storage</h3>
-  <p>
-    Pour les URLs contenant <code>supabase.co/storage/v1/object/public/</code> :
-    redirige vers l'endpoint <code>/render/image/</code> pour bénéficier de la transformation d'images
-    (ajuste la largeur, applique la compression et convertit en WebP à la volée).
-  </p>
-
-  <h3>2. Unsplash (images externes)</h3>
-  <p>
-    Pour les URLs <code>images.unsplash.com</code> : ajoute les paramètres imgix
-    <code>?w=...&q=...&fm=webp&fit=crop</code> pour la même optimisation côté Unsplash.
-  </p>
-
-  <h3>3. Images locales /img/</h3>
-  <p>
-    Pour les chemins relatifs <code>/img/*.jpg</code> : remplace automatiquement l'extension
-    <code>.jpg</code> → <code>.webp</code> pour servir la version compressée.
-    Exemple : <code>/img/Dodge-Charger.jpg</code> devient <code>/img/Dodge-Charger.webp</code>.
-  </p>
-
-  <div class="note blue">
-    <strong>Schéma :</strong> peu importe la source, <code>optimizeImageUrl()</code> garantit que le navigateur reçoit la version la plus légère et moderne possible.
-  </div>
-
-  <h2>Priorités de chargement — loading & fetchPriority</h2>
-
-  <h3>Au-dessus du fold (visible immédiatement)</h3>
+  <h2>optimizeImageUrl() — gestion par source</h2>
+  <p>La fonction <code>optimizeImageUrl(url, width, quality)</code> dans <code>lib/utils.js</code> adapte l'URL selon la source :</p>
   <table>
-    <thead><tr><th>Composant</th><th>loading</th><th>fetchPriority</th><th>Détail</th></tr></thead>
+    <thead><tr><th>Source</th><th>Traitement</th></tr></thead>
     <tbody>
-      <tr>
-        <td><strong>Featured cards (Home)</strong></td>
-        <td><code>eager</code></td>
-        <td><code>high</code> (1ère card) / <code>auto</code> (2e, 3e)</td>
-        <td>Visibles au chargement de la page → charger immédiatement</td>
-      </tr>
-      <tr>
-        <td><strong>VehicleCard (Catalogue, 3 premières)</strong></td>
-        <td><code>eager</code></td>
-        <td><code>high</code></td>
-        <td>Index < 3 sur première page → haute priorité</td>
-      </tr>
-      <tr>
-        <td><strong>VehicleDetail (image principale)</strong></td>
-        <td><code>eager</code></td>
-        <td><code>high</code></td>
-        <td>Page dédiée au véhicule → image critique</td>
-      </tr>
+      <tr><td><strong>Supabase Storage</strong></td><td>Redirige vers <code>/render/image/</code> avec paramètres <code>width</code>, <code>quality</code> et <code>format=webp</code></td></tr>
+      <tr><td><strong>Unsplash</strong></td><td>Ajoute les paramètres imgix : <code>?w=...&q=...&fm=webp&fit=crop</code></td></tr>
+      <tr><td><strong>Local <code>/img/</code></strong></td><td>Remplace l'extension <code>.jpg</code> → <code>.webp</code> automatiquement</td></tr>
     </tbody>
   </table>
 
-  <h3>En dessous du fold (lazy loading)</h3>
+  <h2>Stratégie de chargement des images</h2>
   <table>
-    <thead><tr><th>Composant</th><th>loading</th><th>Détail</th></tr></thead>
+    <thead><tr><th>Composant</th><th>loading</th><th>fetchPriority</th><th>Raison</th></tr></thead>
     <tbody>
-      <tr>
-        <td><strong>VehicleCard (Catalogue, à partir du 4e)</strong></td>
-        <td><code>lazy</code></td>
-        <td>En bas de première page ou pages suivantes → charger à la demande</td>
-      </tr>
-      <tr>
-        <td><strong>Gallery thumbnails (VehicleDetail)</strong></td>
-        <td><code>lazy</code></td>
-        <td>Thumbnails secondaires → lazy loading standard</td>
-      </tr>
+      <tr><td>VehicleCard — index &lt; 3</td><td><code>eager</code></td><td><code>high</code></td><td>Visible immédiatement sur la première page</td></tr>
+      <tr><td>VehicleCard — index ≥ 3</td><td><code>lazy</code></td><td><code>auto</code></td><td>Hors viewport au chargement — différé</td></tr>
+      <tr><td>Featured cards (Home)</td><td><code>eager</code></td><td><code>high</code> / <code>auto</code></td><td>Au-dessus du fold — chargement prioritaire</td></tr>
+      <tr><td>VehicleDetail — image principale</td><td><code>eager</code></td><td><code>high</code></td><td>Image critique de la page</td></tr>
+      <tr><td>Gallery thumbnails</td><td><code>lazy</code></td><td><code>auto</code></td><td>Images secondaires</td></tr>
     </tbody>
   </table>
 
+  <h2>Google Fonts — chargement non bloquant</h2>
   <p>
-    <code>loading="eager"</code> dit au navigateur de télécharger l'image immédiatement.
-    <code>loading="lazy"</code> l'ajourte au moment où elle approche du viewport.
-    <code>fetchPriority="high"</code> la demande en priorité réseau par rapport aux autres ressources.
+    L'ancien <code>@import url(...)</code> dans le CSS était découvert après le parsing du CSS, bloquant le rendu.
+    Remplacé par des <code>&lt;link rel="preconnect"&gt;</code> dans le <code>&lt;head&gt;</code> — découverts immédiatement au parsing HTML.
   </p>
-
-  <h2>Fonts — Non blocking avec preconnect</h2>
-  <p>
-    Les polices <strong>Barlow</strong> et <strong>Barlow Condensed</strong> sont chargées depuis Google Fonts.
-    Avant : <code>@import url(...)</code> dans le CSS — découvert <strong>après</strong> le parsing du CSS, bloquerait le rendu.
-    Après : liens en <code>&lt;head&gt;</code> avec <code>rel="preconnect"</code> et <code>rel="preload"</code> — découverts <strong>immédiatement</strong>.
-  </p>
-
-  <div class="file-section">
-    <div class="file-section-header">client/index.html — Head</div>
-    <div class="file-list">
-      <div class="file-row">
-        <div class="file-path">&lt;link rel="preconnect"&gt;</div>
-        <div class="file-desc">Établit la connexion TCP à fonts.googleapis.com en parallèle du parsing HTML. Gain : ~100-200ms avant la première requête font</div>
-      </div>
-      <div class="file-row">
-        <div class="file-path">&lt;link rel="stylesheet"&gt;</div>
-        <div class="file-desc">Requête non bloquante pour la feuille de styles Google Fonts. Rendu de la page peut commencer avant que les fonts soit prêtes (FOUT — Flash Of Unstyled Text acceptable)</div>
-      </div>
-    </div>
-  </div>
-
-  <h2>Serveur statique — Express.js</h2>
-  <p>
-    En production, Express sert maintenant les fichiers statiques du build React depuis <code>client/dist/</code>.
-    Avant : seules les requêtes <code>/api/*</code> étaient gérées ; le frontend et les images n'étaient pas servis.
-  </p>
-
-  <div class="flow">
-    <div class="flow-step"><div class="flow-num">1</div><div class="flow-text">Build Vite génère <code>client/dist/</code> avec tous les assets (JS, CSS, images WebP) prêts pour production</div></div>
-    <div class="flow-step"><div class="flow-num">2</div><div class="flow-text">Express en production : <code>app.use(express.static(distPath))</code> sert <code>client/dist/</code> sur <code>/</code></div></div>
-    <div class="flow-step"><div class="flow-num">3</div><div class="flow-text">Les images WebP dans <code>dist/img/</code> sont servies au même serveur que l'API (une seule connexion)</div></div>
-    <div class="flow-step"><div class="flow-num">4</div><div class="flow-num">5</div><div class="flow-text">Fallback SPA : toute route non trouvée retourne <code>index.html</code> pour que React Router gère la navigation côté client</div></div>
-  </div>
-
-  <h2>Résultats mesurés</h2>
-  <div class="note green">
-    <strong>Avant optimisations :</strong> 45 MB d'images pour 6 véhicules visibles → page 2-3 secondes à charger sur 4G<br/>
-    <strong>Après optimisations :</strong> 1.5 MB d'images pour les mêmes 6 véhicules → page < 500ms sur 4G
-  </div>
-
-  <p>
-    Les trois leviers de performance appliqués :
-  </p>
-  <ol style="margin: 12px 0; padding-left: 20px; line-height: 1.8; font-size: 10pt;">
-    <li><strong>Réduction du poids des fichiers</strong> (conversion WebP) — 95% du gain</li>
-    <li><strong>Reqêtes plus petites</strong> (dimensions adaptées par composant) — 5% du gain complémentaire</li>
-    <li><strong>Priorités intelligentes</strong> (eager/lazy + fetchPriority) — perception de rapidité immédiate</li>
-  </ol>
 </div>
 
-<!-- 09 — DÉPLOIEMENT -->
+<!-- 08 — DÉPLOIEMENT -->
+<div class="page page-break">
   <div class="section-header">
-    <div class="section-tag">11</div>
+    <div class="section-tag">08</div>
     <div class="section-title">Déploiement</div>
   </div>
 
   <h2>Architecture de production</h2>
   <div class="flow">
-    <div class="flow-step"><div class="flow-num">1</div><div class="flow-text"><strong>Navigateur</strong> — envoie une requête HTTPS vers eclipse-auto.theo-ferrete.fr</div></div>
-    <div class="flow-step"><div class="flow-num">2</div><div class="flow-text"><strong>Apache (port 443)</strong> — termine le SSL Let's Encrypt et sert les fichiers statiques React depuis <code>client/dist</code></div></div>
-    <div class="flow-step"><div class="flow-num">3</div><div class="flow-text">Pour les URLs <code>/api/*</code>, Apache fait un <strong>reverse proxy</strong> vers localhost:3001</div></div>
-    <div class="flow-step"><div class="flow-num">4</div><div class="flow-text"><strong>Express (port 3001)</strong> géré par PM2 traite la requête et interroge Supabase</div></div>
-    <div class="flow-step"><div class="flow-num">5</div><div class="flow-text"><strong>Supabase Cloud</strong> — base de données PostgreSQL hébergée externement</div></div>
+    <div class="flow-step"><div class="flow-num">1</div><div class="flow-text"><strong>Navigateur</strong> — requête HTTPS vers eclipse-auto.theo-ferrete.fr</div></div>
+    <div class="flow-step"><div class="flow-num">2</div><div class="flow-text"><strong>Express (port 3001)</strong> géré par PM2 — sert le frontend statique depuis <code>client/dist/</code> et traite les requêtes <code>/api/*</code></div></div>
+    <div class="flow-step"><div class="flow-num">3</div><div class="flow-text"><strong>Fallback SPA</strong> — toute route non trouvée retourne <code>index.html</code> pour que React Router gère la navigation</div></div>
+    <div class="flow-step"><div class="flow-num">4</div><div class="flow-text"><strong>Supabase Cloud</strong> — PostgreSQL + Auth hébergés externalement</div></div>
   </div>
 
   <h2>Infrastructure</h2>
@@ -1163,11 +463,9 @@
     <tbody>
       <tr><td><strong>Hébergeur</strong></td><td>VPS OVH — Ubuntu 22.04 LTS</td></tr>
       <tr><td><strong>Domaine</strong></td><td>eclipse-auto.theo-ferrete.fr</td></tr>
-      <tr><td><strong>DNS</strong></td><td>Enregistrement A OVH pointant vers l'IP du VPS</td></tr>
-      <tr><td><strong>Serveur web</strong></td><td>Apache 2 avec mod_proxy</td></tr>
       <tr><td><strong>SSL</strong></td><td>Let's Encrypt — renouvellement automatique</td></tr>
       <tr><td><strong>Process manager</strong></td><td>PM2 — redémarre automatiquement au reboot</td></tr>
-      <tr><td><strong>Base de données</strong></td><td>Supabase Cloud (PostgreSQL)</td></tr>
+      <tr><td><strong>Base de données</strong></td><td>Supabase Cloud (PostgreSQL managé)</td></tr>
     </tbody>
   </table>
 
@@ -1177,19 +475,25 @@
     <tbody>
       <tr><td><code>VITE_SUPABASE_URL</code></td><td>Client</td><td>URL du projet Supabase</td></tr>
       <tr><td><code>VITE_SUPABASE_ANON_KEY</code></td><td>Client</td><td>Clé publique Supabase (safe à exposer)</td></tr>
-      <tr><td><code>PORT</code></td><td>Serveur</td><td>Port du serveur Express (3001)</td></tr>
-      <tr><td><code>CLIENT_URL</code></td><td>Serveur</td><td>Domaine autorisé par CORS</td></tr>
-      <tr><td><code>SUPABASE_SERVICE_ROLE_KEY</code></td><td>Serveur</td><td>Clé admin Supabase — bypasse les RLS, confidentielle, jamais dans le code client</td></tr>
-      <tr><td><code>RESEND_API_KEY</code></td><td>Serveur</td><td>Clé API Resend pour l'envoi d'e-mails (formulaire de contact)</td></tr>
+      <tr><td><code>PORT</code></td><td>Serveur</td><td>Port Express (défaut : 3001)</td></tr>
+      <tr><td><code>NODE_ENV</code></td><td>Serveur</td><td>"production" pour activer le serving statique et désactiver CORS</td></tr>
+      <tr><td><code>SUPABASE_URL</code></td><td>Serveur</td><td>URL du projet Supabase (côté serveur)</td></tr>
+      <tr><td><code>SUPABASE_SERVICE_ROLE_KEY</code></td><td>Serveur</td><td>Clé admin Supabase — bypasse les RLS. Confidentielle, jamais dans le code client</td></tr>
+      <tr><td><code>GMAIL_USER</code></td><td>Serveur</td><td>Compte Gmail pour l'envoi des e-mails de contact</td></tr>
+      <tr><td><code>GMAIL_PASS</code></td><td>Serveur</td><td>Mot de passe d'application Gmail (2FA requis)</td></tr>
     </tbody>
   </table>
 
-  <div class="note">
-    <strong>Fichier <code>.env.example</code> :</strong> un fichier modèle versionné dans Git fournit la liste des variables à définir, sans aucune valeur réelle. Le fichier <code>.env</code> contenant les secrets réels est exclu via <code>.gitignore</code>.
+  <h2>Procédure de mise en production</h2>
+  <div class="flow">
+    <div class="flow-step"><div class="flow-num">1</div><div class="flow-text">Développement local — commit et push sur la branche <code>main</code></div></div>
+    <div class="flow-step"><div class="flow-num">2</div><div class="flow-text">Sur le VPS : <code>git fetch origin && git reset --hard origin/main</code></div></div>
+    <div class="flow-step"><div class="flow-num">3</div><div class="flow-text">Rebuild du frontend : <code>cd client && npm install && npm run build</code></div></div>
+    <div class="flow-step"><div class="flow-num">4</div><div class="flow-text">Redémarrage du serveur : <code>cd server && npm install && pm2 restart eclipse-auto-api</code></div></div>
   </div>
 
-  <div class="note green">
-    <strong>Mise en production :</strong> après chaque push Git, il suffit de faire <code>git pull</code> + <code>npm run build</code> dans le dossier client + <code>pm2 restart eclipse-auto-api</code> sur le VPS.
+  <div class="note">
+    <strong>Fichier <code>.env.example</code> :</strong> versionné dans Git — liste toutes les variables sans valeurs réelles. Le <code>.env</code> avec les secrets est exclu via <code>.gitignore</code>.
   </div>
 </div>
 

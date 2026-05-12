@@ -6,15 +6,20 @@ function getTokenFromHeader(req) {
   return header.split(' ')[1]
 }
 
+async function verifyToken(token) {
+  if (!token) return { error: 'Token manquant.' }
+  const { data: { user }, error } = await supabase.auth.getUser(token)
+  if (error || !user) {
+    return { error: 'Token invalide ou expiré.' }
+  }
+  return { user }
+}
+
 async function requireAuth(req, res, next) {
   const token = getTokenFromHeader(req)
-  if (!token) return res.status(401).json({ error: 'Token manquant.' })
+  const { user, error } = await verifyToken(token)
 
-  const { data: { user }, error } = await supabase.auth.getUser(token)
-
-  if (error || !user) {
-    return res.status(401).json({ error: 'Token invalide ou expiré.' })
-  }
+  if (error) return res.status(401).json({ error })
 
   req.user = user
   next()
@@ -22,13 +27,9 @@ async function requireAuth(req, res, next) {
 
 async function requireAdmin(req, res, next) {
   const token = getTokenFromHeader(req)
-  if (!token) return res.status(401).json({ error: 'Token manquant.' })
+  const { user, error } = await verifyToken(token)
 
-  const { data: { user }, error } = await supabase.auth.getUser(token)
-
-  if (error || !user) {
-    return res.status(401).json({ error: 'Token invalide ou expiré.' })
-  }
+  if (error) return res.status(401).json({ error })
 
   const { data: profile } = await supabase
     .from('profiles')

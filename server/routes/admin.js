@@ -35,14 +35,20 @@ router.get('/stats', requireAdmin, async (req, res) => {
 
 // GET /api/admin/clients — liste des clients
 router.get('/clients', requireAdmin, async (req, res) => {
-  const { data, error } = await supabase
+  const { limit = 50, offset = 0 } = req.query
+
+  const limitNum = Math.min(parseInt(limit) || 50, 100)
+  const offsetNum = Math.max(parseInt(offset) || 0, 0)
+
+  const { data, error, count } = await supabase
     .from('profiles')
-    .select('*')
+    .select('*', { count: 'exact' })
     .eq('role', 'client')
     .order('created_at', { ascending: false })
+    .range(offsetNum, offsetNum + limitNum - 1)
 
   if (error) return res.status(500).json({ error: error.message })
-  res.json(data)
+  res.json({ data, total: count, limit: limitNum, offset: offsetNum })
 })
 
 // DELETE /api/admin/clients/:id — supprimer un client

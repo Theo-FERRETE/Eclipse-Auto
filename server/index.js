@@ -14,15 +14,22 @@ app.use('/api', apiRouter)
 
 // Frontend statique (production)
 const distPath = path.join(__dirname, '../client/dist')
-app.use(express.static(distPath))
+app.use(express.static(distPath, {
+  maxAge: '1y',
+  etag: false,
+}))
 app.use((req, res) => {
   res.sendFile(path.join(distPath, 'index.html'))
 })
 
 // Erreur globale
 app.use((err, req, res, next) => {
-  console.error(err)
-  res.status(500).json({ error: 'Erreur interne du serveur.' })
+  const isDev = process.env.NODE_ENV !== 'production'
+  const message = isDev ? err.message : 'Erreur interne du serveur.'
+
+  if (isDev) console.error(err)
+
+  res.status(err.status || 500).json({ error: message })
 })
 
 app.listen(PORT, () => {

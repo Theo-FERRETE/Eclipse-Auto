@@ -11,12 +11,55 @@ const transporter = nodemailer.createTransport({
   },
 })
 
+const ipRequestCounts = new Map()
+
+function checkRateLimit(ip) {
+  const now = Date.now()
+  const windowMs = 15 * 60 * 1000
+  const maxRequests = 5
+
+  if (!ipRequestCounts.has(ip)) {
+    ipRequestCounts.set(ip, [])
+  }
+
+  const requests = ipRequestCounts.get(ip).filter(time => now - time < windowMs)
+  ipRequestCounts.set(ip, requests)
+
+  if (requests.length >= maxRequests) {
+    return false
+  }
+
+  requests.push(now)
+  ipRequestCounts.set(ip, requests)
+  return true
+}
+
+function escapeHtml(text) {
+  const map = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;',
+  }
+  return text.replace(/[&<>"']/g, char => map[char])
+}
+
 // POST /api/contact — formulaire de contact
 router.post('/', async (req, res) => {
+  const clientIp = req.ip || req.connection.remoteAddress
   const { name, email, phone, subject, message } = req.body
+
+  if (!checkRateLimit(clientIp)) {
+    return res.status(429).json({ error: 'Trop de requêtes. Réessayez dans 15 minutes.' })
+  }
 
   if (!name || !email || !message) {
     return res.status(400).json({ error: 'Nom, email et message sont obligatoires.' })
+  }
+
+  if (name.length > 100 || message.length > 5000) {
+    return res.status(400).json({ error: 'Champs trop longs.' })
   }
 
   try {
@@ -24,11 +67,11 @@ router.post('/', async (req, res) => {
       from: `"Eclipse Auto" <${process.env.GMAIL_USER}>`,
       to: process.env.GMAIL_USER,
       replyTo: email,
-      subject: `[Eclipse Auto] ${subject || 'Nouveau message'}`,
+      subject: `[Eclipse Auto] ${escapeHtml(subject || 'Nouveau message')}`,
       html: `
-        <p><strong>De :</strong> ${name} (${email}${phone ? ` — ${phone}` : ''})</p>
+        <p><strong>De :</strong> ${escapeHtml(name)} (${escapeHtml(email)}${phone ? ` — ${escapeHtml(phone)}` : ''})</p>
         <p><strong>Message :</strong></p>
-        <p>${message.replace(/\n/g, '<br>')}</p>
+        <p>${escapeHtml(message).replace(/\n/g, '<br>')}</p>
       `,
     })
 
