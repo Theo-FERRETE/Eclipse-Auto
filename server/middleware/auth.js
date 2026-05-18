@@ -1,3 +1,4 @@
+const { createClient } = require('@supabase/supabase-js')
 const supabase = require('../supabase')
 
 function getTokenFromHeader(req) {
@@ -31,7 +32,13 @@ async function requireAdmin(req, res, next) {
 
   if (error) return res.status(401).json({ error })
 
-  const { data: profile } = await supabase
+  const userClient = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_ANON_KEY,
+    { global: { headers: { Authorization: `Bearer ${token}` } } }
+  )
+
+  const { data: profile } = await userClient
     .from('profiles')
     .select('role')
     .eq('id', user.id)
