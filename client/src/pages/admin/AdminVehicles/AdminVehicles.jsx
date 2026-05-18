@@ -79,6 +79,11 @@ export default function AdminVehicles() {
     setSuccess(null)
   }
 
+  async function getToken() {
+    const { data: { session } } = await supabase.auth.getSession()
+    return session?.access_token
+  }
+
   async function handleSubmit(e) {
     e.preventDefault()
     setError(null)
@@ -96,15 +101,17 @@ export default function AdminVehicles() {
       status: form.status,
     }
     try {
-      if (editing) {
-        const { error } = await supabase.from('vehicles').update(payload).eq('id', editing)
-        if (error) throw error
-        setSuccess('Modifié avec succès.')
-      } else {
-        const { error } = await supabase.from('vehicles').insert(payload)
-        if (error) throw error
-        setSuccess('Ajouté avec succès.')
-      }
+      const token = await getToken()
+      const url = editing ? `/api/vehicles/${editing}` : '/api/vehicles'
+      const method = editing ? 'PUT' : 'POST'
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify(payload),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Une erreur est survenue.')
+      setSuccess(editing ? 'Modifié avec succès.' : 'Ajouté avec succès.')
       await fetchVehicles()
       setTimeout(() => closeForm(), 1500)
     } catch (err) {
@@ -115,14 +122,23 @@ export default function AdminVehicles() {
   }
 
   async function confirmDelete() {
-    const { error } = await supabase.from('vehicles').delete().eq('id', confirmId)
+    const token = await getToken()
+    const res = await fetch(`/api/vehicles/${confirmId}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` },
+    })
     setConfirmId(null)
-    if (error) { alert('Impossible de supprimer ce véhicule.'); return }
+    if (!res.ok) { alert('Impossible de supprimer ce véhicule.'); return }
     fetchVehicles()
   }
 
-  async function handleStatusChange(id, status) {
-    await supabase.from('vehicles').update({ status }).eq('id', id)
+  async function handleStatusChange(vehicle, status) {
+    const token = await getToken()
+    await fetch(`/api/vehicles/${vehicle.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ ...vehicle, status }),
+    })
     fetchVehicles()
   }
 
@@ -189,7 +205,7 @@ export default function AdminVehicles() {
                           <select
                             className="status-select"
                             value={v.status}
-                            onChange={e => handleStatusChange(v.id, e.target.value)}
+                            onChange={e => handleStatusChange(v, e.target.value)}
                           >
                             <option value="available">Disponible</option>
                             <option value="reserved">Réservé</option>

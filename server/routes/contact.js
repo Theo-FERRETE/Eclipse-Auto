@@ -66,6 +66,10 @@ router.post('/', async (req, res) => {
     return res.status(400).json({ error: 'Adresse email invalide.' })
   }
 
+  if (/[\r\n]/.test(email)) {
+    return res.status(400).json({ error: 'Adresse email invalide.' })
+  }
+
   if (name.length > 100 || message.length > 5000) {
     return res.status(400).json({ error: 'Champs trop longs.' })
   }

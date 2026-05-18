@@ -109,4 +109,122 @@ describe('PATCH /api/reservations/:id/status (admin)', () => {
     expect(res.status).toBe(400)
     expect(res.body.error).toMatch(/Statut invalide/)
   })
+
+  it('met à jour le statut d\'une réservation (200)', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
+    const profileQuery = makeQuery({ role: 'admin' })
+    profileQuery.single = jest.fn().mockResolvedValue({ data: { role: 'admin' }, error: null })
+    const updated = { ...mockReservation, status: 'confirmed' }
+    supabaseMock.from.mockReturnValueOnce(profileQuery).mockReturnValue(makeQuery(updated))
+
+    const res = await request(app)
+      .patch(`/api/reservations/${mockReservation.id}/status`)
+      .set('Authorization', 'Bearer admin-token')
+      .send({ status: 'confirmed' })
+
+    expect(res.status).toBe(200)
+    expect(res.body.status).toBe('confirmed')
+  })
+})
+
+describe('GET /api/reservations/all (admin) — cas succès', () => {
+  it('retourne toutes les réservations paginées (200)', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
+    const profileQuery = makeQuery({ role: 'admin' })
+    profileQuery.single = jest.fn().mockResolvedValue({ data: { role: 'admin' }, error: null })
+    supabaseMock.from.mockReturnValueOnce(profileQuery).mockReturnValue(makeQuery([mockReservation], 1))
+
+    const res = await request(app)
+      .get('/api/reservations/all')
+      .set('Authorization', 'Bearer admin-token')
+
+    expect(res.status).toBe(200)
+    expect(res.body).toHaveProperty('data')
+    expect(res.body).toHaveProperty('total')
+    expect(Array.isArray(res.body.data)).toBe(true)
+  })
+})
+
+describe('POST /api/reservations — cas complets', () => {
+  it('retourne 409 si le véhicule n\'est plus disponible', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockUser }, error: null })
+    const vehicleQuery = makeQuery({ status: 'reserved' })
+    supabaseMock.from.mockReturnValue(vehicleQuery)
+
+    const res = await request(app)
+      .post('/api/reservations')
+      .set('Authorization', 'Bearer user-token')
+      .send({ vehicle_id: 'vehicle-uuid-789' })
+
+    expect(res.status).toBe(409)
+    expect(res.body.error).toMatch(/disponible/)
+  })
+
+  it('crée une réservation et retourne 201', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockUser }, error: null })
+    const vehicleQuery = makeQuery({ status: 'available' })
+    const insertQuery = makeQuery(mockReservation)
+    supabaseMock.from
+      .mockReturnValueOnce(vehicleQuery)
+      .mockReturnValue(insertQuery)
+
+    const res = await request(app)
+      .post('/api/reservations')
+      .set('Authorization', 'Bearer user-token')
+      .send({ vehicle_id: 'vehicle-uuid-789' })
+
+    expect(res.status).toBe(201)
+    expect(res.body).toHaveProperty('id')
+  })
+})
+
+describe('PATCH /api/reservations/:id/cancel', () => {
+  it('rejette sans authentification (401)', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: null }, error: { message: 'No token' } })
+
+    const res = await request(app).patch(`/api/reservations/${mockReservation.id}/cancel`)
+
+    expect(res.status).toBe(401)
+  })
+
+  it('rejette si la réservation n\'appartient pas à l\'utilisateur (403)', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockUser }, error: null })
+    const q = makeQuery({ client_id: 'autre-user-id', status: 'pending' })
+    supabaseMock.from.mockReturnValue(q)
+
+    const res = await request(app)
+      .patch(`/api/reservations/${mockReservation.id}/cancel`)
+      .set('Authorization', 'Bearer user-token')
+
+    expect(res.status).toBe(403)
+  })
+
+  it('rejette si la réservation n\'est pas en attente (400)', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockUser }, error: null })
+    const q = makeQuery({ client_id: mockUser.id, status: 'confirmed' })
+    supabaseMock.from.mockReturnValue(q)
+
+    const res = await request(app)
+      .patch(`/api/reservations/${mockReservation.id}/cancel`)
+      .set('Authorization', 'Bearer user-token')
+
+    expect(res.status).toBe(400)
+    expect(res.body.error).toMatch(/annulées/)
+  })
+
+  it('annule la réservation avec succès (200)', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockUser }, error: null })
+    const selectQuery = makeQuery({ client_id: mockUser.id, status: 'pending' })
+    const updateQuery = makeQuery({ ...mockReservation, status: 'cancelled' })
+    supabaseMock.from
+      .mockReturnValueOnce(selectQuery)
+      .mockReturnValue(updateQuery)
+
+    const res = await request(app)
+      .patch(`/api/reservations/${mockReservation.id}/cancel`)
+      .set('Authorization', 'Bearer user-token')
+
+    expect(res.status).toBe(200)
+    expect(res.body.status).toBe('cancelled')
+  })
 })

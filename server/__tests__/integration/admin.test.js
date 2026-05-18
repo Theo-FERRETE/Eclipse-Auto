@@ -79,4 +79,57 @@ describe('DELETE /api/admin/clients/:id', () => {
 
     expect(res.status).toBe(401)
   })
+
+  it('supprime un client et retourne success (200)', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
+    const profileQuery = makeQuery({ role: 'admin' })
+    profileQuery.single = jest.fn().mockResolvedValue({ data: { role: 'admin' }, error: null })
+    supabaseMock.from.mockReturnValueOnce(profileQuery).mockReturnValue(makeQuery(null))
+
+    const res = await request(app)
+      .delete('/api/admin/clients/some-user-id')
+      .set('Authorization', 'Bearer admin-token')
+
+    expect(res.status).toBe(200)
+    expect(res.body.success).toBe(true)
+  })
+})
+
+describe('GET /api/admin/stats — cas succès', () => {
+  it('retourne les statistiques du dashboard (200)', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
+    const profileQuery = makeQuery({ role: 'admin' })
+    profileQuery.single = jest.fn().mockResolvedValue({ data: { role: 'admin' }, error: null })
+    const statsQuery = makeQuery(null, 10)
+    supabaseMock.from.mockReturnValueOnce(profileQuery).mockReturnValue(statsQuery)
+
+    const res = await request(app)
+      .get('/api/admin/stats')
+      .set('Authorization', 'Bearer admin-token')
+
+    expect(res.status).toBe(200)
+    expect(res.body).toHaveProperty('vehicles')
+    expect(res.body).toHaveProperty('reservations')
+    expect(res.body).toHaveProperty('clients')
+    expect(res.body.vehicles).toHaveProperty('total')
+  })
+})
+
+describe('GET /api/admin/clients — cas succès', () => {
+  it('retourne la liste des clients paginée (200)', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
+    const profileQuery = makeQuery({ role: 'admin' })
+    profileQuery.single = jest.fn().mockResolvedValue({ data: { role: 'admin' }, error: null })
+    const mockClient = { id: 'client-uuid-001', email: 'client@test.com', role: 'client' }
+    supabaseMock.from.mockReturnValueOnce(profileQuery).mockReturnValue(makeQuery([mockClient], 1))
+
+    const res = await request(app)
+      .get('/api/admin/clients')
+      .set('Authorization', 'Bearer admin-token')
+
+    expect(res.status).toBe(200)
+    expect(res.body).toHaveProperty('data')
+    expect(res.body).toHaveProperty('total')
+    expect(Array.isArray(res.body.data)).toBe(true)
+  })
 })
