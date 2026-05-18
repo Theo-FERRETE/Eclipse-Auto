@@ -90,7 +90,7 @@ router.get('/:id', async (req, res) => {
 
 // POST /api/vehicles — créer un véhicule (admin)
 router.post('/', requireAdmin, async (req, res) => {
-  const { brand, model, year, price, fuel_type, transmission, mileage, power, description, status } = req.body
+  const { brand, model, year, price, fuel_type, transmission, mileage, power, description, status, images } = req.body
 
   if (!brand || !model || !year || !price || !fuel_type || !transmission) {
     return res.status(400).json({ error: 'Champs obligatoires manquants.' })
@@ -108,6 +108,7 @@ router.post('/', requireAdmin, async (req, res) => {
     power: power || null,
     description: description || null,
     status: status || 'available',
+    images: images || [],
   }).select().single()
 
   if (error) return res.status(500).json({ error: error.message })
@@ -116,7 +117,7 @@ router.post('/', requireAdmin, async (req, res) => {
 
 // PUT /api/vehicles/:id — modifier un véhicule (admin)
 router.put('/:id', requireAdmin, async (req, res) => {
-  const { brand, model, year, price, fuel_type, transmission, mileage, power, description, status } = req.body
+  const { brand, model, year, price, fuel_type, transmission, mileage, power, description, status, images } = req.body
 
   const validationError = validateVehicleInput({ year, price, mileage })
   if (validationError) return res.status(400).json({ error: validationError })
@@ -132,6 +133,7 @@ router.put('/:id', requireAdmin, async (req, res) => {
       power: power || null,
       description: description || null,
       status,
+      images: images || [],
     })
     .eq('id', req.params.id)
     .select()

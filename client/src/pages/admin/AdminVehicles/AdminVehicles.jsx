@@ -10,7 +10,7 @@ import './AdminVehicles.css'
 const EMPTY_FORM = {
   brand: '', model: '', year: '', price: '',
   fuel_type: '', transmission: '', mileage: '',
-  power: '', description: '', status: 'available',
+  power: '', description: '', status: 'available', image: '',
 }
 
 const ITEMS_PER_PAGE = 5
@@ -65,6 +65,7 @@ export default function AdminVehicles() {
       power: vehicle.power || '',
       description: vehicle.description || '',
       status: vehicle.status || 'available',
+      image: vehicle.images?.[0] || '',
     })
     setError(null)
     setSuccess(null)
@@ -99,6 +100,7 @@ export default function AdminVehicles() {
       power: form.power || null,
       description: form.description || null,
       status: form.status,
+      images: form.image ? [form.image] : [],
     }
     try {
       const token = await getToken()
@@ -266,18 +268,18 @@ export default function AdminVehicles() {
                         <label className="vmf-label">Carburant *</label>
                         <select name="fuel_type" className="vmf-input" value={form.fuel_type} onChange={handleChange} required>
                           <option value="">Sélectionner</option>
-                          <option value="Essence">Essence</option>
-                          <option value="Diesel">Diesel</option>
-                          <option value="Hybride">Hybride</option>
-                          <option value="Électrique">Électrique</option>
+                          <option value="ESSENCE">Essence</option>
+                          <option value="DIESEL">Diesel</option>
+                          <option value="HYBRIDE">Hybride</option>
+                          <option value="ELECTRIQUE">Électrique</option>
                         </select>
                       </div>
                       <div className="vmf-group">
                         <label className="vmf-label">Transmission *</label>
                         <select name="transmission" className="vmf-input" value={form.transmission} onChange={handleChange} required>
                           <option value="">Sélectionner</option>
-                          <option value="Automatique">Automatique</option>
-                          <option value="Manuelle">Manuelle</option>
+                          <option value="AUTOMATIQUE">Automatique</option>
+                          <option value="MANUELLE">Manuelle</option>
                         </select>
                       </div>
                     </div>
@@ -300,6 +302,11 @@ export default function AdminVehicles() {
                         <option value="reserved">Réservé</option>
                         <option value="sold">Vendu</option>
                       </select>
+                    </div>
+
+                    <div className="vmf-group">
+                      <label className="vmf-label">URL de l'image</label>
+                      <input name="image" className="vmf-input" value={form.image} onChange={handleChange} placeholder="https://..." />
                     </div>
 
                     <div className="vmf-group">
