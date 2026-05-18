@@ -1,4 +1,3 @@
-const { createClient } = require('@supabase/supabase-js')
 const supabase = require('../supabase')
 
 function getTokenFromHeader(req) {
@@ -32,24 +31,11 @@ async function requireAdmin(req, res, next) {
 
   if (error) return res.status(401).json({ error })
 
-  const userClient = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_ANON_KEY,
-    { global: { headers: { Authorization: `Bearer ${token}` } } }
-  )
-
-  const { data: profile } = await userClient
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single()
-
-  if (profile?.role !== 'admin') {
+  if (user.app_metadata?.role !== 'admin') {
     return res.status(403).json({ error: 'Accès réservé aux administrateurs.' })
   }
 
   req.user = user
-  req.profile = profile
   next()
 }
 
