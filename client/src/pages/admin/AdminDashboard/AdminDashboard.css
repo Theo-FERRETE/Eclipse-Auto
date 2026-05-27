@@ -36,43 +36,85 @@
   margin-bottom: 4px;
 }
 
-.stats-grid {
+.kpi-row {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 2px;
   background: var(--border);
 }
 
-.stat-card {
+.kpi-card {
   background: var(--black-2);
-  padding: 28px 24px;
+  padding: 20px 24px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  transition: background 0.2s;
+  gap: 6px;
 }
-.stat-card:hover { background: var(--black-3); }
 
-.stat-card-n {
+.kpi-n {
   font-family: var(--font-display);
-  font-size: 48px;
+  font-size: 36px;
   font-weight: 900;
   color: var(--white);
   line-height: 1;
 }
 
-.stat-card-n.available { color: var(--red); }
-.stat-card-n.reserved { color: #EF9F27; }
-.stat-card-n.sold { color: var(--gray); }
-.stat-card-n.pending { color: #EF9F27; }
-.stat-card-n.confirmed { color: #22c55e; }
+.kpi-n.confirmed { color: #22c55e; }
 
-.stat-card-l {
+.kpi-l {
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gray-dark);
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  background: var(--border);
+  margin-top: 40px;
+}
+
+.chart-card {
+  background: var(--black-2);
+  padding: 28px 24px 24px;
+}
+
+.chart-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.chart-title {
   font-family: var(--font-display);
   font-size: 12px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--gray-dark);
+}
+
+.chart-total {
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--border-light);
+}
+
+.chart-body {
+  height: 260px;
+  position: relative;
+}
+
+.chart-empty {
+  color: var(--gray-dark);
+  font-size: 13px;
+  padding: 40px 0;
+  text-align: center;
 }
 
 .admin-actions {
@@ -84,7 +126,8 @@
 
 @media (max-width: 1024px) {
   .admin-layout { grid-template-columns: 1fr; gap: 24px; }
-  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .kpi-row { grid-template-columns: repeat(2, 1fr); }
+  .charts-grid { grid-template-columns: 1fr; }
 
   .admin-sidebar {
     position: static;

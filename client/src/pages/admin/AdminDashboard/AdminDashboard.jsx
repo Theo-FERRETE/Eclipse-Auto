@@ -3,35 +3,29 @@ import { Link } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import AdminSidebar from '@/components/AdminSidebar/AdminSidebar'
 import AdminPageHeader from '@/components/AdminPageHeader/AdminPageHeader'
+import VehicleStatusChart from '@/components/AdminCharts/VehicleStatusChart'
+import ReservationStatusChart from '@/components/AdminCharts/ReservationStatusChart'
 import './AdminDashboard.css'
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState({
-    vehicles: 0, available: 0, reserved: 0, sold: 0,
-    reservations: 0, pending: 0, confirmed: 0, clients: 0,
-  })
+  const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function fetchStats() {
-      const [
-        { count: vehicles }, { count: available }, { count: reserved }, { count: sold },
-        { count: reservations }, { count: pending }, { count: confirmed }, { count: clients },
-      ] = await Promise.all([
-        supabase.from('vehicles').select('*', { count: 'exact', head: true }),
-        supabase.from('vehicles').select('*', { count: 'exact', head: true }).eq('status', 'available'),
-        supabase.from('vehicles').select('*', { count: 'exact', head: true }).eq('status', 'reserved'),
-        supabase.from('vehicles').select('*', { count: 'exact', head: true }).eq('status', 'sold'),
-        supabase.from('reservations').select('*', { count: 'exact', head: true }),
-        supabase.from('reservations').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
-        supabase.from('reservations').select('*', { count: 'exact', head: true }).eq('status', 'confirmed'),
-        supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'client'),
-      ])
-      setStats({ vehicles, available, reserved, sold, reservations, pending, confirmed, clients })
+      const { data: { session } } = await supabase.auth.getSession()
+      const res = await fetch('/api/admin/stats', {
+        headers: { 'Authorization': `Bearer ${session?.access_token}` },
+      })
+      if (res.ok) setStats(await res.json())
       setLoading(false)
     }
     fetchStats()
   }, [])
+
+  const v = stats?.vehicles ?? {}
+  const r = stats?.reservations ?? {}
+  const cancelled = (r.total ?? 0) - (r.pending ?? 0) - (r.confirmed ?? 0)
 
   return (
     <main className="admin">
@@ -43,20 +37,38 @@ export default function AdminDashboard() {
             <div className="dashboard-loading"><div className="loader"></div></div>
           ) : (
             <>
-              <div className="admin-section-title"><div className="tag">Véhicules</div></div>
-              <div className="stats-grid">
-                <div className="stat-card"><div className="stat-card-n">{stats.vehicles}</div><div className="stat-card-l">Total</div></div>
-                <div className="stat-card"><div className="stat-card-n available">{stats.available}</div><div className="stat-card-l">Disponibles</div></div>
-                <div className="stat-card"><div className="stat-card-n reserved">{stats.reserved}</div><div className="stat-card-l">Réservés</div></div>
-                <div className="stat-card"><div className="stat-card-n sold">{stats.sold}</div><div className="stat-card-l">Vendus</div></div>
+              <div className="kpi-row">
+                <div className="kpi-card">
+                  <div className="kpi-n">{v.total}</div>
+                  <div className="kpi-l">Véhicules</div>
+                </div>
+                <div className="kpi-card">
+                  <div className="kpi-n">{r.total}</div>
+                  <div className="kpi-l">Réservations</div>
+                </div>
+                <div className="kpi-card">
+                  <div className="kpi-n confirmed">{r.confirmed}</div>
+                  <div className="kpi-l">Confirmées</div>
+                </div>
+                <div className="kpi-card">
+                  <div className="kpi-n">{stats.clients}</div>
+                  <div className="kpi-l">Clients</div>
+                </div>
               </div>
-              <div className="admin-section-title" style={{ marginTop: '40px' }}><div className="tag">Réservations</div></div>
-              <div className="stats-grid">
-                <div className="stat-card"><div className="stat-card-n">{stats.reservations}</div><div className="stat-card-l">Total</div></div>
-                <div className="stat-card"><div className="stat-card-n pending">{stats.pending}</div><div className="stat-card-l">En attente</div></div>
-                <div className="stat-card"><div className="stat-card-n confirmed">{stats.confirmed}</div><div className="stat-card-l">Confirmées</div></div>
-                <div className="stat-card"><div className="stat-card-n">{stats.clients}</div><div className="stat-card-l">Clients</div></div>
+
+              <div className="charts-grid">
+                <VehicleStatusChart
+                  available={v.available ?? 0}
+                  reserved={v.reserved ?? 0}
+                  sold={v.sold ?? 0}
+                />
+                <ReservationStatusChart
+                  pending={r.pending ?? 0}
+                  confirmed={r.confirmed ?? 0}
+                  cancelled={Math.max(0, cancelled)}
+                />
               </div>
+
               <div className="admin-actions">
                 <Link to="/admin/vehicles" className="btn-primary">Gérer les véhicules</Link>
                 <Link to="/admin/reservations" className="btn-ghost">Gérer les réservations</Link>
