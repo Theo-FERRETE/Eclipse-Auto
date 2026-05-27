@@ -147,9 +147,7 @@ describe('DELETE /api/vehicles/:id (admin)', () => {
 
   it('supprime le véhicule et retourne success (200)', async () => {
     supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
-    const profileQuery = makeQuery({ role: 'admin' })
-    profileQuery.single = jest.fn().mockResolvedValue({ data: { role: 'admin' }, error: null })
-    supabaseMock.from.mockReturnValueOnce(profileQuery).mockReturnValue(makeQuery(null))
+    supabaseMock.from.mockReturnValue(makeQuery(null))
 
     const res = await request(app)
       .delete(`/api/vehicles/${mockVehicle.id}`)
@@ -183,9 +181,7 @@ describe('GET /api/vehicles/by-slug/:slug', () => {
 describe('POST /api/vehicles (admin) — cas succès', () => {
   it('crée un véhicule et retourne 201', async () => {
     supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
-    const profileQuery = makeQuery({ role: 'admin' })
-    profileQuery.single = jest.fn().mockResolvedValue({ data: { role: 'admin' }, error: null })
-    supabaseMock.from.mockReturnValueOnce(profileQuery).mockReturnValue(makeQuery(mockVehicle))
+    supabaseMock.from.mockReturnValue(makeQuery(mockVehicle))
 
     const res = await request(app)
       .post('/api/vehicles')
@@ -198,9 +194,6 @@ describe('POST /api/vehicles (admin) — cas succès', () => {
 
   it('rejette si les champs obligatoires sont manquants (400)', async () => {
     supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
-    const profileQuery = makeQuery({ role: 'admin' })
-    profileQuery.single = jest.fn().mockResolvedValue({ data: { role: 'admin' }, error: null })
-    supabaseMock.from.mockReturnValueOnce(profileQuery)
 
     const res = await request(app)
       .post('/api/vehicles')
@@ -225,10 +218,8 @@ describe('PUT /api/vehicles/:id (admin)', () => {
 
   it('met à jour un véhicule et retourne 200', async () => {
     supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
-    const profileQuery = makeQuery({ role: 'admin' })
-    profileQuery.single = jest.fn().mockResolvedValue({ data: { role: 'admin' }, error: null })
     const updated = { ...mockVehicle, model: 'Civic' }
-    supabaseMock.from.mockReturnValueOnce(profileQuery).mockReturnValue(makeQuery(updated))
+    supabaseMock.from.mockReturnValue(makeQuery(updated))
 
     const res = await request(app)
       .put(`/api/vehicles/${mockVehicle.id}`)

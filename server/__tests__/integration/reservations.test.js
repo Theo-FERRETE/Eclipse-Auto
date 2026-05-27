@@ -112,10 +112,8 @@ describe('PATCH /api/reservations/:id/status (admin)', () => {
 
   it('met à jour le statut d\'une réservation (200)', async () => {
     supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
-    const profileQuery = makeQuery({ role: 'admin' })
-    profileQuery.single = jest.fn().mockResolvedValue({ data: { role: 'admin' }, error: null })
     const updated = { ...mockReservation, status: 'confirmed' }
-    supabaseMock.from.mockReturnValueOnce(profileQuery).mockReturnValue(makeQuery(updated))
+    supabaseMock.from.mockReturnValue(makeQuery(updated))
 
     const res = await request(app)
       .patch(`/api/reservations/${mockReservation.id}/status`)
@@ -130,9 +128,7 @@ describe('PATCH /api/reservations/:id/status (admin)', () => {
 describe('GET /api/reservations/all (admin) — cas succès', () => {
   it('retourne toutes les réservations paginées (200)', async () => {
     supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
-    const profileQuery = makeQuery({ role: 'admin' })
-    profileQuery.single = jest.fn().mockResolvedValue({ data: { role: 'admin' }, error: null })
-    supabaseMock.from.mockReturnValueOnce(profileQuery).mockReturnValue(makeQuery([mockReservation], 1))
+    supabaseMock.from.mockReturnValue(makeQuery([mockReservation], 1))
 
     const res = await request(app)
       .get('/api/reservations/all')

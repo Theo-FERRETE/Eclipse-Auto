@@ -7,6 +7,7 @@ const mockUser = {
 const mockAdmin = {
   id: 'admin-uuid-456',
   email: 'admin@test.com',
+  app_metadata: { role: 'admin' },
 }
 
 const mockVehicle = {

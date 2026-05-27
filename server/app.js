@@ -1,5 +1,6 @@
 require('dotenv').config()
 const express = require('express')
+const helmet = require('helmet')
 const path = require('path')
 const setupMiddleware = require('./middleware/setup')
 const apiRouter = require('./routes/api')
@@ -7,6 +8,7 @@ const apiRouter = require('./routes/api')
 const app = express()
 
 app.set('trust proxy', 1)
+app.use(helmet())
 setupMiddleware(app)
 
 app.use('/api', apiRouter)

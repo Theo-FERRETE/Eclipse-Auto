@@ -82,9 +82,7 @@ describe('DELETE /api/admin/clients/:id', () => {
 
   it('supprime un client et retourne success (200)', async () => {
     supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
-    const profileQuery = makeQuery({ role: 'admin' })
-    profileQuery.single = jest.fn().mockResolvedValue({ data: { role: 'admin' }, error: null })
-    supabaseMock.from.mockReturnValueOnce(profileQuery).mockReturnValue(makeQuery(null))
+    supabaseMock.from.mockReturnValue(makeQuery(null))
 
     const res = await request(app)
       .delete('/api/admin/clients/some-user-id')
@@ -98,10 +96,8 @@ describe('DELETE /api/admin/clients/:id', () => {
 describe('GET /api/admin/stats — cas succès', () => {
   it('retourne les statistiques du dashboard (200)', async () => {
     supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
-    const profileQuery = makeQuery({ role: 'admin' })
-    profileQuery.single = jest.fn().mockResolvedValue({ data: { role: 'admin' }, error: null })
     const statsQuery = makeQuery(null, 10)
-    supabaseMock.from.mockReturnValueOnce(profileQuery).mockReturnValue(statsQuery)
+    supabaseMock.from.mockReturnValue(statsQuery)
 
     const res = await request(app)
       .get('/api/admin/stats')
@@ -118,10 +114,8 @@ describe('GET /api/admin/stats — cas succès', () => {
 describe('GET /api/admin/clients — cas succès', () => {
   it('retourne la liste des clients paginée (200)', async () => {
     supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
-    const profileQuery = makeQuery({ role: 'admin' })
-    profileQuery.single = jest.fn().mockResolvedValue({ data: { role: 'admin' }, error: null })
     const mockClient = { id: 'client-uuid-001', email: 'client@test.com', role: 'client' }
-    supabaseMock.from.mockReturnValueOnce(profileQuery).mockReturnValue(makeQuery([mockClient], 1))
+    supabaseMock.from.mockReturnValue(makeQuery([mockClient], 1))
 
     const res = await request(app)
       .get('/api/admin/clients')
