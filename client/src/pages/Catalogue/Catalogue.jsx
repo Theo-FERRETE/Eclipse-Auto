@@ -1,30 +1,23 @@
 import { useState, useMemo, useEffect } from 'react'
-import VehicleCard from '@/components/VehicleCard/VehicleCard'
+import { useSearchParams } from 'react-router-dom'
 import Filters from '@/components/Filters/Filters'
-import Pagination from '@/components/Pagination/Pagination'
 import { supabase } from '@/lib/supabase'
 import { getVehicles, patchCachedVehicle } from '@/lib/vehiclesCache'
+import { DEFAULT_STATUS, ITEMS_PER_PAGE, filtersFromParams, buildParams } from './catalogueFilters'
+import CatalogueToolbar from './CatalogueToolbar'
+import CatalogueGrid from './CatalogueGrid'
 import './Catalogue.css'
-
-const INITIAL_FILTERS = {
-  brand: '',
-  fuel_type: '',
-  transmission: '',
-  price_max: Infinity,
-  year_min: '',
-  status: ['available', 'reserved', 'sold'],
-}
-
-const ITEMS_PER_PAGE = 6
 
 export default function Catalogue() {
   const [vehicles, setVehicles] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [filters, setFilters] = useState(INITIAL_FILTERS)
-  const [sort, setSort] = useState('default')
-  const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const filters = filtersFromParams(searchParams)
+  const sort = searchParams.get('sort') || 'default'
+  const search = searchParams.get('q') || ''
 
   useEffect(() => {
     async function fetchVehicles() {
@@ -35,7 +28,6 @@ export default function Catalogue() {
     }
 
     fetchVehicles()
-
     window.addEventListener('focus', fetchVehicles)
 
     const channel = supabase
@@ -53,14 +45,12 @@ export default function Catalogue() {
   }, [])
 
   function handleFilterChange(key, value) {
-    setFilters(prev => ({ ...prev, [key]: value }))
+    setSearchParams(buildParams({ ...filters, [key]: value }, sort, search))
     setPage(1)
   }
 
   function handleReset() {
-    setFilters(INITIAL_FILTERS)
-    setSearch('')
-    setSort('default')
+    setSearchParams(new URLSearchParams())
     setPage(1)
   }
 
@@ -77,17 +67,15 @@ export default function Catalogue() {
   , [vehicles])
 
   const priceMax = useMemo(() =>
-    vehicles.length ? Math.max(...vehicles.map(v => v.price || 0)) : 700000
+    vehicles.length ? Math.max(...vehicles.map(v => v.price || 0)) : null
   , [vehicles])
 
   const filtered = useMemo(() => {
     let result = [...vehicles]
-
     if (search) {
       const q = search.toLowerCase()
       result = result.filter(v =>
-        v.brand.toLowerCase().includes(q) ||
-        v.model.toLowerCase().includes(q)
+        v.brand.toLowerCase().includes(q) || v.model.toLowerCase().includes(q)
       )
     }
     if (filters.brand) result = result.filter(v => v.brand === filters.brand)
@@ -96,12 +84,10 @@ export default function Catalogue() {
     if (filters.year_min) result = result.filter(v => v.year >= Number(filters.year_min))
     if (filters.status.length) result = result.filter(v => filters.status.includes(v.status))
     if (filters.price_max !== Infinity) result = result.filter(v => v.price <= Number(filters.price_max))
-
     if (sort === 'price_asc') result.sort((a, b) => a.price - b.price)
     if (sort === 'price_desc') result.sort((a, b) => b.price - a.price)
     if (sort === 'year_desc') result.sort((a, b) => b.year - a.year)
     if (sort === 'mileage_asc') result.sort((a, b) => a.mileage - b.mileage)
-
     return result
   }, [vehicles, filters, sort, search])
 
@@ -132,66 +118,23 @@ export default function Catalogue() {
           transmissions={transmissions}
           priceMax={priceMax}
         />
-
         <div className="catalogue-main">
-          <div className="catalogue-toolbar">
-            <div className="search-wrap">
-              <input
-                type="text"
-                className="search-input"
-                placeholder="Rechercher une marque, un modèle..."
-                value={search}
-                onChange={e => { setSearch(e.target.value); setPage(1) }}
-              />
-            </div>
-            <select
-              className="sort-select"
-              value={sort}
-              onChange={e => { setSort(e.target.value); setPage(1) }}
-            >
-              <option value="default">Trier par défaut</option>
-              <option value="price_asc">Prix croissant</option>
-              <option value="price_desc">Prix décroissant</option>
-              <option value="year_desc">Année récente</option>
-              <option value="mileage_asc">Kilométrage</option>
-            </select>
-          </div>
-
-          {loading && (
-            <div className="catalogue-loading">
-              <div className="loader"></div>
-              <p>Chargement des véhicules...</p>
-            </div>
-          )}
-
-          {error && (
-            <div className="catalogue-error">
-              <p>Erreur : {error}</p>
-            </div>
-          )}
-
-          {!loading && !error && paginated.length === 0 && (
-            <div className="catalogue-empty">
-              <p>Aucun véhicule ne correspond à vos critères.</p>
-              <button className="btn-ghost" onClick={handleReset}>
-                Réinitialiser les filtres
-              </button>
-            </div>
-          )}
-
-          {!loading && !error && paginated.length > 0 && (
-            <div className="catalogue-grid">
-              {paginated.map((vehicle, i) => (
-                <VehicleCard
-                  key={vehicle.id}
-                  vehicle={vehicle}
-                  index={(page - 1) * ITEMS_PER_PAGE + i}
-                />
-              ))}
-            </div>
-          )}
-
-          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+          <CatalogueToolbar
+            search={search}
+            sort={sort}
+            onSearchChange={value => { setSearchParams(buildParams(filters, sort, value)); setPage(1) }}
+            onSortChange={value => { setSearchParams(buildParams(filters, value, search)); setPage(1) }}
+          />
+          <CatalogueGrid
+            loading={loading}
+            error={error}
+            paginated={paginated}
+            page={page}
+            itemsPerPage={ITEMS_PER_PAGE}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            onReset={handleReset}
+          />
         </div>
       </div>
     </main>
