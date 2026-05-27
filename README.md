@@ -1,4 +1,4 @@
-# Eclipse Auto v2
+# Eclipse Auto 
 
 Une plateforme de gestion et réservation de véhicules avec interface d'administration.
 
