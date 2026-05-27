@@ -11,8 +11,6 @@ export default function AdminUsers() {
   const [search, setSearch] = useState('')
   const [confirmId, setConfirmId] = useState(null)
 
-  useEffect(() => { fetchClients() }, [])
-
   async function fetchClients() {
     setLoading(true)
     const { data, error } = await supabase
@@ -24,6 +22,9 @@ export default function AdminUsers() {
     setClients(data || [])
     setLoading(false)
   }
+
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { fetchClients() }, [])
 
   async function confirmDelete() {
     await supabase.from('profiles').delete().eq('id', confirmId)

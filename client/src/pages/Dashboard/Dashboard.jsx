@@ -39,6 +39,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (profile) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setProfileForm({
         first_name: profile.first_name || '',
         last_name: profile.last_name || '',

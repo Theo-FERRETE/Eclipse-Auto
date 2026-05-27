@@ -22,7 +22,7 @@ export default function Login() {
       setTimeout(() => {
         navigate('/dashboard')
       }, 500)
-    } catch (err) {
+    } catch {
       setError('Email ou mot de passe incorrect.')
     } finally {
       setLoading(false)

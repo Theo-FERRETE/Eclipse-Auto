@@ -14,8 +14,6 @@ export default function AdminReservations() {
   const [page, setPage] = useState(1)
   const [filter, setFilter] = useState('all')
 
-  useEffect(() => { fetchReservations() }, [])
-
   async function fetchReservations() {
     setLoading(true)
     const { data, error } = await supabase
@@ -45,6 +43,9 @@ export default function AdminReservations() {
     setReservations(enriched)
     setLoading(false)
   }
+
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { fetchReservations() }, [])
 
   async function handleStatus(id, status) {
     // Le trigger PostgreSQL sync_vehicle_status_on_reservation

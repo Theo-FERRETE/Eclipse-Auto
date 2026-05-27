@@ -74,7 +74,7 @@ export default function Reservation() {
 
       setSuccess(true)
       setTimeout(() => navigate('/dashboard'), 3000)
-    } catch (err) {
+    } catch {
       setError('Une erreur est survenue. Veuillez réessayer.')
     } finally {
       setSubmitting(false)
