@@ -48,7 +48,7 @@ export default function Reservation() {
     }
 
     init()
-  }, [slug])
+  }, [slug, navigate])
 
   function handleChange(e) {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
@@ -60,22 +60,29 @@ export default function Reservation() {
     setSubmitting(true)
 
     try {
-      const { error } = await supabase
-        .from('reservations')
-        .insert({
+      const { data: { session } } = await supabase.auth.getSession()
+      const res = await fetch('/api/reservations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token}`,
+        },
+        body: JSON.stringify({
           vehicle_id: vehicle.id,
-          client_id: user.id,
-          status: 'pending',
           message: form.message || null,
           rdv_date: form.rdv_date || null,
-        })
+        }),
+      })
 
-      if (error) throw error
+      if (!res.ok) {
+        const data = await res.json()
+        throw new Error(data.error || 'Une erreur est survenue.')
+      }
 
       setSuccess(true)
       setTimeout(() => navigate('/dashboard'), 3000)
-    } catch {
-      setError('Une erreur est survenue. Veuillez réessayer.')
+    } catch (err) {
+      setError(err.message || 'Une erreur est survenue. Veuillez réessayer.')
     } finally {
       setSubmitting(false)
     }

@@ -51,9 +51,9 @@ router.get('/clients', requireAdmin, async (req, res) => {
   res.json({ data, total: count, limit: limitNum, offset: offsetNum })
 })
 
-// DELETE /api/admin/clients/:id — supprimer un client
+// DELETE /api/admin/clients/:id — supprimer un client (auth + profil)
 router.delete('/clients/:id', requireAdmin, async (req, res) => {
-  const { error } = await supabase.from('profiles').delete().eq('id', req.params.id)
+  const { error } = await supabase.auth.admin.deleteUser(req.params.id)
   if (error) return res.status(500).json({ error: error.message })
   res.json({ success: true })
 })

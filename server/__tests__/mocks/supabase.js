@@ -47,6 +47,10 @@ function buildQuery(result) {
 const supabaseMock = {
   auth: {
     getUser: jest.fn(),
+    admin: {
+      deleteUser: jest.fn(),
+      getUserById: jest.fn(),
+    },
   },
   from: jest.fn(),
   _mockUser: mockUser,

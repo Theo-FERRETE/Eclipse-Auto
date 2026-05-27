@@ -10,7 +10,7 @@ const INITIAL_FILTERS = {
   brand: '',
   fuel_type: '',
   transmission: '',
-  price_max: 700000,
+  price_max: Infinity,
   year_min: '',
   status: ['available', 'reserved', 'sold'],
 }
@@ -29,7 +29,7 @@ export default function Catalogue() {
   useEffect(() => {
     async function fetchVehicles() {
       const { data, error } = await getVehicles()
-      if (error) setError(error.message)
+      if (error) setError('Impossible de charger les véhicules.')
       else setVehicles(data)
       setLoading(false)
     }
@@ -65,7 +65,19 @@ export default function Catalogue() {
   }
 
   const brands = useMemo(() =>
-    [...new Set(vehicles.map(v => v.brand))].sort()
+    [...new Set(vehicles.map(v => v.brand).filter(Boolean))].sort()
+  , [vehicles])
+
+  const fuelTypes = useMemo(() =>
+    [...new Set(vehicles.map(v => v.fuel_type).filter(Boolean))].sort()
+  , [vehicles])
+
+  const transmissions = useMemo(() =>
+    [...new Set(vehicles.map(v => v.transmission).filter(Boolean))].sort()
+  , [vehicles])
+
+  const priceMax = useMemo(() =>
+    vehicles.length ? Math.max(...vehicles.map(v => v.price || 0)) : 700000
   , [vehicles])
 
   const filtered = useMemo(() => {
@@ -83,7 +95,7 @@ export default function Catalogue() {
     if (filters.transmission) result = result.filter(v => v.transmission === filters.transmission)
     if (filters.year_min) result = result.filter(v => v.year >= Number(filters.year_min))
     if (filters.status.length) result = result.filter(v => filters.status.includes(v.status))
-    result = result.filter(v => v.price <= Number(filters.price_max))
+    if (filters.price_max !== Infinity) result = result.filter(v => v.price <= Number(filters.price_max))
 
     if (sort === 'price_asc') result.sort((a, b) => a.price - b.price)
     if (sort === 'price_desc') result.sort((a, b) => b.price - a.price)
@@ -111,7 +123,15 @@ export default function Catalogue() {
       <div className="divider"></div>
 
       <div className="container catalogue-layout">
-        <Filters filters={filters} onChange={handleFilterChange} onReset={handleReset} brands={brands} />
+        <Filters
+          filters={filters}
+          onChange={handleFilterChange}
+          onReset={handleReset}
+          brands={brands}
+          fuelTypes={fuelTypes}
+          transmissions={transmissions}
+          priceMax={priceMax}
+        />
 
         <div className="catalogue-main">
           <div className="catalogue-toolbar">

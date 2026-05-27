@@ -1,6 +1,11 @@
 import './Filters.css'
 
-export default function Filters({ filters, onChange, onReset, brands = [] }) {
+export default function Filters({ filters, onChange, onReset, brands = [], fuelTypes = [], transmissions = [], priceMax = 700000 }) {
+  const sliderValue = filters.price_max === Infinity ? priceMax : Math.min(Number(filters.price_max), priceMax)
+  const isMaxPrice = filters.price_max === Infinity || Number(filters.price_max) >= priceMax
+  const sliderStep = Math.max(1000, Math.round(priceMax / 100 / 1000) * 1000)
+  const sliderMin = Math.round(priceMax * 0.05 / sliderStep) * sliderStep
+
   return (
     <aside className="filters">
       <div className="filters-header">
@@ -30,10 +35,7 @@ export default function Filters({ filters, onChange, onReset, brands = [] }) {
           onChange={e => onChange('fuel_type', e.target.value)}
         >
           <option value="">Tous</option>
-          <option value="Essence">Essence</option>
-          <option value="Diesel">Diesel</option>
-          <option value="Hybride">Hybride</option>
-          <option value="Électrique">Électrique</option>
+          {fuelTypes.map(f => <option key={f} value={f}>{f}</option>)}
         </select>
       </div>
 
@@ -45,27 +47,29 @@ export default function Filters({ filters, onChange, onReset, brands = [] }) {
           onChange={e => onChange('transmission', e.target.value)}
         >
           <option value="">Toutes</option>
-          <option value="Automatique">Automatique</option>
-          <option value="Manuelle">Manuelle</option>
+          {transmissions.map(t => <option key={t} value={t}>{t}</option>)}
         </select>
       </div>
 
       <div className="filter-group">
         <label className="filter-label">
-          Prix max — € {Number(filters.price_max).toLocaleString('fr-FR')}
+          Prix max — {isMaxPrice ? 'Sans limite' : `${sliderValue.toLocaleString('fr-FR')} €`}
         </label>
         <input
           type="range"
           className="filter-range"
-          min="50000"
-          max="700000"
-          step="10000"
-          value={filters.price_max}
-          onChange={e => onChange('price_max', e.target.value)}
+          min={sliderMin}
+          max={priceMax}
+          step={sliderStep}
+          value={sliderValue}
+          onChange={e => {
+            const v = Number(e.target.value)
+            onChange('price_max', v >= priceMax ? Infinity : v)
+          }}
         />
         <div className="filter-range-labels">
-          <span>50 000 €</span>
-          <span>700 000 €</span>
+          <span>{sliderMin.toLocaleString('fr-FR')} €</span>
+          <span>Max</span>
         </div>
       </div>
 

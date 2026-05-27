@@ -82,7 +82,7 @@ describe('DELETE /api/admin/clients/:id', () => {
 
   it('supprime un client et retourne success (200)', async () => {
     supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
-    supabaseMock.from.mockReturnValue(makeQuery(null))
+    supabaseMock.auth.admin.deleteUser.mockResolvedValue({ error: null })
 
     const res = await request(app)
       .delete('/api/admin/clients/some-user-id')

@@ -25,7 +25,7 @@ export default function VehicleDetail() {
       setLoading(false)
     }
     fetchVehicle()
-  }, [slug])
+  }, [slug, navigate])
 
   if (loading) {
     return (

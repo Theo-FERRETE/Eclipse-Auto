@@ -1,6 +1,15 @@
 const { Router } = require('express')
+const nodemailer = require('nodemailer')
 const supabase = require('../supabase')
 const { requireAuth, requireAdmin } = require('../middleware/auth')
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_APP_PASSWORD,
+  },
+})
 
 const router = Router()
 
@@ -75,6 +84,13 @@ router.patch('/:id/status', requireAdmin, async (req, res) => {
     return res.status(400).json({ error: 'Statut invalide.' })
   }
 
+  // Récupérer les détails avant mise à jour pour l'email
+  const { data: resData } = await supabase
+    .from('reservations')
+    .select('client_id, rdv_date, vehicles(brand, model, year)')
+    .eq('id', req.params.id)
+    .single()
+
   const { data, error } = await supabase
     .from('reservations')
     .update({ status })
@@ -83,6 +99,38 @@ router.patch('/:id/status', requireAdmin, async (req, res) => {
     .single()
 
   if (error) return res.status(500).json({ error: error.message })
+
+  if (status === 'confirmed' && resData) {
+    try {
+      const [{ data: { user: clientUser } }, { data: profile }] = await Promise.all([
+        supabase.auth.admin.getUserById(resData.client_id),
+        supabase.from('profiles').select('first_name').eq('id', resData.client_id).single(),
+      ])
+
+      if (clientUser?.email) {
+        const v = resData.vehicles
+        const firstName = profile?.first_name || 'Client'
+        const rdvLine = resData.rdv_date
+          ? `<p>Rendez-vous prévu le <strong>${new Date(resData.rdv_date).toLocaleString('fr-FR')}</strong>.</p>`
+          : ''
+        await transporter.sendMail({
+          from: `"Eclipse Auto" <${process.env.GMAIL_USER}>`,
+          to: clientUser.email,
+          subject: 'Votre réservation est confirmée — Eclipse Auto',
+          html: `
+            <p>Bonjour ${firstName},</p>
+            <p>Votre demande de réservation pour la <strong>${v.brand} ${v.model} (${v.year})</strong> a été <strong>confirmée</strong> par notre équipe.</p>
+            ${rdvLine}
+            <p>Nous vous contacterons prochainement pour finaliser les détails.</p>
+            <p>Merci de votre confiance,<br>L'équipe Eclipse Auto</p>
+          `,
+        })
+      }
+    } catch (emailErr) {
+      console.error('[Reservations] Erreur envoi email :', emailErr)
+    }
+  }
+
   res.json(data)
 })
 

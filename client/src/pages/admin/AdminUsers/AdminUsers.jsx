@@ -11,23 +11,33 @@ export default function AdminUsers() {
   const [search, setSearch] = useState('')
   const [confirmId, setConfirmId] = useState(null)
 
+  async function getToken() {
+    const { data: { session } } = await supabase.auth.getSession()
+    return session?.access_token
+  }
+
   async function fetchClients() {
     setLoading(true)
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('role', 'client')
-      .order('created_at', { ascending: false })
-    if (error) console.error(error)
-    setClients(data || [])
+    const token = await getToken()
+    const res = await fetch('/api/admin/clients', {
+      headers: { 'Authorization': `Bearer ${token}` },
+    })
+    if (res.ok) {
+      const json = await res.json()
+      setClients(json.data || [])
+    }
     setLoading(false)
   }
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { fetchClients() }, [])
 
   async function confirmDelete() {
-    await supabase.from('profiles').delete().eq('id', confirmId)
+    const token = await getToken()
+    await fetch(`/api/admin/clients/${confirmId}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` },
+    })
     setConfirmId(null)
     fetchClients()
   }
