@@ -45,10 +45,6 @@ export default function Footer() {
           </div>
           <div className="footer-credits">
             <span className="footer-credit-item">
-              Images : <a href="https://unsplash.com" target="_blank" rel="noopener noreferrer">Unsplash</a>
-            </span>
-            <span className="footer-sep">·</span>
-            <span className="footer-credit-item">
               Projet éducatif — aucune transaction réelle
             </span>
             <span className="footer-sep">·</span>

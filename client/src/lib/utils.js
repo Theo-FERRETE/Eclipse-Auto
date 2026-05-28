@@ -17,11 +17,6 @@ export function optimizeImageUrl(url, width = 800, quality = 75) {
     ) + `?width=${width}&quality=${quality}&format=webp`
   }
 
-  if (url.includes('images.unsplash.com')) {
-    const sep = url.includes('?') ? '&' : '?'
-    return `${url}${sep}w=${width}&q=${quality}&fm=webp&fit=crop`
-  }
-
   if (url.startsWith('/img/')) {
     return url.replace(/\.(jpg|jpeg|png)$/i, '.webp')
   }
