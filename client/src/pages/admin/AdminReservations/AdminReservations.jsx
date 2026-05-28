@@ -48,10 +48,16 @@ export default function AdminReservations() {
   useEffect(() => { fetchReservations() }, [])
 
   async function handleStatus(id, status) {
-    // Le trigger PostgreSQL sync_vehicle_status_on_reservation
-    // met à jour vehicles.status automatiquement côté DB
-    const { error } = await supabase.from('reservations').update({ status }).eq('id', id)
-    if (error) { console.error(error); return }
+    const { data: { session } } = await supabase.auth.getSession()
+    const res = await fetch(`/api/reservations/${id}/status`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session?.access_token}`,
+      },
+      body: JSON.stringify({ status }),
+    })
+    if (!res.ok) { console.error('Erreur changement statut'); return }
     fetchReservations()
   }
 

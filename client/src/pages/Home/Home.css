@@ -11,6 +11,23 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
+  background-image: url('/img/Hero.webp');
+  background-size: cover;
+  background-position: 70% 50%;
+  background-repeat: no-repeat;
+}
+
+.hero-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(10, 10, 10, 0.90) 0%,
+    rgba(10, 10, 10, 0.65) 40%,
+    rgba(10, 10, 10, 0.55) 70%,
+    rgba(10, 10, 10, 0.85) 100%
+  );
 }
 
 .hero-line-h {
@@ -20,7 +37,8 @@
   right: 0;
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--red), transparent);
-  opacity: 0.2;
+  opacity: 0.15;
+  z-index: 1;
 }
 
 .hero-line-v {
@@ -29,7 +47,8 @@
   top: 0;
   bottom: 0;
   width: 1px;
-  background: linear-gradient(180deg, transparent, rgba(0, 212, 255, 0.15), transparent);
+  background: linear-gradient(180deg, transparent, rgba(0, 212, 255, 0.1), transparent);
+  z-index: 1;
 }
 
 .hero-content {
@@ -37,6 +56,7 @@
   padding-bottom: 40px;
   position: relative;
   z-index: 2;
+  max-width: 640px;
 }
 
 .hero-title {
@@ -73,9 +93,11 @@
 .hero-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  border-top: 1px solid var(--border);
+  border-top: 1px solid rgba(255,255,255,0.08);
   position: relative;
   z-index: 2;
+  background: rgba(10, 10, 10, 0.6);
+  backdrop-filter: blur(8px);
 }
 
 .stat {

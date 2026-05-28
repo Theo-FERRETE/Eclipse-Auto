@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
-import { optimizeImageUrl, formatPrice } from '@/lib/utils'
 import AdminSidebar from '@/components/AdminSidebar/AdminSidebar'
 import AdminPageHeader from '@/components/AdminPageHeader/AdminPageHeader'
 import Pagination from '@/components/Pagination/Pagination'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
+import AdminVehicleCard from '@/components/AdminVehicleCard/AdminVehicleCard'
+import AdminVehicleModal from '@/components/AdminVehicleModal/AdminVehicleModal'
 import './AdminVehicles.css'
 
 const EMPTY_FORM = {
@@ -45,39 +46,23 @@ export default function AdminVehicles() {
   }
 
   function openCreate() {
-    setEditing(null)
-    setForm(EMPTY_FORM)
-    setError(null)
-    setSuccess(null)
-    setShowForm(true)
+    setEditing(null); setForm(EMPTY_FORM); setError(null); setSuccess(null); setShowForm(true)
   }
 
   function openEdit(vehicle) {
     setEditing(vehicle.id)
     setForm({
-      brand: vehicle.brand || '',
-      model: vehicle.model || '',
-      year: vehicle.year || '',
-      price: vehicle.price || '',
-      fuel_type: vehicle.fuel_type || '',
-      transmission: vehicle.transmission || '',
-      mileage: vehicle.mileage || '',
-      power: vehicle.power || '',
-      description: vehicle.description || '',
-      status: vehicle.status || 'available',
-      image: vehicle.images?.[0] || '',
+      brand: vehicle.brand || '', model: vehicle.model || '', year: vehicle.year || '',
+      price: vehicle.price || '', fuel_type: vehicle.fuel_type || '',
+      transmission: vehicle.transmission || '', mileage: vehicle.mileage || '',
+      power: vehicle.power || '', description: vehicle.description || '',
+      status: vehicle.status || 'available', image: vehicle.images?.[0] || '',
     })
-    setError(null)
-    setSuccess(null)
-    setShowForm(true)
+    setError(null); setSuccess(null); setShowForm(true)
   }
 
   function closeForm() {
-    setShowForm(false)
-    setEditing(null)
-    setForm(EMPTY_FORM)
-    setError(null)
-    setSuccess(null)
+    setShowForm(false); setEditing(null); setForm(EMPTY_FORM); setError(null); setSuccess(null)
   }
 
   async function getToken() {
@@ -87,27 +72,18 @@ export default function AdminVehicles() {
 
   async function handleSubmit(e) {
     e.preventDefault()
-    setError(null)
-    setSubmitting(true)
+    setError(null); setSubmitting(true)
     const payload = {
-      brand: form.brand,
-      model: form.model,
-      year: parseInt(form.year),
-      price: parseFloat(form.price),
-      fuel_type: form.fuel_type,
-      transmission: form.transmission,
-      mileage: form.mileage ? parseInt(form.mileage) : 0,
-      power: form.power || null,
-      description: form.description || null,
-      status: form.status,
-      images: form.image ? [form.image] : [],
+      brand: form.brand, model: form.model, year: parseInt(form.year),
+      price: parseFloat(form.price), fuel_type: form.fuel_type,
+      transmission: form.transmission, mileage: form.mileage ? parseInt(form.mileage) : 0,
+      power: form.power || null, description: form.description || null,
+      status: form.status, images: form.image ? [form.image] : [],
     }
     try {
       const token = await getToken()
-      const url = editing ? `/api/vehicles/${editing}` : '/api/vehicles'
-      const method = editing ? 'PUT' : 'POST'
-      const res = await fetch(url, {
-        method,
+      const res = await fetch(editing ? `/api/vehicles/${editing}` : '/api/vehicles', {
+        method: editing ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(payload),
       })
@@ -153,10 +129,8 @@ export default function AdminVehicles() {
   return (
     <main className="admin">
       <AdminPageHeader title="Véhicules" />
-
       <div className="container admin-layout">
         <AdminSidebar />
-
         <div className="admin-content">
           <div className="admin-vehicles-wrap">
             <div className="admin-list">
@@ -171,161 +145,40 @@ export default function AdminVehicles() {
                 />
                 <button className="btn-primary" onClick={openCreate}>+ Ajouter</button>
               </div>
-
               {loading ? (
                 <div className="dashboard-loading"><div className="loader"></div></div>
               ) : (
                 <>
                   <div className="admin-vehicles-list">
                     {paginated.map(v => (
-                      <div key={v.id} className={`admin-vehicle-card ${editing === v.id ? 'active' : ''}`}>
-                        <div className="avc-img">
-                          {v.images?.[0]
-                            ? <img
-                                src={optimizeImageUrl(v.images[0], 200)}
-                                alt={`${v.brand} ${v.model}`}
-                                loading="lazy"
-                                decoding="async"
-                                style={{ opacity: 0, transition: 'opacity 0.3s ease' }}
-                                onLoad={e => { e.currentTarget.style.opacity = '1' }}
-                              />
-                            : <div className="avc-img-placeholder"></div>
-                          }
-                          <div className="gallery-bar"></div>
-                        </div>
-                        <div className="avc-info">
-                          <div className="vcard-brand">{v.brand}</div>
-                          <div className="avc-model">{v.model}</div>
-                          <div className="vcard-specs">
-                            <span>{v.year}</span>
-                            <span className="spec-dot"></span>
-                            <span>{v.fuel_type}</span>
-                          </div>
-                        </div>
-                        <div className="avc-right">
-                          <div className="avc-price">{formatPrice(v.price)}</div>
-                          <select
-                            className="status-select"
-                            value={v.status}
-                            onChange={e => handleStatusChange(v, e.target.value)}
-                          >
-                            <option value="available">Disponible</option>
-                            <option value="reserved">Réservé</option>
-                            <option value="sold">Vendu</option>
-                          </select>
-                          <div className="avc-actions">
-                            <button className="action-btn edit" onClick={() => openEdit(v)}>Modifier</button>
-                            <button className="action-btn delete" onClick={() => setConfirmId(v.id)}>Supprimer</button>
-                          </div>
-                        </div>
-                      </div>
+                      <AdminVehicleCard
+                        key={v.id}
+                        vehicle={v}
+                        editing={editing}
+                        onEdit={openEdit}
+                        onDelete={setConfirmId}
+                        onStatusChange={handleStatusChange}
+                      />
                     ))}
                     {filtered.length === 0 && (
                       <div className="catalogue-empty"><p>Aucun véhicule trouvé.</p></div>
                     )}
                   </div>
-
                   <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
                 </>
               )}
             </div>
-
             {showForm && (
-              <div className="vehicle-modal-overlay" onClick={e => { if (e.target === e.currentTarget) closeForm() }}>
-                <div className="vehicle-modal">
-                  <div className="vehicle-modal-header">
-                    <div>
-                      <div className="tag">{editing ? 'Modifier le véhicule' : 'Nouveau véhicule'}</div>
-                    </div>
-                    <button className="vehicle-modal-close" onClick={closeForm}>✕</button>
-                  </div>
-
-                  <form className="vehicle-modal-form" onSubmit={handleSubmit}>
-                    <div className="vmf-row">
-                      <div className="vmf-group">
-                        <label className="vmf-label">Marque *</label>
-                        <input name="brand" className="vmf-input" value={form.brand} onChange={handleChange} required placeholder="Ferrari" />
-                      </div>
-                      <div className="vmf-group">
-                        <label className="vmf-label">Modèle *</label>
-                        <input name="model" className="vmf-input" value={form.model} onChange={handleChange} required placeholder="Roma Spider" />
-                      </div>
-                    </div>
-
-                    <div className="vmf-row">
-                      <div className="vmf-group">
-                        <label className="vmf-label">Année *</label>
-                        <input name="year" type="number" className="vmf-input" value={form.year} onChange={handleChange} required placeholder="2024" />
-                      </div>
-                      <div className="vmf-group">
-                        <label className="vmf-label">Prix (€) *</label>
-                        <input name="price" type="number" className="vmf-input" value={form.price} onChange={handleChange} required placeholder="248000" />
-                      </div>
-                    </div>
-
-                    <div className="vmf-row">
-                      <div className="vmf-group">
-                        <label className="vmf-label">Carburant *</label>
-                        <select name="fuel_type" className="vmf-input" value={form.fuel_type} onChange={handleChange} required>
-                          <option value="">Sélectionner</option>
-                          <option value="ESSENCE">Essence</option>
-                          <option value="DIESEL">Diesel</option>
-                          <option value="HYBRIDE">Hybride</option>
-                          <option value="ELECTRIQUE">Électrique</option>
-                        </select>
-                      </div>
-                      <div className="vmf-group">
-                        <label className="vmf-label">Transmission *</label>
-                        <select name="transmission" className="vmf-input" value={form.transmission} onChange={handleChange} required>
-                          <option value="">Sélectionner</option>
-                          <option value="AUTOMATIQUE">Automatique</option>
-                          <option value="MANUELLE">Manuelle</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div className="vmf-row">
-                      <div className="vmf-group">
-                        <label className="vmf-label">Kilométrage</label>
-                        <input name="mileage" type="number" className="vmf-input" value={form.mileage} onChange={handleChange} placeholder="0" />
-                      </div>
-                      <div className="vmf-group">
-                        <label className="vmf-label">Puissance</label>
-                        <input name="power" className="vmf-input" value={form.power} onChange={handleChange} placeholder="620 CH" />
-                      </div>
-                    </div>
-
-                    <div className="vmf-group">
-                      <label className="vmf-label">Statut</label>
-                      <select name="status" className="vmf-input" value={form.status} onChange={handleChange}>
-                        <option value="available">Disponible</option>
-                        <option value="reserved">Réservé</option>
-                        <option value="sold">Vendu</option>
-                      </select>
-                    </div>
-
-                    <div className="vmf-group">
-                      <label className="vmf-label">URL de l'image</label>
-                      <input name="image" className="vmf-input" value={form.image} onChange={handleChange} placeholder="https://..." />
-                    </div>
-
-                    <div className="vmf-group">
-                      <label className="vmf-label">Description</label>
-                      <textarea name="description" className="vmf-input vmf-textarea" value={form.description} onChange={handleChange} placeholder="Description du véhicule..." rows={3} />
-                    </div>
-
-                    {error && <div className="vmf-error">{error}</div>}
-                    {success && <div className="vmf-success">{success}</div>}
-
-                    <div className="vmf-actions">
-                      <button type="button" className="btn-ghost" onClick={closeForm}>Annuler</button>
-                      <button type="submit" className="btn-primary" disabled={submitting}>
-                        {submitting ? 'Enregistrement...' : editing ? 'Enregistrer' : 'Ajouter'}
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
+              <AdminVehicleModal
+                form={form}
+                onChange={handleChange}
+                onSubmit={handleSubmit}
+                onClose={closeForm}
+                editing={editing}
+                submitting={submitting}
+                error={error}
+                success={success}
+              />
             )}
           </div>
         </div>
