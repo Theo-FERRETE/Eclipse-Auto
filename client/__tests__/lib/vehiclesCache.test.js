@@ -53,7 +53,7 @@ describe('getVehicles', () => {
 
 describe('getVehicleBySlug — cache froid', () => {
   it('appelle /api/vehicles/by-slug/:slug si cache vide', async () => {
-    global.fetch = vi.fn().mockResolvedValue({
+    globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,
       json: async () => mockVehicle,
     })
@@ -66,7 +66,7 @@ describe('getVehicleBySlug — cache froid', () => {
   })
 
   it('retourne une erreur si la réponse n\'est pas ok', async () => {
-    global.fetch = vi.fn().mockResolvedValue({ ok: false })
+    globalThis.fetch = vi.fn().mockResolvedValue({ ok: false })
 
     const { data, error } = await getVehicleBySlug('slug-inexistant')
 
@@ -84,7 +84,7 @@ describe('getVehicleBySlug — cache chaud', () => {
     })
     await getVehicles()
 
-    global.fetch = vi.fn()
+    globalThis.fetch = vi.fn()
     const { data } = await getVehicleBySlug('toyota-corolla')
 
     expect(fetch).not.toHaveBeenCalled()
@@ -99,7 +99,7 @@ describe('getVehicleBySlug — cache chaud', () => {
     })
     await getVehicles()
 
-    global.fetch = vi.fn()
+    globalThis.fetch = vi.fn()
     const { data, error } = await getVehicleBySlug('renault-clio')
 
     expect(data).toBeNull()

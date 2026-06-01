@@ -33,7 +33,7 @@ describe('Contact — rendu', () => {
 
 describe('Contact — formulaire', () => {
   beforeEach(() => {
-    global.fetch = vi.fn()
+    globalThis.fetch = vi.fn()
   })
 
   afterEach(() => {
@@ -41,7 +41,7 @@ describe('Contact — formulaire', () => {
   })
 
   it('affiche le message de succès après envoi', async () => {
-    global.fetch.mockResolvedValueOnce({
+    globalThis.fetch.mockResolvedValueOnce({
       ok: true,
       json: async () => ({ success: true }),
     })
@@ -58,7 +58,7 @@ describe('Contact — formulaire', () => {
   })
 
   it('affiche une erreur si le serveur retourne une erreur', async () => {
-    global.fetch.mockResolvedValueOnce({
+    globalThis.fetch.mockResolvedValueOnce({
       ok: false,
       json: async () => ({ error: 'Trop de requêtes.' }),
     })
@@ -72,7 +72,7 @@ describe('Contact — formulaire', () => {
   })
 
   it('affiche une erreur réseau si fetch échoue', async () => {
-    global.fetch.mockRejectedValueOnce(new Error('Network error'))
+    globalThis.fetch.mockRejectedValueOnce(new Error('Network error'))
     renderContact()
 
     fireEvent.submit(screen.getByRole('button', { name: /envoyer le message/i }).closest('form'))
@@ -83,7 +83,7 @@ describe('Contact — formulaire', () => {
   })
 
   it('appelle fetch avec la bonne URL et méthode POST', async () => {
-    global.fetch.mockResolvedValueOnce({
+    globalThis.fetch.mockResolvedValueOnce({
       ok: true,
       json: async () => ({ success: true }),
     })
