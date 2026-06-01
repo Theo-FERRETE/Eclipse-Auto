@@ -1,24 +1,18 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 
 export default function DashboardProfile({ user, profile, refreshProfile }) {
-  const [profileForm, setProfileForm] = useState({ first_name: '', last_name: '', phone: '' })
+  const [profileForm, setProfileForm] = useState({
+    first_name: profile?.first_name || '',
+    last_name: profile?.last_name || '',
+    phone: profile?.phone || '',
+  })
   const [profileSaving, setProfileSaving] = useState(false)
   const [profileMsg, setProfileMsg] = useState(null)
 
   const [pwForm, setPwForm] = useState({ password: '', confirm: '' })
   const [pwSaving, setPwSaving] = useState(false)
   const [pwMsg, setPwMsg] = useState(null)
-
-  useEffect(() => {
-    if (profile) {
-      setProfileForm({
-        first_name: profile.first_name || '',
-        last_name: profile.last_name || '',
-        phone: profile.phone || '',
-      })
-    }
-  }, [profile])
 
   async function handleProfileSave(e) {
     e.preventDefault()
