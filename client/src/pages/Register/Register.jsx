@@ -50,7 +50,7 @@ export default function Register() {
     <main className="auth-page">
       <div className="auth-card">
         <div className="auth-header">
-          <img src="/logo-eclipse.svg" alt="Eclipse Auto" className="auth-logo" />
+          <img src="/eclipse-auto.svg" alt="Eclipse Auto" className="auth-logo" />
           <div className="tag">Espace membre</div>
           <h1 className="auth-title">Inscription</h1>
         </div>
@@ -58,8 +58,9 @@ export default function Register() {
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="form-row">
             <div className="form-group">
-              <label className="form-label">Prénom</label>
+              <label className="form-label" htmlFor="reg-firstname">Prénom</label>
               <input
+                id="reg-firstname"
                 type="text"
                 name="first_name"
                 className="form-input"
@@ -70,8 +71,9 @@ export default function Register() {
               />
             </div>
             <div className="form-group">
-              <label className="form-label">Nom</label>
+              <label className="form-label" htmlFor="reg-lastname">Nom</label>
               <input
+                id="reg-lastname"
                 type="text"
                 name="last_name"
                 className="form-input"
@@ -84,8 +86,9 @@ export default function Register() {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Email</label>
+            <label className="form-label" htmlFor="reg-email">Email</label>
             <input
+              id="reg-email"
               type="email"
               name="email"
               className="form-input"
@@ -97,8 +100,9 @@ export default function Register() {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Mot de passe</label>
+            <label className="form-label" htmlFor="reg-password">Mot de passe</label>
             <input
+              id="reg-password"
               type="password"
               name="password"
               className="form-input"
@@ -110,8 +114,9 @@ export default function Register() {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Confirmer le mot de passe</label>
+            <label className="form-label" htmlFor="reg-confirm">Confirmer le mot de passe</label>
             <input
+              id="reg-confirm"
               type="password"
               name="confirm_password"
               className="form-input"
@@ -123,7 +128,7 @@ export default function Register() {
           </div>
 
           {error && (
-            <div className="form-error">{error}</div>
+            <div className="form-error" role="alert">{error}</div>
           )}
 
           {success && (

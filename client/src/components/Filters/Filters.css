@@ -56,7 +56,6 @@
   transition: border-color 0.2s;
 }
 .filter-select:focus {
-  outline: none;
   border-color: var(--red);
 }
 

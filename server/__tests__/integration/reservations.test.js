@@ -2,6 +2,11 @@ const request = require('supertest')
 
 jest.mock('../../supabase', () => require('../mocks/supabase').supabaseMock)
 
+const mockSendMail = jest.fn().mockResolvedValue({ messageId: 'test-id' })
+jest.mock('nodemailer', () => ({
+  createTransport: jest.fn(() => ({ sendMail: mockSendMail })),
+}))
+
 const { supabaseMock, mockUser, mockAdmin } = require('../mocks/supabase')
 const app = require('../../app')
 
@@ -112,6 +117,7 @@ describe('PATCH /api/reservations/:id/status (admin)', () => {
 
   it('met à jour le statut d\'une réservation (200)', async () => {
     supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
+    supabaseMock.auth.admin.getUserById.mockResolvedValue({ data: { user: null } })
     const updated = { ...mockReservation, status: 'confirmed' }
     supabaseMock.from.mockReturnValue(makeQuery(updated))
 
@@ -171,6 +177,110 @@ describe('POST /api/reservations — cas complets', () => {
 
     expect(res.status).toBe(201)
     expect(res.body).toHaveProperty('id')
+  })
+})
+
+describe('PATCH /api/reservations/:id/status — email flow', () => {
+  const mockReservationWithVehicle = {
+    client_id: mockUser.id,
+    rdv_date: '2026-06-15T10:00:00',
+    vehicles: { brand: 'Ferrari', model: 'Roma', year: 2024, price: 248000 },
+  }
+
+  beforeEach(() => {
+    mockSendMail.mockClear()
+  })
+
+  it('envoie un email quand le statut passe à confirmed', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
+    supabaseMock.auth.admin.getUserById.mockResolvedValue({
+      data: { user: { email: 'client@test.com' } },
+    })
+
+    const selectQuery = makeQuery(mockReservationWithVehicle)
+    const updateQuery = makeQuery({ ...mockReservationWithVehicle, status: 'confirmed' })
+    const profileQuery = makeQuery({ first_name: 'Théo' })
+
+    supabaseMock.from
+      .mockReturnValueOnce(selectQuery)
+      .mockReturnValueOnce(updateQuery)
+      .mockReturnValue(profileQuery)
+
+    const res = await request(app)
+      .patch(`/api/reservations/${mockReservation.id}/status`)
+      .set('Authorization', 'Bearer admin-token')
+      .send({ status: 'confirmed' })
+
+    expect(res.status).toBe(200)
+    expect(mockSendMail).toHaveBeenCalledTimes(1)
+    expect(mockSendMail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: 'client@test.com',
+        subject: expect.stringContaining('Ferrari Roma'),
+        html: expect.stringContaining('Théo'),
+      })
+    )
+  })
+
+  it('n\'envoie pas d\'email quand le statut passe à cancelled', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
+    supabaseMock.from.mockReturnValue(makeQuery({ ...mockReservationWithVehicle, status: 'cancelled' }))
+
+    const res = await request(app)
+      .patch(`/api/reservations/${mockReservation.id}/status`)
+      .set('Authorization', 'Bearer admin-token')
+      .send({ status: 'cancelled' })
+
+    expect(res.status).toBe(200)
+    expect(mockSendMail).not.toHaveBeenCalled()
+  })
+
+  it('retourne 200 même si l\'envoi d\'email échoue', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
+    supabaseMock.auth.admin.getUserById.mockResolvedValue({
+      data: { user: { email: 'client@test.com' } },
+    })
+    mockSendMail.mockRejectedValueOnce(new Error('SMTP error'))
+
+    const selectQuery = makeQuery(mockReservationWithVehicle)
+    const updateQuery = makeQuery({ ...mockReservationWithVehicle, status: 'confirmed' })
+    const profileQuery = makeQuery({ first_name: 'Théo' })
+
+    supabaseMock.from
+      .mockReturnValueOnce(selectQuery)
+      .mockReturnValueOnce(updateQuery)
+      .mockReturnValue(profileQuery)
+
+    const res = await request(app)
+      .patch(`/api/reservations/${mockReservation.id}/status`)
+      .set('Authorization', 'Bearer admin-token')
+      .send({ status: 'confirmed' })
+
+    expect(res.status).toBe(200)
+  })
+
+  it('n\'envoie pas d\'email si l\'utilisateur n\'a pas d\'adresse email', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
+    supabaseMock.auth.admin.getUserById.mockResolvedValue({
+      data: { user: { email: null } },
+    })
+
+    const selectQuery = makeQuery(mockReservationWithVehicle)
+    const updateQuery = makeQuery({ ...mockReservationWithVehicle, status: 'confirmed' })
+    const profileQuery = makeQuery({ first_name: 'Théo' })
+
+    supabaseMock.from
+      .mockReturnValueOnce(selectQuery)
+      .mockReturnValueOnce(updateQuery)
+      .mockReturnValue(profileQuery)
+
+    const res = await request(app)
+      .patch(`/api/reservations/${mockReservation.id}/status`)
+      .set('Authorization', 'Bearer admin-token')
+      .send({ status: 'confirmed' })
+
+    expect(res.status).toBe(200)
+    expect(mockSendMail).not.toHaveBeenCalled()
   })
 })
 

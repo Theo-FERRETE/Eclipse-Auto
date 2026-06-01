@@ -105,7 +105,6 @@
 
 .form-input::placeholder { color: var(--gray-dark); }
 .form-input:focus {
-  outline: none;
   border-color: var(--red);
 }
 

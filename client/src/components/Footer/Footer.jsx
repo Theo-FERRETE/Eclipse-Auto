@@ -9,7 +9,7 @@ export default function Footer() {
       <div className="footer-top">
         <div className="container footer-grid">
           <div className="footer-brand">
-            <img src="/logo-eclipse.svg" alt="Eclipse Auto" className="footer-logo" />
+            <img src="/eclipse-auto.svg" alt="Eclipse Auto" className="footer-logo" />
             <p className="footer-desc">
               Concession automobile de sport haut de gamme. Sélection exclusive de véhicules d'exception disponibles à la réservation en ligne.
             </p>

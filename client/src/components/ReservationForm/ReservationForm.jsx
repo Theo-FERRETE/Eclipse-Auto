@@ -22,8 +22,9 @@ export default function ReservationForm({ form, onChange, onSubmit, error, submi
 
       <form className="reservation-form" onSubmit={onSubmit}>
         <div className="form-group">
-          <label className="form-label">Date de rendez-vous souhaitée</label>
+          <label className="form-label" htmlFor="res-rdv-date">Date de rendez-vous souhaitée</label>
           <input
+            id="res-rdv-date"
             type="datetime-local"
             name="rdv_date"
             className="form-input"
@@ -34,8 +35,9 @@ export default function ReservationForm({ form, onChange, onSubmit, error, submi
         </div>
 
         <div className="form-group">
-          <label className="form-label">Message (optionnel)</label>
+          <label className="form-label" htmlFor="res-message">Message (optionnel)</label>
           <textarea
+            id="res-message"
             name="message"
             className="form-input form-textarea"
             placeholder="Précisez vos questions ou demandes particulières..."
@@ -45,7 +47,7 @@ export default function ReservationForm({ form, onChange, onSubmit, error, submi
           />
         </div>
 
-        {error && <div className="form-error">{error}</div>}
+        {error && <div className="form-error" role="alert">{error}</div>}
 
         <div className="reservation-disclaimer">
           En soumettant ce formulaire, vous faites une demande de réservation. Notre équipe vous contactera pour confirmer le rendez-vous. Aucun paiement n'est requis à cette étape.

@@ -16,8 +16,9 @@ export default function Filters({ filters, onChange, onReset, brands = [], fuelT
       </div>
 
       <div className="filter-group">
-        <label className="filter-label">Marque</label>
+        <label className="filter-label" htmlFor="filter-brand">Marque</label>
         <select
+          id="filter-brand"
           className="filter-select"
           value={filters.brand}
           onChange={e => onChange('brand', e.target.value)}
@@ -28,8 +29,9 @@ export default function Filters({ filters, onChange, onReset, brands = [], fuelT
       </div>
 
       <div className="filter-group">
-        <label className="filter-label">Carburant</label>
+        <label className="filter-label" htmlFor="filter-fuel">Carburant</label>
         <select
+          id="filter-fuel"
           className="filter-select"
           value={filters.fuel_type}
           onChange={e => onChange('fuel_type', e.target.value)}
@@ -40,8 +42,9 @@ export default function Filters({ filters, onChange, onReset, brands = [], fuelT
       </div>
 
       <div className="filter-group">
-        <label className="filter-label">Transmission</label>
+        <label className="filter-label" htmlFor="filter-transmission">Transmission</label>
         <select
+          id="filter-transmission"
           className="filter-select"
           value={filters.transmission}
           onChange={e => onChange('transmission', e.target.value)}
@@ -53,10 +56,11 @@ export default function Filters({ filters, onChange, onReset, brands = [], fuelT
 
       {priceMax && (
         <div className="filter-group">
-          <label className="filter-label">
+          <label className="filter-label" htmlFor="filter-price">
             Prix max — {isMaxPrice ? 'Sans limite' : `${sliderValue.toLocaleString('fr-FR')} €`}
           </label>
           <input
+            id="filter-price"
             type="range"
             className="filter-range"
             min={sliderMin}
@@ -76,8 +80,9 @@ export default function Filters({ filters, onChange, onReset, brands = [], fuelT
       )}
 
       <div className="filter-group">
-        <label className="filter-label">Année minimum</label>
+        <label className="filter-label" htmlFor="filter-year">Année minimum</label>
         <select
+          id="filter-year"
           className="filter-select"
           value={filters.year_min}
           onChange={e => onChange('year_min', e.target.value)}

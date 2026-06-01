@@ -33,15 +33,16 @@ export default function Login() {
     <main className="auth-page">
       <div className="auth-card">
         <div className="auth-header">
-          <img src="/logo-eclipse.svg" alt="Eclipse Auto" className="auth-logo" />
+          <img src="/eclipse-auto.svg" alt="Eclipse Auto" className="auth-logo" />
           <div className="tag">Espace membre</div>
           <h1 className="auth-title">Connexion</h1>
         </div>
 
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="form-group">
-            <label className="form-label">Email</label>
+            <label className="form-label" htmlFor="login-email">Email</label>
             <input
+              id="login-email"
               type="email"
               name="email"
               className="form-input"
@@ -54,12 +55,13 @@ export default function Login() {
 
           <div className="form-group">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <label className="form-label">Mot de passe</label>
-              <Link to="/forgot-password" className="auth-link" style={{ fontSize: '11px' }}>
+              <label className="form-label" htmlFor="login-password">Mot de passe</label>
+              <Link to="/forgot-password" className="auth-link" style={{ fontSize: '12px' }}>
                 Mot de passe oublié ?
               </Link>
             </div>
             <input
+              id="login-password"
               type="password"
               name="password"
               className="form-input"
@@ -71,7 +73,7 @@ export default function Login() {
           </div>
 
           {error && (
-            <div className="form-error">{error}</div>
+            <div className="form-error" role="alert">{error}</div>
           )}
 
           <button

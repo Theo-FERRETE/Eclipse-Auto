@@ -2,6 +2,7 @@ const { Router } = require('express')
 const nodemailer = require('nodemailer')
 const supabase = require('../supabase')
 const { requireAuth, requireAdmin } = require('../middleware/auth')
+const { buildConfirmationEmail } = require('../lib/emailTemplates')
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -52,7 +53,6 @@ router.post('/', requireAuth, async (req, res) => {
     return res.status(400).json({ error: 'vehicle_id obligatoire.' })
   }
 
-  // Vérifier que le véhicule est disponible
   const { data: vehicle } = await supabase
     .from('vehicles')
     .select('status')
@@ -84,10 +84,9 @@ router.patch('/:id/status', requireAdmin, async (req, res) => {
     return res.status(400).json({ error: 'Statut invalide.' })
   }
 
-  // Récupérer les détails avant mise à jour pour l'email
   const { data: resData } = await supabase
     .from('reservations')
-    .select('client_id, rdv_date, vehicles(brand, model, year)')
+    .select('client_id, rdv_date, vehicles(brand, model, year, price)')
     .eq('id', req.params.id)
     .single()
 
@@ -108,22 +107,12 @@ router.patch('/:id/status', requireAdmin, async (req, res) => {
       ])
 
       if (clientUser?.email) {
-        const v = resData.vehicles
         const firstName = profile?.first_name || 'Client'
-        const rdvLine = resData.rdv_date
-          ? `<p>Rendez-vous prévu le <strong>${new Date(resData.rdv_date).toLocaleString('fr-FR')}</strong>.</p>`
-          : ''
         await transporter.sendMail({
           from: `"Eclipse Auto" <${process.env.GMAIL_USER}>`,
           to: clientUser.email,
-          subject: 'Votre réservation est confirmée — Eclipse Auto',
-          html: `
-            <p>Bonjour ${firstName},</p>
-            <p>Votre demande de réservation pour la <strong>${v.brand} ${v.model} (${v.year})</strong> a été <strong>confirmée</strong> par notre équipe.</p>
-            ${rdvLine}
-            <p>Nous vous contacterons prochainement pour finaliser les détails.</p>
-            <p>Merci de votre confiance,<br>L'équipe Eclipse Auto</p>
-          `,
+          subject: `Votre réservation est confirmée — ${resData.vehicles.brand} ${resData.vehicles.model}`,
+          html: buildConfirmationEmail(firstName, resData.vehicles, resData.rdv_date),
         })
       }
     } catch (emailErr) {
@@ -136,7 +125,6 @@ router.patch('/:id/status', requireAdmin, async (req, res) => {
 
 // PATCH /api/reservations/:id/cancel — annulation par le client
 router.patch('/:id/cancel', requireAuth, async (req, res) => {
-  // Vérifier que la réservation appartient bien à cet utilisateur
   const { data: reservation } = await supabase
     .from('reservations')
     .select('client_id, status')

@@ -28,7 +28,7 @@ export default function ForgotPassword() {
     <main className="auth-page">
       <div className="auth-card">
         <div className="auth-header">
-          <img src="/logo-eclipse.svg" alt="Eclipse Auto" className="auth-logo" />
+          <img src="/eclipse-auto.svg" alt="Eclipse Auto" className="auth-logo" />
           <div className="tag">Espace membre</div>
           <h1 className="auth-title">Mot de passe oublié</h1>
         </div>
@@ -41,8 +41,9 @@ export default function ForgotPassword() {
         ) : (
           <form className="auth-form" onSubmit={handleSubmit}>
             <div className="form-group">
-              <label className="form-label">Email</label>
+              <label className="form-label" htmlFor="forgot-email">Email</label>
               <input
+                id="forgot-email"
                 type="email"
                 className="form-input"
                 placeholder="votre@email.com"
@@ -53,7 +54,7 @@ export default function ForgotPassword() {
               />
             </div>
 
-            {error && <div className="form-error">{error}</div>}
+            {error && <div className="form-error" role="alert">{error}</div>}
 
             <button
               type="submit"

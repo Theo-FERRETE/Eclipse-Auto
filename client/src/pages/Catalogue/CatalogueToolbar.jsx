@@ -5,6 +5,7 @@ export default function CatalogueToolbar({ search, sort, onSearchChange, onSortC
         <input
           type="text"
           className="search-input"
+          aria-label="Rechercher un véhicule"
           placeholder="Rechercher une marque, un modèle..."
           value={search}
           onChange={e => onSearchChange(e.target.value)}
@@ -12,6 +13,7 @@ export default function CatalogueToolbar({ search, sort, onSearchChange, onSortC
       </div>
       <select
         className="sort-select"
+        aria-label="Trier les véhicules"
         value={sort}
         onChange={e => onSortChange(e.target.value)}
       >

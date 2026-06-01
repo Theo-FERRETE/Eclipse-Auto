@@ -80,8 +80,9 @@ export default function DashboardProfile({ user, profile, refreshProfile }) {
         <div className="profile-form-title">Informations personnelles</div>
         <div className="form-row">
           <div className="form-group">
-            <label className="form-label">Prénom</label>
+            <label className="form-label" htmlFor="profile-firstname">Prénom</label>
             <input
+              id="profile-firstname"
               className="form-input"
               value={profileForm.first_name}
               onChange={e => setProfileForm(p => ({ ...p, first_name: e.target.value }))}
@@ -89,8 +90,9 @@ export default function DashboardProfile({ user, profile, refreshProfile }) {
             />
           </div>
           <div className="form-group">
-            <label className="form-label">Nom</label>
+            <label className="form-label" htmlFor="profile-lastname">Nom</label>
             <input
+              id="profile-lastname"
               className="form-input"
               value={profileForm.last_name}
               onChange={e => setProfileForm(p => ({ ...p, last_name: e.target.value }))}
@@ -99,8 +101,9 @@ export default function DashboardProfile({ user, profile, refreshProfile }) {
           </div>
         </div>
         <div className="form-group">
-          <label className="form-label">Téléphone</label>
+          <label className="form-label" htmlFor="profile-phone">Téléphone</label>
           <input
+            id="profile-phone"
             className="form-input"
             value={profileForm.phone}
             onChange={e => setProfileForm(p => ({ ...p, phone: e.target.value }))}
@@ -109,8 +112,9 @@ export default function DashboardProfile({ user, profile, refreshProfile }) {
           />
         </div>
         <div className="form-group">
-          <label className="form-label">Email</label>
+          <label className="form-label" htmlFor="profile-email">Email</label>
           <input
+            id="profile-email"
             className="form-input"
             value={user?.email || ''}
             disabled
@@ -118,7 +122,7 @@ export default function DashboardProfile({ user, profile, refreshProfile }) {
           />
         </div>
         {profileMsg && (
-          <div className={profileMsg.type === 'error' ? 'form-error' : 'form-success'}>
+          <div className={profileMsg.type === 'error' ? 'form-error' : 'form-success'} role={profileMsg.type === 'error' ? 'alert' : 'status'}>
             {profileMsg.text}
           </div>
         )}
@@ -130,8 +134,9 @@ export default function DashboardProfile({ user, profile, refreshProfile }) {
       <form className="profile-form" onSubmit={handlePasswordSave}>
         <div className="profile-form-title">Changer le mot de passe</div>
         <div className="form-group">
-          <label className="form-label">Nouveau mot de passe</label>
+          <label className="form-label" htmlFor="profile-new-password">Nouveau mot de passe</label>
           <input
+            id="profile-new-password"
             className="form-input"
             type="password"
             value={pwForm.password}
@@ -140,8 +145,9 @@ export default function DashboardProfile({ user, profile, refreshProfile }) {
           />
         </div>
         <div className="form-group">
-          <label className="form-label">Confirmer le mot de passe</label>
+          <label className="form-label" htmlFor="profile-confirm-password">Confirmer le mot de passe</label>
           <input
+            id="profile-confirm-password"
             className="form-input"
             type="password"
             value={pwForm.confirm}
@@ -150,7 +156,7 @@ export default function DashboardProfile({ user, profile, refreshProfile }) {
           />
         </div>
         {pwMsg && (
-          <div className={pwMsg.type === 'error' ? 'form-error' : 'form-success'}>
+          <div className={pwMsg.type === 'error' ? 'form-error' : 'form-success'} role={pwMsg.type === 'error' ? 'alert' : 'status'}>
             {pwMsg.text}
           </div>
         )}

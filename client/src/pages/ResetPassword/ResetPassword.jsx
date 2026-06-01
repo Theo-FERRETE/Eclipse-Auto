@@ -45,7 +45,7 @@ export default function ResetPassword() {
     <main className="auth-page">
       <div className="auth-card">
         <div className="auth-header">
-          <img src="/logo-eclipse.svg" alt="Eclipse Auto" className="auth-logo" />
+          <img src="/eclipse-auto.svg" alt="Eclipse Auto" className="auth-logo" />
           <div className="tag">Espace membre</div>
           <h1 className="auth-title">Nouveau mot de passe</h1>
         </div>
@@ -67,8 +67,9 @@ export default function ResetPassword() {
         ) : (
           <form className="auth-form" onSubmit={handleSubmit}>
             <div className="form-group">
-              <label className="form-label">Nouveau mot de passe</label>
+              <label className="form-label" htmlFor="reset-password">Nouveau mot de passe</label>
               <input
+                id="reset-password"
                 type="password"
                 className="form-input"
                 placeholder="••••••••"
@@ -79,8 +80,9 @@ export default function ResetPassword() {
               />
             </div>
             <div className="form-group">
-              <label className="form-label">Confirmer le mot de passe</label>
+              <label className="form-label" htmlFor="reset-confirm">Confirmer le mot de passe</label>
               <input
+                id="reset-confirm"
                 type="password"
                 className="form-input"
                 placeholder="••••••••"
@@ -90,7 +92,7 @@ export default function ResetPassword() {
               />
             </div>
 
-            {error && <div className="form-error">{error}</div>}
+            {error && <div className="form-error" role="alert">{error}</div>}
 
             <button
               type="submit"

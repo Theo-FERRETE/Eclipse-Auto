@@ -19,7 +19,7 @@ export default function Navbar() {
       <div className="navbar-inner">
 
         <Link to="/" className="navbar-logo">
-          <img src="/logo-eclipse.svg" alt="Eclipse Auto" className="navbar-logo-img" />
+          <img src="/eclipse-auto.svg" alt="Eclipse Auto" className="navbar-logo-img" />
         </Link>
 
         <nav className={`navbar-links ${menuOpen ? 'open' : ''}`}>

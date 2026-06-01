@@ -308,7 +308,6 @@ button.sidebar-link {
 }
 
 .form-input:focus {
-  outline: none;
   border-color: var(--cyan);
 }
 

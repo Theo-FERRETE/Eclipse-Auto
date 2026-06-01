@@ -109,7 +109,7 @@
   cursor: pointer;
   transition: border-color 0.2s;
 }
-.status-select:focus { outline: none; border-color: var(--red); }
+.status-select:focus { border-color: var(--red); }
 
 .avc-actions {
   display: flex;
@@ -219,7 +219,7 @@
   transition: border-color 0.2s;
 }
 .vmf-input::placeholder { color: #444; }
-.vmf-input:focus { outline: none; border-color: var(--cyan); }
+.vmf-input:focus { border-color: var(--cyan); }
 .vmf-input option { background: var(--black-2); }
 
 .vmf-textarea { resize: vertical; min-height: 80px; }
