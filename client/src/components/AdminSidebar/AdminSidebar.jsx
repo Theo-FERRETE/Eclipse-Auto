@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
+import './AdminSidebar.css'
 
 const LINKS = [
   { to: '/admin',               label: 'Dashboard' },

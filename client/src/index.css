@@ -16,8 +16,8 @@
   --white: #ffffff;
   --gray: #c0c0c0;
   --gray-dark: #999999;
-  --font-display: 'Barlow Condensed', Arial Narrow, sans-serif;
-  --font-body: 'Barlow', Arial, sans-serif;
+  --font-display: 'Rajdhani', Arial Narrow, sans-serif;
+  --font-body: 'Inter', Arial, sans-serif;
   --clip-btn: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
   --clip-card: polygon(0 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
 }

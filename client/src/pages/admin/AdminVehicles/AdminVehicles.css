@@ -249,21 +249,11 @@
   margin-top: 4px;
 }
 
-@media (max-width: 1024px) {
-  .admin-layout { grid-template-columns: 1fr; gap: 24px; }
-  .admin-sidebar { position: static; height: auto; }
-  .admin-sidebar .sidebar-nav { flex-direction: row; overflow-x: auto; scrollbar-width: none; gap: 0; }
-  .admin-sidebar .sidebar-nav::-webkit-scrollbar { display: none; }
-  .admin-sidebar .sidebar-link { white-space: nowrap; flex-shrink: 0; border-left: none !important; border-bottom: 2px solid transparent; padding: 12px 20px; }
-  .admin-sidebar .sidebar-link.active { border-left: none !important; border-bottom-color: var(--red); }
-}
-
 @media (max-width: 1200px) {
   .avc-price { display: none; }
 }
 
 @media (max-width: 768px) {
-  .admin-sidebar .sidebar-link { font-size: 11px; padding: 12px 14px; letter-spacing: 1px; }
   .admin-toolbar { flex-direction: column; align-items: stretch; }
   .admin-toolbar .btn-primary { align-self: flex-start; }
 
@@ -286,6 +276,19 @@
   .status-select { flex: 1; min-width: 120px; }
   .avc-actions { flex: 1; justify-content: flex-end; }
 
-  .vehicle-modal { padding: 20px; clip-path: none; border-radius: 2px; }
+  .vehicle-modal { padding: 20px; clip-path: none; }
   .vmf-row { grid-template-columns: 1fr; }
+  .vmf-actions { flex-direction: column-reverse; }
+  .vmf-actions .btn-primary,
+  .vmf-actions .btn-ghost { width: 100%; text-align: center; }
+}
+
+@media (max-width: 480px) {
+  .admin-vehicle-card { padding: 10px 12px; gap: 10px; }
+  .avc-img { height: 48px; width: 72px; }
+  .avc-model { font-size: 15px; }
+  .status-select { font-size: 11px; padding: 5px 8px; }
+  .action-btn { font-size: 10px; padding: 5px 10px; }
+  .vehicle-modal { padding: 16px; max-height: 95vh; }
+  .vehicle-modal-header { margin-bottom: 20px; padding-bottom: 14px; }
 }

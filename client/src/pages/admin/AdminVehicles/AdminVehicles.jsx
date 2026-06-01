@@ -28,6 +28,7 @@ export default function AdminVehicles() {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const [confirmId, setConfirmId] = useState(null)
+  const [statusError, setStatusError] = useState(null)
 
   useEffect(() => { fetchVehicles() }, [])
 
@@ -112,11 +113,16 @@ export default function AdminVehicles() {
 
   async function handleStatusChange(vehicle, status) {
     const token = await getToken()
-    await fetch(`/api/vehicles/${vehicle.id}`, {
+    const res = await fetch(`/api/vehicles/${vehicle.id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
       body: JSON.stringify({ ...vehicle, status }),
     })
+    if (!res.ok) {
+      setStatusError('Impossible de modifier le statut.')
+      return
+    }
+    setStatusError(null)
     fetchVehicles()
   }
 
@@ -134,6 +140,9 @@ export default function AdminVehicles() {
         <div className="admin-content">
           <div className="admin-vehicles-wrap">
             <div className="admin-list">
+              {statusError && (
+                <div className="form-error" role="alert" style={{ marginBottom: '16px' }}>{statusError}</div>
+              )}
               <div className="admin-toolbar">
                 <input
                   type="text"

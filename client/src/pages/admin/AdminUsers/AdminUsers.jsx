@@ -10,6 +10,7 @@ export default function AdminUsers() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [confirmId, setConfirmId] = useState(null)
+  const [deleteError, setDeleteError] = useState(null)
 
   async function getToken() {
     const { data: { session } } = await supabase.auth.getSession()
@@ -34,11 +35,16 @@ export default function AdminUsers() {
 
   async function confirmDelete() {
     const token = await getToken()
-    await fetch(`/api/admin/clients/${confirmId}`, {
+    const res = await fetch(`/api/admin/clients/${confirmId}`, {
       method: 'DELETE',
       headers: { 'Authorization': `Bearer ${token}` },
     })
     setConfirmId(null)
+    if (!res.ok) {
+      setDeleteError('Impossible de supprimer ce client.')
+      return
+    }
+    setDeleteError(null)
     fetchClients()
   }
 
@@ -53,6 +59,9 @@ export default function AdminUsers() {
         <AdminSidebar />
 
         <div className="admin-content">
+          {deleteError && (
+            <div className="form-error" role="alert" style={{ marginBottom: '16px' }}>{deleteError}</div>
+          )}
           <div className="admin-toolbar">
             <input
               type="text"

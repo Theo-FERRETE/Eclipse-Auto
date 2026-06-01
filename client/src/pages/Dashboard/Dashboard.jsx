@@ -12,6 +12,7 @@ export default function Dashboard() {
   const [reservations, setReservations] = useState([])
   const [loading, setLoading] = useState(true)
   const [cancelling, setCancelling] = useState(new Set())
+  const [cancelError, setCancelError] = useState(null)
 
   useEffect(() => {
     async function fetchReservations() {
@@ -42,6 +43,9 @@ export default function Dashboard() {
       setReservations(prev =>
         prev.map(r => r.id === id ? { ...r, status: 'cancelled' } : r)
       )
+      setCancelError(null)
+    } else {
+      setCancelError('Impossible d\'annuler cette réservation. Veuillez réessayer.')
     }
 
     setCancelling(prev => { const s = new Set(prev); s.delete(id); return s })
@@ -64,12 +68,17 @@ export default function Dashboard() {
         <DashboardSidebar profile={profile} user={user} view={view} onViewChange={setView} />
         <div className="dashboard-main">
           {view === 'reservations' && (
-            <DashboardReservations
-              reservations={reservations}
-              loading={loading}
-              cancelling={cancelling}
-              onCancel={handleCancel}
-            />
+            <>
+              {cancelError && (
+                <div className="form-error" role="alert" style={{ marginBottom: '16px' }}>{cancelError}</div>
+              )}
+              <DashboardReservations
+                reservations={reservations}
+                loading={loading}
+                cancelling={cancelling}
+                onCancel={handleCancel}
+              />
+            </>
           )}
           {view === 'profile' && (
             <DashboardProfile user={user} profile={profile} refreshProfile={refreshProfile} />
