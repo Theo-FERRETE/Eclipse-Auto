@@ -3,6 +3,7 @@ const nodemailer = require('nodemailer')
 const supabase = require('../supabase')
 const { requireAuth, requireAdmin } = require('../middleware/auth')
 const { buildConfirmationEmail } = require('../lib/emailTemplates')
+const { RESERVATION_STATUSES } = require('../constants')
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -32,6 +33,10 @@ router.get('/all', requireAdmin, async (req, res) => {
 
   const limitNum = Math.min(parseInt(limit) || 50, 100)
   const offsetNum = Math.max(parseInt(offset) || 0, 0)
+
+  if (status && !RESERVATION_STATUSES.includes(status)) {
+    return res.status(400).json({ error: 'Statut invalide.' })
+  }
 
   let query = supabase
     .from('reservations')

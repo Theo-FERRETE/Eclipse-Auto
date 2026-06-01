@@ -1,6 +1,7 @@
 const { Router } = require('express')
 const supabase = require('../supabase')
 const { requireAdmin } = require('../middleware/auth')
+const { VEHICLE_STATUSES } = require('../constants')
 
 const router = Router()
 
@@ -36,9 +37,13 @@ function validateVehicleInput(body) {
 router.get('/', async (req, res) => {
   const { status, brand, fuel_type, limit = 50, offset = 0 } = req.query
 
+  if (status && !VEHICLE_STATUSES.includes(status)) {
+    return res.status(400).json({ error: 'Statut invalide.' })
+  }
+
   let query = supabase.from('vehicles').select('*', { count: 'exact' }).order('created_at', { ascending: false })
 
-  if (status)   query = query.eq('status', status)
+  if (status) query = query.eq('status', status)
   if (brand)    query = query.eq('brand', brand)
   if (fuel_type) query = query.eq('fuel_type', fuel_type)
 

@@ -18,10 +18,12 @@ import AdminReservations from '@/pages/admin/AdminReservations/AdminReservations
 import AdminUsers from '@/pages/admin/AdminUsers/AdminUsers'
 import ProtectedRoute from '@/components/ProtectedRoute/ProtectedRoute'
 import NotFound from '@/pages/NotFound/NotFound'
+import ErrorBoundary from '@/components/ErrorBoundary/ErrorBoundary'
 
 function App() {
   return (
     <BrowserRouter>
+      <ErrorBoundary>
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -54,6 +56,7 @@ function App() {
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
+      </ErrorBoundary>
     </BrowserRouter>
   )
 }

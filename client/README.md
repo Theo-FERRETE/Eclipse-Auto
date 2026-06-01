@@ -1,16 +1,54 @@
-# React + Vite
+# Eclipse Auto — Client
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Interface utilisateur de l'application Eclipse Auto, construite avec React 19 et Vite.
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **React 19** + **Vite 6**
+- **React Router v7** — navigation SPA
+- **Recharts** — graphiques du dashboard admin
+- **ESLint** avec `eslint-plugin-react-hooks` v7
 
-## React Compiler
+## Scripts
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+npm run dev      # Serveur de développement (port 5173)
+npm run build    # Build de production
+npm run preview  # Prévisualiser le build
+npm run lint     # ESLint
+npm test         # Tests unitaires (vitest run)
+npm run test:watch  # Tests en mode watch
+```
 
-## Expanding the ESLint configuration
+## Structure
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```text
+src/
+  components/    # Composants réutilisables (Navbar, Footer, Pagination, ErrorBoundary…)
+  pages/         # Pages de l'application (Home, Catalogue, VehicleDetail, Login…)
+  lib/           # Utilitaires (auth, supabase, vehiclesCache, utils, constants)
+  context/       # AuthContext
+  assets/        # Ressources statiques
+__tests__/
+  components/    # Tests des composants
+  pages/         # Tests des pages
+  lib/           # Tests des utilitaires
+  setup.js       # Configuration jest-dom
+```
+
+## Tests
+
+64 tests unitaires couvrant les composants, pages et utilitaires.
+
+```bash
+npm test
+```
+
+## Variables d'environnement
+
+Créer un fichier `.env` à la racine du dossier `client/` :
+
+```env
+VITE_SUPABASE_URL=...
+VITE_SUPABASE_ANON_KEY=...
+```

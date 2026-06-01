@@ -1,17 +1,24 @@
-# Eclipse Auto 
+# Eclipse Auto
 
-Une plateforme de gestion et réservation de véhicules avec interface d'administration.
+Plateforme de gestion et réservation de véhicules haut de gamme, avec interface d'administration complète.
 
-## Stack Technique
+## Stack technique
 
-**Backend:** Node.js + Express 5.2.1
-**Frontend:** React 19 + Vite
-**Database:** Supabase (PostgreSQL)
-**Auth:** Supabase Auth + JWT
+| Couche | Technologie |
+|--------|-------------|
+| Backend | Node.js + Express 5 |
+| Frontend | React 19 + Vite 6 |
+| Base de données | Supabase (PostgreSQL) |
+| Authentification | Supabase Auth + JWT |
+| Email | Nodemailer + Gmail SMTP |
+| Tests serveur | Jest + Supertest |
+| Tests client | Vitest + Testing Library |
+| CI/CD | GitHub Actions |
 
 ## Installation
 
 ### Backend
+
 ```bash
 cd server
 npm install
@@ -21,110 +28,113 @@ npm start
 ```
 
 ### Frontend
+
 ```bash
 cd client
 npm install
 npm run dev
 ```
 
-## Architecture
+## Variables d'environnement
 
-### Backend Routes
+### Server (`server/.env`)
+
+```env
+PORT=3001
+NODE_ENV=development
+SUPABASE_URL=...
+SUPABASE_SERVICE_ROLE_KEY=...
+GMAIL_USER=...
+GMAIL_APP_PASSWORD=...
+```
+
+### Client (`client/.env`)
+
+```env
+VITE_SUPABASE_URL=...
+VITE_SUPABASE_ANON_KEY=...
+```
+
+## API
+
+### Véhicules
 
 | Route | Méthode | Auth | Description |
 |-------|---------|------|-------------|
-| `/api/vehicles` | GET | Public | Liste des véhicules |
-| `/api/vehicles/:id` | GET | Public | Détails d'un véhicule |
+| `/api/vehicles` | GET | Public | Liste paginée des véhicules |
+| `/api/vehicles/by-slug/:slug` | GET | Public | Détail par slug (brand-model) |
+| `/api/vehicles/:id` | GET | Public | Détail par UUID |
 | `/api/vehicles` | POST | Admin | Créer un véhicule |
 | `/api/vehicles/:id` | PUT | Admin | Modifier un véhicule |
 | `/api/vehicles/:id` | DELETE | Admin | Supprimer un véhicule |
+
+### Réservations
+
+| Route | Méthode | Auth | Description |
+|-------|---------|------|-------------|
 | `/api/reservations` | GET | Auth | Mes réservations |
 | `/api/reservations/all` | GET | Admin | Toutes les réservations |
 | `/api/reservations` | POST | Auth | Créer une réservation |
-| `/api/reservations/:id/status` | PATCH | Admin | Changer statut |
-| `/api/admin/stats` | GET | Admin | Statistiques |
-| `/api/admin/clients` | GET | Admin | Liste des clients |
-| `/api/contact` | POST | Public | Formulaire contact |
+| `/api/reservations/:id/status` | PATCH | Admin | Changer le statut |
+| `/api/reservations/:id/cancel` | PATCH | Auth | Annuler (client) |
 
-### Frontend Routes
+### Administration & autres
+
+| Route | Méthode | Auth | Description |
+|-------|---------|------|-------------|
+| `/api/admin/stats` | GET | Admin | Statistiques du tableau de bord |
+| `/api/admin/clients` | GET | Admin | Liste des clients |
+| `/api/contact` | POST | Public | Formulaire de contact |
+| `/api/health` | GET | Public | Statut du serveur |
+
+## Pages frontend
 
 | Route | Type | Description |
 |-------|------|-------------|
 | `/` | Public | Accueil |
 | `/catalogue` | Public | Catalogue des véhicules |
-| `/vehicles/:slug` | Public | Détails véhicule |
+| `/vehicles/:slug` | Public | Détails d'un véhicule |
 | `/login` | Public | Connexion |
 | `/register` | Public | Inscription |
-| `/contact` | Public | Formulaire contact |
-| `/dashboard` | Private | Espace client |
-| `/reserve/:slug` | Private | Réserver un véhicule |
-| `/admin/*` | Admin | Panneau administration |
+| `/contact` | Public | Formulaire de contact |
+| `/dashboard` | Privé | Espace client |
+| `/reserve/:slug` | Privé | Réserver un véhicule |
+| `/admin/*` | Admin | Panneau d'administration |
 
-## Variables d'Environnement
-
-### Server (.env)
-- `PORT` - Port du serveur (default: 3001)
-- `NODE_ENV` - Environnement (development/production)
-- `SUPABASE_URL` - URL Supabase
-- `SUPABASE_SERVICE_KEY` - Clé de service Supabase
-- `GMAIL_USER` - Email Gmail
-- `GMAIL_PASSWORD` - Mot de passe Gmail
-
-### Client (.env)
-- `VITE_SUPABASE_URL` - URL Supabase
-- `VITE_SUPABASE_ANON_KEY` - Clé anon Supabase
-
-## Développement
+## Tests
 
 ```bash
-# Backend (from server/)
-npm run dev
+# Serveur (124 tests, ~92% coverage)
+cd server && npm test
 
-# Frontend (from client/)
-npm run dev
-
-# Build frontend
-npm run build
+# Client (64 tests)
+cd client && npm test
 ```
+
+## Base de données
+
+### Tables principales
+
+- `profiles` — profils utilisateurs (rôle, prénom, nom, téléphone)
+- `vehicles` — catalogue véhicules (marque, modèle, prix, statut…)
+- `reservations` — réservations (statut, date RDV, message)
+
+Un trigger PostgreSQL met à jour automatiquement `vehicles.status` lors d'un changement de statut de réservation.
+
+## Sécurité
+
+- Authentification JWT via Supabase Auth
+- RBAC (admin / user) via `profiles.role`
+- Validation des entrées sur toutes les routes sensibles
+- Sanitization des emails (protection header injection)
+- CORS restreint en production
+- ErrorBoundary React pour les erreurs inattendues côté client
 
 ## Production
 
 ```bash
-# Compiler le frontend
-cd client
-npm run build
-
-# Démarrer le serveur
-cd ../server
-NODE_ENV=production npm start
+cd client && npm run build
+cd ../server && NODE_ENV=production npm start
 ```
 
-Le serveur servira les assets frontend depuis `client/dist/`.
-
-## Base de Données
-
-### Tables Principales
-- `profiles` - Profils utilisateurs (role, email)
-- `vehicles` - Catalogue véhicules
-- `reservations` - Réservations (statut, dates)
-
-## Sécurité
-
-- Auth via JWT Supabase
-- RBAC (admin/user) via table `profiles.role`
-- CORS activé en développement uniquement
-- Validation des entrées sur API sensibles
-- Sanitization des emails (contact form)
-
-## Dépannage
-
-**App crash au démarrage?**
-- Vérifier que AuthContext.jsx existe (`client/src/lib/AuthContext.jsx`)
-- Vérifier les variables .env
-
-**Erreurs CORS?**
-- En développement: CORS est auto-configuré
-- En production: CONFIG_URL doit matcher domaine frontend
-
-**Routes 404?**
-- Vérifier que `client/dist/` existe (npm run build en client/)
+Le serveur Express sert les assets du build Vite depuis `client/dist/`.

@@ -25,18 +25,16 @@ export async function getVehicles() {
 }
 
 export async function getVehicleBySlug(slug) {
-  // Cherche dans le cache d'abord
   if (_cache && Date.now() - _cacheTime < TTL) {
     const found = _cache.find(v => toSlug(v.brand, v.model) === slug)
     return { data: found || null, error: found ? null : { message: 'Véhicule introuvable.' } }
   }
 
-  // Sinon charge tout le catalogue (met à jour le cache au passage)
-  const { data, error } = await fetchFromDB()
-  if (error || !data) return { data: null, error }
-
-  const found = data.find(v => toSlug(v.brand, v.model) === slug)
-  return { data: found || null, error: found ? null : { message: 'Véhicule introuvable.' } }
+  // Appel ciblé : évite de charger tout le catalogue juste pour une fiche
+  const res = await fetch(`/api/vehicles/by-slug/${encodeURIComponent(slug)}`)
+  if (!res.ok) return { data: null, error: { message: 'Véhicule introuvable.' } }
+  const data = await res.json()
+  return { data, error: null }
 }
 
 export function patchCachedVehicle(updated) {

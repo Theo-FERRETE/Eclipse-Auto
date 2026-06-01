@@ -62,11 +62,7 @@ router.post('/', async (req, res) => {
     return res.status(400).json({ error: 'Nom, email et message sont obligatoires.' })
   }
 
-  if (!isValidEmail(email)) {
-    return res.status(400).json({ error: 'Adresse email invalide.' })
-  }
-
-  if (/[\r\n]/.test(email)) {
+  if (!isValidEmail(email) || /[\r\n]/.test(email)) {
     return res.status(400).json({ error: 'Adresse email invalide.' })
   }
 
