@@ -52,7 +52,7 @@ export function AuthProvider({ children }) {
       isClient: profile?.role === 'client',
       refreshProfile,
     }}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   )
 }
