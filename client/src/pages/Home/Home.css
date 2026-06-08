@@ -17,6 +17,12 @@
   background-repeat: no-repeat;
 }
 
+@media (max-width: 768px) {
+  .hero-bg {
+    background-image: url('/img/Hero-mobile.webp');
+  }
+}
+
 .hero-bg::after {
   content: '';
   position: absolute;
