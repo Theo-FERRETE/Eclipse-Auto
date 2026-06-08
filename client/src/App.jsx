@@ -1,30 +1,33 @@
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Navbar from '@/components/Navbar/Navbar'
 import Footer from '@/components/Footer/Footer'
 import Home from '@/pages/Home/Home'
-import Catalogue from '@/pages/Catalogue/Catalogue'
-import VehicleDetail from '@/pages/VehicleDetail/VehicleDetail'
-import Login from '@/pages/Login/Login'
-import Register from '@/pages/Register/Register'
-import ForgotPassword from '@/pages/ForgotPassword/ForgotPassword'
-import ResetPassword from '@/pages/ResetPassword/ResetPassword'
-import Dashboard from '@/pages/Dashboard/Dashboard'
-import Reservation from '@/pages/Reservation/Reservation'
-import Contact from '@/pages/Contact/Contact'
-import MentionsLegales from '@/pages/MentionsLegales/MentionsLegales'
-import AdminDashboard from '@/pages/admin/AdminDashboard/AdminDashboard'
-import AdminVehicles from '@/pages/admin/AdminVehicles/AdminVehicles'
-import AdminReservations from '@/pages/admin/AdminReservations/AdminReservations'
-import AdminUsers from '@/pages/admin/AdminUsers/AdminUsers'
 import ProtectedRoute from '@/components/ProtectedRoute/ProtectedRoute'
-import NotFound from '@/pages/NotFound/NotFound'
 import ErrorBoundary from '@/components/ErrorBoundary/ErrorBoundary'
+
+const Catalogue = lazy(() => import('@/pages/Catalogue/Catalogue'))
+const VehicleDetail = lazy(() => import('@/pages/VehicleDetail/VehicleDetail'))
+const Login = lazy(() => import('@/pages/Login/Login'))
+const Register = lazy(() => import('@/pages/Register/Register'))
+const ForgotPassword = lazy(() => import('@/pages/ForgotPassword/ForgotPassword'))
+const ResetPassword = lazy(() => import('@/pages/ResetPassword/ResetPassword'))
+const Dashboard = lazy(() => import('@/pages/Dashboard/Dashboard'))
+const Reservation = lazy(() => import('@/pages/Reservation/Reservation'))
+const Contact = lazy(() => import('@/pages/Contact/Contact'))
+const MentionsLegales = lazy(() => import('@/pages/MentionsLegales/MentionsLegales'))
+const AdminDashboard = lazy(() => import('@/pages/admin/AdminDashboard/AdminDashboard'))
+const AdminVehicles = lazy(() => import('@/pages/admin/AdminVehicles/AdminVehicles'))
+const AdminReservations = lazy(() => import('@/pages/admin/AdminReservations/AdminReservations'))
+const AdminUsers = lazy(() => import('@/pages/admin/AdminUsers/AdminUsers'))
+const NotFound = lazy(() => import('@/pages/NotFound/NotFound'))
 
 function App() {
   return (
     <BrowserRouter>
       <ErrorBoundary>
       <Navbar />
+      <Suspense fallback={null}>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/catalogue" element={<Catalogue />} />
@@ -55,6 +58,7 @@ function App() {
         } />
         <Route path="*" element={<NotFound />} />
       </Routes>
+      </Suspense>
       <Footer />
       </ErrorBoundary>
     </BrowserRouter>

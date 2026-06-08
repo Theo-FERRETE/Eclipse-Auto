@@ -111,7 +111,12 @@ export default function Home() {
                       <div className="car-price">
                         {formatPrice(car.price)}
                       </div>
-                      <Link to={`/vehicles/${toSlug(car.brand, car.model)}`} className="btn-cyan" style={{ padding: '8px 18px', fontSize: '11px' }}>
+                      <Link
+                        to={`/vehicles/${toSlug(car.brand, car.model)}`}
+                        className="btn-cyan"
+                        style={{ padding: '8px 18px', fontSize: '11px' }}
+                        aria-label={`Voir ${car.brand} ${car.model}`}
+                      >
                         Voir
                       </Link>
                     </div>
