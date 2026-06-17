@@ -155,4 +155,55 @@ router.delete('/:id', requireAdmin, async (req, res) => {
   res.json({ success: true })
 })
 
+// GET /api/vehicles/:id/equipements — équipements d'un véhicule + prix total
+router.get('/:id/equipements', async (req, res) => {
+  const { data: vehicle, error: vErr } = await supabase
+    .from('vehicles')
+    .select('id, brand, model, price')
+    .eq('id', req.params.id)
+    .single()
+
+  if (vErr) return res.status(404).json({ error: 'Véhicule introuvable.' })
+
+  const { data: liens, error: lErr } = await supabase
+    .from('vehicle_equipements')
+    .select('equipements(id, nom, categorie, prix_supplement)')
+    .eq('vehicle_id', req.params.id)
+
+  if (lErr) return res.status(500).json({ error: lErr.message })
+
+  const equipements = liens.map(l => l.equipements)
+  const supplement  = equipements.reduce((sum, e) => sum + Number(e.prix_supplement), 0)
+
+  res.json({
+    ...vehicle,
+    prix_base: vehicle.price,
+    prix_total: vehicle.price + supplement,
+    equipements,
+  })
+})
+
+// PUT /api/vehicles/:id/equipements — définir les équipements d'un véhicule (admin)
+router.put('/:id/equipements', requireAdmin, async (req, res) => {
+  const { equipement_ids } = req.body
+
+  if (!Array.isArray(equipement_ids)) {
+    return res.status(400).json({ error: 'equipement_ids doit être un tableau.' })
+  }
+
+  await supabase.from('vehicle_equipements').delete().eq('vehicle_id', req.params.id)
+
+  if (equipement_ids.length > 0) {
+    const rows = equipement_ids.map(eid => ({
+      vehicle_id: req.params.id,
+      equipement_id: eid,
+    }))
+
+    const { error } = await supabase.from('vehicle_equipements').insert(rows)
+    if (error) return res.status(500).json({ error: error.message })
+  }
+
+  res.redirect(303, `/api/vehicles/${req.params.id}/equipements`)
+})
+
 module.exports = router

@@ -120,6 +120,56 @@ Supprimer un véhicule.
 
 ---
 
+## Équipements
+
+### `GET /equipements`
+Liste tous les équipements du catalogue.
+
+**Réponse 200**
+```json
+[
+  { "id": "uuid", "nom": "GPS", "categorie": "Confort", "prix_supplement": 500 }
+]
+```
+
+---
+
+### `GET /vehicles/:id/equipements`
+Équipements cochés sur un véhicule, avec le prix total calculé.
+
+**Réponse 200**
+```json
+{
+  "id": 1,
+  "brand": "Toyota",
+  "model": "Corolla",
+  "prix_base": 25000,
+  "prix_total": 26100,
+  "equipements": [
+    { "id": "uuid", "nom": "Aileron", "categorie": "Esthétique", "prix_supplement": 600 },
+    { "id": "uuid", "nom": "GPS", "categorie": "Confort", "prix_supplement": 500 }
+  ]
+}
+```
+
+**Réponse 404** : `{ "error": "Véhicule introuvable." }`
+
+---
+
+### `PUT /vehicles/:id/equipements` 🔒 Admin
+Définit la liste des équipements d'un véhicule (remplace les liens existants).
+
+**Body**
+```json
+{ "equipement_ids": ["uuid1", "uuid2"] }
+```
+
+**Réponse 303** : redirige vers `GET /vehicles/:id/equipements`  
+**Réponse 400** : `{ "error": "equipement_ids doit être un tableau." }`  
+**Réponse 401/403** : non authentifié / non admin
+
+---
+
 ## Réservations
 
 ### `GET /reservations` 🔒 Auth

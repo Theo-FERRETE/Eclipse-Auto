@@ -162,9 +162,25 @@
 }
 
 .reservation-form-wrap {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 28px;
+  background: linear-gradient(165deg, var(--black-3), var(--black-2));
+  border: 1px solid var(--border);
+  clip-path: var(--clip-card);
+  padding: 36px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+}
+
+.reservation-form-wrap::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 12px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--red), transparent);
 }
 
 .reservation-form-header {
@@ -184,7 +200,7 @@
 }
 
 .reservation-client-info {
-  background: var(--black-2);
+  background: var(--black);
   border: 1px solid var(--border);
   padding: 20px;
   display: flex;

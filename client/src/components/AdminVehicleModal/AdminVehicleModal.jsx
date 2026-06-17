@@ -1,4 +1,13 @@
-export default function AdminVehicleModal({ form, onChange, onSubmit, onClose, editing, submitting, error, success }) {
+export default function AdminVehicleModal({
+  form, onChange, onSubmit, onClose, editing, submitting, error, success,
+  equipements = [], selectedEquipementIds = [], onToggleEquipement,
+}) {
+  const basePrice = parseFloat(form.price) || 0
+  const supplement = equipements
+    .filter(eq => selectedEquipementIds.includes(eq.id))
+    .reduce((sum, eq) => sum + Number(eq.prix_supplement), 0)
+  const totalPrice = basePrice + supplement
+
   return (
     <div className="vehicle-modal-overlay" onClick={e => { if (e.target === e.currentTarget) onClose() }}>
       <div className="vehicle-modal">
@@ -72,6 +81,29 @@ export default function AdminVehicleModal({ form, onChange, onSubmit, onClose, e
               <option value="sold">Vendu</option>
             </select>
           </div>
+
+          {equipements.length > 0 && (
+            <div className="vmf-group">
+              <label className="vmf-label">Équipements</label>
+              <div className="vmf-equip-grid">
+                {equipements.map(eq => (
+                  <label key={eq.id} className="vmf-equip-item">
+                    <input
+                      type="checkbox"
+                      checked={selectedEquipementIds.includes(eq.id)}
+                      onChange={() => onToggleEquipement(eq.id)}
+                    />
+                    {eq.nom} (+{Number(eq.prix_supplement).toLocaleString('fr-FR')} €)
+                  </label>
+                ))}
+              </div>
+              {supplement > 0 && (
+                <p className="vmf-total">
+                  Prix de base {basePrice.toLocaleString('fr-FR')} € + options = <strong>{totalPrice.toLocaleString('fr-FR')} €</strong>
+                </p>
+              )}
+            </div>
+          )}
 
           <div className="vmf-group">
             <label className="vmf-label" htmlFor="vmf-image">URL de l'image</label>

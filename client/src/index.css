@@ -109,9 +109,123 @@ img { max-width: 100%; display: block; }
 .section { padding: 80px 0; }
 .container { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
 
+@media (max-width: 768px) {
+  .admin-hero { padding: 40px 0 24px; }
+}
+
 @media (max-width: 480px) {
   .container { padding: 0 20px; }
   .section { padding: 60px 0; }
+  .admin-hero { padding: 32px 0 20px; }
+}
+
+/* ============================================
+   En-tête admin (réutilisé sur toutes les pages /admin/*)
+   ============================================ */
+.admin-hero {
+  padding: 60px 0 40px;
+}
+
+.admin-title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 7vw, 96px);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -1px;
+  line-height: 0.9;
+  margin-top: 12px;
+}
+
+/* ============================================
+   Champ de recherche (Catalogue + listes admin)
+   ============================================ */
+.search-input {
+  width: 100%;
+  background: linear-gradient(180deg, var(--black-2), var(--black));
+  border: 1px solid var(--border-light);
+  color: var(--white);
+  padding: 12px 16px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+}
+.search-input::placeholder { color: var(--gray-dark); }
+.search-input:focus {
+  border-color: var(--red);
+  box-shadow: 0 0 0 1px rgba(232, 0, 13, 0.15), 0 0 24px rgba(232, 0, 13, 0.12);
+}
+
+/* ============================================
+   États partagés : chargement, liste vide, action
+   (réutilisés sur Catalogue, Dashboard, VehicleDetail, Admin)
+   ============================================ */
+.loader {
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--border);
+  border-top-color: var(--red);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.dashboard-loading {
+  display: flex;
+  justify-content: center;
+  padding: 80px 0;
+}
+
+.catalogue-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 80px 0;
+  color: var(--gray);
+  font-family: var(--font-display);
+  font-size: 14px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.action-btn {
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  transition: opacity 0.2s;
+  clip-path: polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 5px 100%, 0 calc(100% - 5px));
+}
+.action-btn:hover { opacity: 0.8; }
+.action-btn.edit { background: var(--border-light); color: var(--white); }
+.action-btn.delete { background: var(--red); color: var(--white); }
+
+.avc-img-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #140000, #0a0a12);
+}
+
+.avc-model {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--white);
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .badge-available {
@@ -152,6 +266,79 @@ img { max-width: 100%; display: block; }
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--red), transparent);
   opacity: 0.5;
+}
+
+/* ============================================
+   Formulaires — design system (toutes les pages)
+   ============================================ */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.form-label {
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gray);
+}
+
+.form-input {
+  background: linear-gradient(180deg, var(--black-2), var(--black));
+  border: 1px solid var(--border-light);
+  color: var(--white);
+  padding: 14px 18px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  width: 100%;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+
+.form-input::placeholder { color: #4a4a4a; }
+.form-input:hover { border-color: #3a3a3a; }
+.form-input:focus {
+  border-color: var(--red);
+  box-shadow: 0 0 0 1px rgba(232, 0, 13, 0.15), 0 0 28px rgba(232, 0, 13, 0.12);
+  background: linear-gradient(180deg, var(--black-3), var(--black));
+}
+.form-input:disabled { opacity: 0.45; cursor: not-allowed; }
+.form-input option { background: var(--black-2); }
+
+.form-textarea { resize: vertical; min-height: 110px; line-height: 1.6; }
+
+.form-error {
+  background: rgba(232, 0, 13, 0.08);
+  border: 1px solid rgba(232, 0, 13, 0.3);
+  border-left: 2px solid var(--red);
+  color: #ff5757;
+  padding: 12px 16px;
+  font-size: 13px;
+  font-family: var(--font-body);
+  line-height: 1.5;
+}
+
+.form-success {
+  background: rgba(0, 212, 255, 0.08);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  border-left: 2px solid var(--cyan);
+  color: var(--cyan);
+  padding: 12px 16px;
+  font-size: 13px;
+  font-family: var(--font-body);
+  line-height: 1.6;
+}
+
+@media (max-width: 480px) {
+  .form-row { grid-template-columns: 1fr; }
 }
 
 @keyframes shimmer {

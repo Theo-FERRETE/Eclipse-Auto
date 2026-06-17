@@ -4,6 +4,35 @@
   top: 84px;
 }
 
+.admin-sidebar .sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: var(--border);
+}
+
+.admin-sidebar .sidebar-link {
+  background: var(--black-2);
+  padding: 14px 20px;
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gray);
+  transition: color 0.2s, background 0.2s;
+}
+
+.admin-sidebar .sidebar-link:hover {
+  color: var(--white);
+  background: var(--black-3);
+}
+
+.admin-sidebar .sidebar-link.active {
+  color: var(--white);
+  border-left: 2px solid var(--red);
+  background: var(--black-3);
+}
+
 @media (max-width: 1024px) {
   .admin-layout {
     grid-template-columns: 1fr;
