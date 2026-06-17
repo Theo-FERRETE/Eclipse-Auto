@@ -6,6 +6,7 @@ const LINKS = [
   { to: '/admin/vehicles',      label: 'Véhicules' },
   { to: '/admin/reservations',  label: 'Réservations' },
   { to: '/admin/users',         label: 'Clients' },
+  { to: '/admin/equipements',   label: 'Équipements' },
   { to: '/dashboard',           label: 'Espace client' },
 ]
 

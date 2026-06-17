@@ -15,16 +15,21 @@ const transporter = nodemailer.createTransport({
 
 const router = Router()
 
+function formatReservationEquipements(r) {
+  const { reservation_equipements, ...rest } = r
+  return { ...rest, equipements: (reservation_equipements || []).map(re => re.equipements) }
+}
+
 // GET /api/reservations — réservations de l'utilisateur connecté
 router.get('/', requireAuth, async (req, res) => {
   const { data, error } = await supabase
     .from('reservations')
-    .select('*, vehicles(brand, model, images, price)')
+    .select('*, vehicles(brand, model, images, price), reservation_equipements(equipements(id, nom, prix_supplement))')
     .eq('client_id', req.user.id)
     .order('created_at', { ascending: false })
 
   if (error) return res.status(500).json({ error: error.message })
-  res.json(data)
+  res.json(data.map(formatReservationEquipements))
 })
 
 // GET /api/reservations/all — toutes les réservations (admin)
@@ -40,19 +45,19 @@ router.get('/all', requireAdmin, async (req, res) => {
 
   let query = supabase
     .from('reservations')
-    .select('*, vehicles(brand, model, images, price)', { count: 'exact' })
+    .select('*, vehicles(brand, model, images, price), reservation_equipements(equipements(id, nom, prix_supplement))', { count: 'exact' })
     .order('created_at', { ascending: false })
 
   if (status) query = query.eq('status', status)
 
   const { data, error, count } = await query.range(offsetNum, offsetNum + limitNum - 1)
   if (error) return res.status(500).json({ error: error.message })
-  res.json({ data, total: count, limit: limitNum, offset: offsetNum })
+  res.json({ data: data.map(formatReservationEquipements), total: count, limit: limitNum, offset: offsetNum })
 })
 
 // POST /api/reservations — créer une réservation
 router.post('/', requireAuth, async (req, res) => {
-  const { vehicle_id, message, rdv_date } = req.body
+  const { vehicle_id, message, rdv_date, equipement_ids } = req.body
 
   if (!vehicle_id) {
     return res.status(400).json({ error: 'vehicle_id obligatoire.' })
@@ -77,6 +82,13 @@ router.post('/', requireAuth, async (req, res) => {
   }).select().single()
 
   if (error) return res.status(500).json({ error: error.message })
+
+  if (Array.isArray(equipement_ids) && equipement_ids.length > 0) {
+    const rows = equipement_ids.map(eid => ({ reservation_id: data.id, equipement_id: eid }))
+    const { error: equipError } = await supabase.from('reservation_equipements').insert(rows)
+    if (equipError) console.error('[Reservations] Erreur liaison équipements :', equipError)
+  }
+
   res.status(201).json(data)
 })
 

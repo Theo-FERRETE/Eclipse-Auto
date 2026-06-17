@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@/lib/AuthContext'
 import { supabase } from '@/lib/supabase'
 import { toSlug } from '@/lib/utils'
@@ -12,6 +12,7 @@ import './Reservation.css'
 export default function Reservation() {
   const { slug } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
   const { user, profile } = useAuth()
   const [vehicle, setVehicle] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -19,6 +20,10 @@ export default function Reservation() {
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState(null)
   const [form, setForm] = useState({ message: '', rdv_date: '' })
+  const [equipements, setEquipements] = useState([])
+  const [selectedEquipementIds, setSelectedEquipementIds] = useState(
+    (location.state?.selectedEquipements || []).map(eq => eq.id)
+  )
 
   useEffect(() => {
     async function init() {
@@ -33,12 +38,23 @@ export default function Reservation() {
 
       setVehicle(found)
       setLoading(false)
+
+      const res = await fetch('/api/equipements')
+      if (res.ok) {
+        setEquipements(await res.json())
+      }
     }
     init()
   }, [slug, navigate])
 
   function handleChange(e) {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
+  }
+
+  function toggleEquipement(id) {
+    setSelectedEquipementIds(prev =>
+      prev.includes(id) ? prev.filter(e => e !== id) : [...prev, id]
+    )
   }
 
   async function handleSubmit(e) {
@@ -58,6 +74,7 @@ export default function Reservation() {
           vehicle_id: vehicle.id,
           message: form.message || null,
           rdv_date: form.rdv_date || null,
+          equipement_ids: selectedEquipementIds,
         }),
       })
 
@@ -98,6 +115,9 @@ export default function Reservation() {
           submitting={submitting}
           profile={profile}
           user={user}
+          equipements={equipements}
+          selectedEquipementIds={selectedEquipementIds}
+          onToggleEquipement={toggleEquipement}
           slug={slug}
         />
       </div>

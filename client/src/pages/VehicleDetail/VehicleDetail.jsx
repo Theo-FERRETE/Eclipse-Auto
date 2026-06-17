@@ -10,6 +10,8 @@ export default function VehicleDetail() {
   const [vehicle, setVehicle] = useState(null)
   const [loading, setLoading] = useState(true)
   const [activeImg, setActiveImg] = useState(0)
+  const [equipements, setEquipements] = useState([])
+  const [selectedEquipementIds, setSelectedEquipementIds] = useState([])
 
   useEffect(() => {
     async function fetchVehicle() {
@@ -23,9 +25,25 @@ export default function VehicleDetail() {
 
       setVehicle(data)
       setLoading(false)
+
+      const res = await fetch('/api/equipements')
+      if (res.ok) {
+        setEquipements(await res.json())
+      }
     }
     fetchVehicle()
   }, [slug, navigate])
+
+  function toggleEquipement(id) {
+    setSelectedEquipementIds(prev =>
+      prev.includes(id) ? prev.filter(e => e !== id) : [...prev, id]
+    )
+  }
+
+  function handleReserve() {
+    const selectedEquipements = equipements.filter(eq => selectedEquipementIds.includes(eq.id))
+    navigate(`/reserve/${slug}`, { state: { selectedEquipements } })
+  }
 
   if (loading) {
     return (
@@ -116,7 +134,9 @@ export default function VehicleDetail() {
 
           <div className="detail-price-block">
             <div className="detail-price">
-              {formatPrice(price)}
+              {formatPrice(price + equipements
+                .filter(eq => selectedEquipementIds.includes(eq.id))
+                .reduce((sum, eq) => sum + Number(eq.prix_supplement), 0))}
             </div>
             <span className={statusInfo.badge}>{statusInfo.label}</span>
           </div>
@@ -137,15 +157,33 @@ export default function VehicleDetail() {
             </div>
           )}
 
+          {status === 'available' && equipements.length > 0 && (
+            <div className="detail-equipements">
+              <div className="desc-label">Équipements disponibles</div>
+              <div className="detail-equip-grid">
+                {equipements.map(eq => (
+                  <label key={eq.id} className="detail-equip-item">
+                    <input
+                      type="checkbox"
+                      checked={selectedEquipementIds.includes(eq.id)}
+                      onChange={() => toggleEquipement(eq.id)}
+                    />
+                    {eq.nom} (+{Number(eq.prix_supplement).toLocaleString('fr-FR')} €)
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="detail-actions">
             {status === 'available' ? (
-              <Link
-                to={`/reserve/${slug}`}
+              <button
+                onClick={handleReserve}
                 className="btn-primary"
-                style={{ display: 'block', textAlign: 'center' }}
+                style={{ display: 'block', width: '100%', textAlign: 'center' }}
               >
                 Réserver ce véhicule
-              </Link>
+              </button>
             ) : (
               <button
                 className="btn-ghost"

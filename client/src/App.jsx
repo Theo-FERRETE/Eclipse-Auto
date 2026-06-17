@@ -20,6 +20,7 @@ const AdminDashboard = lazy(() => import('@/pages/admin/AdminDashboard/AdminDash
 const AdminVehicles = lazy(() => import('@/pages/admin/AdminVehicles/AdminVehicles'))
 const AdminReservations = lazy(() => import('@/pages/admin/AdminReservations/AdminReservations'))
 const AdminUsers = lazy(() => import('@/pages/admin/AdminUsers/AdminUsers'))
+const AdminEquipements = lazy(() => import('@/pages/admin/AdminEquipements/AdminEquipements'))
 const NotFound = lazy(() => import('@/pages/NotFound/NotFound'))
 
 function App() {
@@ -55,6 +56,9 @@ function App() {
         } />
         <Route path="/admin/users" element={
           <ProtectedRoute requireAdmin><AdminUsers /></ProtectedRoute>
+        } />
+        <Route path="/admin/equipements" element={
+          <ProtectedRoute requireAdmin><AdminEquipements /></ProtectedRoute>
         } />
         <Route path="*" element={<NotFound />} />
       </Routes>

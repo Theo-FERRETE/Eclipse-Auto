@@ -44,13 +44,18 @@ export default function DashboardReservations({ reservations, loading, cancellin
                 }
               </div>
               <div className="reservation-info">
-                <div className="reservation-vehicle">
+                <div className="reservation-vehicle-info">
                   <span className="vcard-brand">{r.vehicles?.brand}</span>
                   <span className="vcard-model" style={{ fontSize: '22px' }}>
                     {r.vehicles?.model}
                   </span>
                 </div>
                 <div className="reservation-price">{formatPrice(r.vehicles?.price)}</div>
+                {r.equipements?.length > 0 && (
+                  <div className="reservation-message">
+                    Équipements : {r.equipements.map(eq => eq.nom).join(', ')}
+                  </div>
+                )}
                 {r.message && (
                   <div className="reservation-message">"{r.message}"</div>
                 )}

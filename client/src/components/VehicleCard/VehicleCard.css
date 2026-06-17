@@ -71,42 +71,6 @@
   flex: 1;
 }
 
-.vcard-brand {
-  font-family: var(--font-display);
-  font-size: 12px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--cyan);
-}
-
-.vcard-model {
-  font-family: var(--font-display);
-  font-size: 24px;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--white);
-  line-height: 1;
-}
-
-.vcard-specs {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--font-display);
-  font-size: 13px;
-  color: var(--gray);
-  letter-spacing: 1px;
-  margin-top: 4px;
-}
-
-.spec-dot {
-  width: 3px;
-  height: 3px;
-  background: var(--red);
-  border-radius: 50%;
-  flex-shrink: 0;
-}
 
 .vcard-mileage {
   font-family: var(--font-display);

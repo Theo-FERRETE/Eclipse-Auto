@@ -234,13 +234,6 @@
   letter-spacing: 1px;
 }
 
-.spec-dot {
-  width: 3px;
-  height: 3px;
-  background: var(--red);
-  border-radius: 50%;
-  flex-shrink: 0;
-}
 
 .car-footer {
   display: flex;

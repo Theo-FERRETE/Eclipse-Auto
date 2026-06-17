@@ -1,0 +1,81 @@
+.admin-equip-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.equip-form {
+  background: linear-gradient(165deg, var(--black-3), var(--black-2));
+  border: 1px solid var(--border);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.equip-form-actions {
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.equip-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: var(--border);
+}
+
+.equip-card {
+  background: var(--black-2);
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 20px;
+  align-items: center;
+  padding: 16px 20px;
+  transition: background 0.2s;
+}
+.equip-card:hover { background: var(--black-3); }
+
+.equip-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.equip-name {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--white);
+}
+
+.equip-categorie {
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gray);
+}
+
+.equip-price {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--cyan);
+}
+
+.equip-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+@media (max-width: 768px) {
+  .equip-card {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}

@@ -1,9 +1,12 @@
 const cors = require('cors')
 const express = require('express')
 const morgan = require('morgan')
+const compression = require('compression')
 
 module.exports = function setupMiddleware(app) {
   const isProd = process.env.NODE_ENV === 'production'
+
+  app.use(compression())
 
   app.use(cors({
     origin: process.env.CLIENT_URL || 'http://localhost:5173',

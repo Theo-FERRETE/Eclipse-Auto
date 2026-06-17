@@ -134,39 +134,35 @@ Liste tous les équipements du catalogue.
 
 ---
 
-### `GET /vehicles/:id/equipements`
-Équipements cochés sur un véhicule, avec le prix total calculé.
-
-**Réponse 200**
-```json
-{
-  "id": 1,
-  "brand": "Toyota",
-  "model": "Corolla",
-  "prix_base": 25000,
-  "prix_total": 26100,
-  "equipements": [
-    { "id": "uuid", "nom": "Aileron", "categorie": "Esthétique", "prix_supplement": 600 },
-    { "id": "uuid", "nom": "GPS", "categorie": "Confort", "prix_supplement": 500 }
-  ]
-}
-```
-
-**Réponse 404** : `{ "error": "Véhicule introuvable." }`
-
----
-
-### `PUT /vehicles/:id/equipements` 🔒 Admin
-Définit la liste des équipements d'un véhicule (remplace les liens existants).
+### `POST /equipements` 🔒 Admin
+Créer un équipement dans le catalogue.
 
 **Body**
 ```json
-{ "equipement_ids": ["uuid1", "uuid2"] }
+{ "nom": "Aileron", "categorie": "Esthétique", "prix_supplement": 600 }
 ```
 
-**Réponse 303** : redirige vers `GET /vehicles/:id/equipements`  
-**Réponse 400** : `{ "error": "equipement_ids doit être un tableau." }`  
+**Réponse 201** : équipement créé  
+**Réponse 400** : `{ "error": "Le nom est obligatoire." }` | `{ "error": "Prix invalide..." }`  
 **Réponse 401/403** : non authentifié / non admin
+
+---
+
+### `PUT /equipements/:id` 🔒 Admin
+Modifier un équipement existant. Mêmes body et validations que POST.
+
+**Réponse 200** : équipement mis à jour
+
+---
+
+### `DELETE /equipements/:id` 🔒 Admin
+Supprimer un équipement du catalogue.
+
+**Réponse 200** : `{ "success": true }`
+
+---
+
+Le client choisit librement parmi ce catalogue au moment de sa demande de réservation (voir `POST /reservations` ci-dessous) — les équipements ne sont pas rattachés à un véhicule en particulier.
 
 ---
 
@@ -186,7 +182,10 @@ Réservations de l'utilisateur connecté.
     "message": "Je suis disponible le mardi",
     "rdv_date": "2026-06-01",
     "created_at": "2026-01-01T00:00:00Z",
-    "vehicles": { "brand": "Toyota", "model": "Corolla", "price": 25000 }
+    "vehicles": { "brand": "Toyota", "model": "Corolla", "price": 25000 },
+    "equipements": [
+      { "id": "uuid", "nom": "GPS", "prix_supplement": 500 }
+    ]
   }
 ]
 ```
@@ -218,7 +217,8 @@ Créer une réservation.
 {
   "vehicle_id": "uuid",
   "message": "Je souhaite un rendez-vous en semaine",
-  "rdv_date": "2026-06-01"
+  "rdv_date": "2026-06-01",
+  "equipement_ids": ["uuid1", "uuid2"]
 }
 ```
 

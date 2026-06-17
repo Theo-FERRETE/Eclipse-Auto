@@ -129,6 +129,12 @@
   text-overflow: ellipsis;
 }
 
+.ar-equipements {
+  font-size: 12px;
+  color: var(--cyan);
+  max-width: 220px;
+}
+
 .ar-actions {
   display: flex;
   flex-direction: column;

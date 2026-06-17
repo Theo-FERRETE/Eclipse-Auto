@@ -178,6 +178,68 @@ describe('POST /api/reservations — cas complets', () => {
     expect(res.status).toBe(201)
     expect(res.body).toHaveProperty('id')
   })
+
+  it('lie les équipements demandés à la réservation créée', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockUser }, error: null })
+    const vehicleQuery = makeQuery({ status: 'available' })
+    const insertQuery = makeQuery(mockReservation)
+    const equipInsertQuery = makeQuery(null)
+    const equipInsertSpy = jest.fn().mockReturnValue(equipInsertQuery)
+    equipInsertQuery.insert = equipInsertSpy
+
+    supabaseMock.from
+      .mockReturnValueOnce(vehicleQuery)
+      .mockReturnValueOnce(insertQuery)
+      .mockReturnValueOnce(equipInsertQuery)
+
+    const res = await request(app)
+      .post('/api/reservations')
+      .set('Authorization', 'Bearer user-token')
+      .send({ vehicle_id: 'vehicle-uuid-789', equipement_ids: ['equip-1', 'equip-2'] })
+
+    expect(res.status).toBe(201)
+    expect(equipInsertSpy).toHaveBeenCalledWith([
+      { reservation_id: mockReservation.id, equipement_id: 'equip-1' },
+      { reservation_id: mockReservation.id, equipement_id: 'equip-2' },
+    ])
+  })
+
+  it('ignore equipement_ids vide ou absent sans erreur', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockUser }, error: null })
+    const vehicleQuery = makeQuery({ status: 'available' })
+    const insertQuery = makeQuery(mockReservation)
+    supabaseMock.from
+      .mockReturnValueOnce(vehicleQuery)
+      .mockReturnValue(insertQuery)
+
+    const res = await request(app)
+      .post('/api/reservations')
+      .set('Authorization', 'Bearer user-token')
+      .send({ vehicle_id: 'vehicle-uuid-789', equipement_ids: [] })
+
+    expect(res.status).toBe(201)
+  })
+})
+
+describe('GET /api/reservations — équipements demandés', () => {
+  it('aplatit reservation_equipements en un tableau equipements', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockUser }, error: null })
+    const withEquip = {
+      ...mockReservation,
+      reservation_equipements: [
+        { equipements: { id: 'equip-1', nom: 'GPS', prix_supplement: 500 } },
+      ],
+    }
+    supabaseMock.from.mockReturnValue(makeQuery([withEquip]))
+
+    const res = await request(app)
+      .get('/api/reservations')
+      .set('Authorization', 'Bearer user-token')
+
+    expect(res.status).toBe(200)
+    expect(res.body[0].equipements).toEqual([{ id: 'equip-1', nom: 'GPS', prix_supplement: 500 }])
+    expect(res.body[0]).not.toHaveProperty('reservation_equipements')
+  })
 })
 
 describe('PATCH /api/reservations/:id/status — email flow', () => {

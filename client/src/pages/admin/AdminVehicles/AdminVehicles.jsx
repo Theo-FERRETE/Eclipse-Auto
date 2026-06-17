@@ -29,22 +29,8 @@ export default function AdminVehicles() {
   const [page, setPage] = useState(1)
   const [confirmId, setConfirmId] = useState(null)
   const [statusError, setStatusError] = useState(null)
-  const [equipementsCatalog, setEquipementsCatalog] = useState([])
-  const [selectedEquipementIds, setSelectedEquipementIds] = useState([])
 
-  useEffect(() => { fetchVehicles(); fetchEquipementsCatalog() }, [])
-
-  async function fetchEquipementsCatalog() {
-    const res = await fetch('/api/equipements')
-    const data = await res.json()
-    setEquipementsCatalog(data || [])
-  }
-
-  function toggleEquipement(id) {
-    setSelectedEquipementIds(prev =>
-      prev.includes(id) ? prev.filter(e => e !== id) : [...prev, id]
-    )
-  }
+  useEffect(() => { fetchVehicles() }, [])
 
   async function fetchVehicles() {
     setLoading(true)
@@ -61,10 +47,10 @@ export default function AdminVehicles() {
   }
 
   function openCreate() {
-    setEditing(null); setForm(EMPTY_FORM); setSelectedEquipementIds([]); setError(null); setSuccess(null); setShowForm(true)
+    setEditing(null); setForm(EMPTY_FORM); setError(null); setSuccess(null); setShowForm(true)
   }
 
-  async function openEdit(vehicle) {
+  function openEdit(vehicle) {
     setEditing(vehicle.id)
     setForm({
       brand: vehicle.brand || '', model: vehicle.model || '', year: vehicle.year || '',
@@ -74,14 +60,10 @@ export default function AdminVehicles() {
       status: vehicle.status || 'available', image: vehicle.images?.[0] || '',
     })
     setError(null); setSuccess(null); setShowForm(true)
-
-    const res = await fetch(`/api/vehicles/${vehicle.id}/equipements`)
-    const data = await res.json()
-    setSelectedEquipementIds(data?.equipements?.map(eq => eq.id) || [])
   }
 
   function closeForm() {
-    setShowForm(false); setEditing(null); setForm(EMPTY_FORM); setSelectedEquipementIds([]); setError(null); setSuccess(null)
+    setShowForm(false); setEditing(null); setForm(EMPTY_FORM); setError(null); setSuccess(null)
   }
 
   async function getToken() {
@@ -108,12 +90,6 @@ export default function AdminVehicles() {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Une erreur est survenue.')
-
-      await fetch(`/api/vehicles/${data.id}/equipements`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify({ equipement_ids: selectedEquipementIds }),
-      })
 
       setSuccess(editing ? 'Modifié avec succès.' : 'Ajouté avec succès.')
       await fetchVehicles()
@@ -212,9 +188,6 @@ export default function AdminVehicles() {
                 submitting={submitting}
                 error={error}
                 success={success}
-                equipements={equipementsCatalog}
-                selectedEquipementIds={selectedEquipementIds}
-                onToggleEquipement={toggleEquipement}
               />
             )}
           </div>

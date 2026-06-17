@@ -133,6 +133,11 @@ export default function AdminReservations() {
                       {r.message && (
                         <div className="ar-message">"{r.message}"</div>
                       )}
+                      {r.equipements?.length > 0 && (
+                        <div className="ar-equipements">
+                          Équipements demandés : {r.equipements.map(eq => eq.nom).join(', ')}
+                        </div>
+                      )}
                     </div>
 
                     <div className="ar-actions">

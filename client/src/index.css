@@ -136,6 +136,18 @@ img { max-width: 100%; display: block; }
   margin-top: 12px;
 }
 
+.admin-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 48px;
+  padding-top: 48px;
+  padding-bottom: 80px;
+}
+
+.admin-content {
+  min-width: 0;
+}
+
 /* ============================================
    Champ de recherche (Catalogue + listes admin)
    ============================================ */
@@ -226,6 +238,99 @@ img { max-width: 100%; display: block; }
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.vcard-brand {
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+
+.vcard-model {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--white);
+  line-height: 1;
+}
+
+.vcard-specs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: 13px;
+  color: var(--gray);
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
+
+.spec-dot {
+  width: 3px;
+  height: 3px;
+  background: var(--red);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.spec-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.spec-label {
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gray);
+}
+
+.spec-value {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--white);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.detail-equip-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.detail-equip-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--gray);
+  cursor: pointer;
+  background: var(--black-2);
+  border: 1px solid var(--border-light);
+  padding: 10px 12px;
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+.detail-equip-item:hover { border-color: #3a3a3a; }
+.detail-equip-item:has(input:checked) {
+  border-color: var(--red);
+  background: rgba(232, 0, 13, 0.08);
+  color: var(--white);
+}
+.detail-equip-item input { accent-color: var(--red); width: 15px; height: 15px; flex-shrink: 0; }
+
+@media (max-width: 480px) {
+  .detail-equip-grid { grid-template-columns: 1fr; }
 }
 
 .badge-available {

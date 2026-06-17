@@ -179,7 +179,7 @@
   gap: 6px;
 }
 
-.reservation-vehicle {
+.reservation-vehicle-info {
   display: flex;
   flex-direction: column;
   gap: 2px;
