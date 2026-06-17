@@ -1,20 +1,47 @@
+import { Doughnut } from 'react-chartjs-2'
+import {
+  Chart as ChartJS,
+  ArcElement, Tooltip, Legend,
+} from 'chart.js'
+
+ChartJS.register(ArcElement, Tooltip, Legend)
+
+const OPTIONS = {
+  responsive: true,
+  maintainAspectRatio: false,
+  cutout: '65%',
+  plugins: {
+    legend: {
+      position: 'bottom',
+      labels: {
+        color: '#999',
+        font: { family: 'Barlow Condensed, sans-serif', size: 12 },
+        padding: 16,
+        boxWidth: 10,
+      },
+    },
+    tooltip: {
+      backgroundColor: '#111',
+      borderColor: '#1e1e1e',
+      borderWidth: 1,
+      titleColor: '#999',
+      bodyColor: '#fff',
+    },
+  },
+}
+
 export default function VehicleStatusChart({ available, reserved, sold }) {
   const total = available + reserved + sold
 
-  const segments = [
-    { label: 'Disponibles', value: available, color: '#e8000d' },
-    { label: 'Réservés', value: reserved, color: '#EF9F27' },
-    { label: 'Vendus', value: sold, color: '#555' },
-  ]
-
-  let cumulative = 0
-  const gradient = total
-    ? segments.map(s => {
-        const start = cumulative
-        cumulative += (s.value / total) * 100
-        return `${s.color} ${start}% ${cumulative}%`
-      }).join(', ')
-    : '#1e1e1e 0%, #1e1e1e 100%'
+  const data = {
+    labels: ['Disponibles', 'Réservés', 'Vendus'],
+    datasets: [{
+      data: [available, reserved, sold],
+      backgroundColor: ['#e8000d', '#EF9F27', '#555'],
+      borderColor: '#0a0a0a',
+      borderWidth: 2,
+    }],
+  }
 
   return (
     <div className="chart-card">
@@ -22,18 +49,8 @@ export default function VehicleStatusChart({ available, reserved, sold }) {
         <div className="chart-title">Parc véhicules</div>
         <div className="chart-total">{total} au total</div>
       </div>
-      <div className="chart-body chart-body--donut">
-        <div className="donut" style={{ background: `conic-gradient(${gradient})` }}>
-          <div className="donut-hole"></div>
-        </div>
-        <ul className="chart-legend">
-          {segments.map(s => (
-            <li key={s.label}>
-              <span className="legend-dot" style={{ background: s.color }}></span>
-              {s.label} <strong>{s.value}</strong>
-            </li>
-          ))}
-        </ul>
+      <div className="chart-body">
+        <Doughnut data={data} options={OPTIONS} />
       </div>
     </div>
   )
