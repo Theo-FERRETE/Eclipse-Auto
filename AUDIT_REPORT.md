@@ -1,70 +1,61 @@
 # Rapport d'Audit — Eclipse Auto v2
 
-**Date :** 1er juin 2026 | **Version :** 4.0
+**Date :** 15 juin 2026 | **Version :** 5.0
 
 ---
 
 ## Notes
 
-| Catégorie | v3 (12 mai) | v4 (1er juin) | Évolution |
-|-----------|-------------|---------------|-----------|
-| **Sécurité** | 8/10 | 9/10 | +1 — email validation + header injection fix |
-| **Architecture** | 6/10 | 7.5/10 | +1.5 — endpoint by-slug, ErrorBoundary, constants |
-| **Performance** | 6/10 | 7.5/10 | +1.5 — VehicleDetail ne charge plus tout le catalogue |
-| **Code Quality** | 7/10 | 8/10 | +1 — constants centralisés, magic strings éliminés |
-| **Tests** | 5/10 | 9/10 | +4 — 188 tests (124 serveur + 64 client), 92% coverage |
-| **Documentation** | 6/10 | 7/10 | +1 — READMEs mis à jour, API documentée |
-| **DevOps** | 4/10 | 8.5/10 | +4.5 — CI/CD complet (tests + lint + build) |
-| **UX/Frontend** | 7/10 | 7.5/10 | +0.5 — ErrorBoundary React |
+| Catégorie | v4 (1er juin) | v5 (15 juin) | Évolution |
+| ----------- | --------------- | ------------ | --------- |
+| **Sécurité** | 9/10 | 9/10 | = |
+| **Architecture** | 7.5/10 | 8/10 | +0.5 — Realtime subscription, découpage admin en 4 pages |
+| **Performance** | 7.5/10 | 8.5/10 | +1 — preload Hero, preconnect Fonts, sitemap, robots.txt |
+| **Code Quality** | 8/10 | 8/10 | = |
+| **Tests** | 9/10 | 9/10 | = — 188 tests, 91.89% coverage serveur |
+| **Documentation** | 7/10 | 7/10 | = |
+| **DevOps** | 8.5/10 | 8.5/10 | = |
+| **UX/Frontend** | 7.5/10 | 8/10 | +0.5 — mises à jour temps réel catalogue, images responsives |
 | **Base de Données** | 6/10 | 6/10 | = |
-| **Gestion d'Erreurs** | 7/10 | 8/10 | +1 — validation avant appel Supabase |
+| **Gestion d'Erreurs** | 8/10 | 8/10 | = |
 
-### Moyenne v3 : 6.2 / 10 → Moyenne v4 : **7.8 / 10**
+### Moyenne v4 : 7.8 / 10 → Moyenne v5 : **8.05 / 10**
 
 ---
 
-## Problèmes résolus depuis v3
+## Problèmes résolus depuis v4
 
-### Sécurité
+### Infrastructure
 
-**Email non validé côté serveur** — résolu
-- `server/routes/contact.js` — validation regex + protection header injection (`[\r\n]`) consolidées en une seule garde
-- Score sécurité : 8 → 9
+**CORS silencieux en production** — résolu
+
+- `server/middleware/setup.js` — CORS configuré avec `process.env.CLIENT_URL || 'http://localhost:5173'` comme origine autorisée, `credentials: true`
+- Le flag `isProd` n'est plus utilisé pour désactiver le CORS mais uniquement pour choisir le format morgan
+
+**Pas de logging structuré** — résolu
+
+- `npm install morgan` ajouté à `server/package.json`
+- `server/middleware/setup.js` — `morgan('dev')` en développement, `morgan('combined')` en production
+- Chaque requête HTTP est maintenant loggée avec IP, méthode, route, code de réponse, durée
+
+### Performance & SEO
+
+**Optimisations front ajoutées depuis v4 :**
+
+- `client/index.html` — `<link rel="canonical">` pointant sur le domaine de prod
+- `client/index.html` — `<meta name="description">` pour le SEO
+- `client/index.html` — `<link rel="preconnect">` pour `fonts.googleapis.com` et `fonts.gstatic.com` (réduit le RTT police)
+- `client/index.html` — `<link rel="preload" fetchpriority="high">` pour `Hero.webp` (desktop) et `Hero-mobile.webp` (mobile), avec `media` queries séparées pour éviter le double chargement
+- `client/public/robots.txt` — Allow `*`, pointeur vers sitemap
+- `client/public/sitemap.xml` — 4 URLs avec priorités (`/` 1.0, `/catalogue` 0.9, `/contact` 0.5, `/mentions-legales` 0.3)
 
 ### Architecture
 
-**Route slug/ID mismatch** — résolu
-- `client/src/lib/vehiclesCache.js` — `getVehicleBySlug()` appelle directement `/api/vehicles/by-slug/:slug` quand le cache est froid, sans charger tout le catalogue
-- Score architecture : 6 → 7.5
+**Realtime Supabase sur le Catalogue** — ajouté
 
-**Magic strings non centralisés** — résolu
-- `server/constants.js` — `VEHICLE_STATUSES`, `RESERVATION_STATUSES`, `FUEL_TYPES`, `TRANSMISSIONS`
-- `client/src/lib/constants.js` — même constantes côté client
-- Validation de statut déplacée **avant** l'appel Supabase dans `vehicles.js` et `reservations.js`
-
-**Pas d'ErrorBoundary** — résolu
-- `client/src/components/ErrorBoundary/ErrorBoundary.jsx` — class component avec `getDerivedStateFromError` + `componentDidCatch`
-- Wrappé autour de toute l'application dans `App.jsx`
-
-### Tests
-
-**Coverage trop faible (6.6%)** — résolu
-- Serveur : 124 tests, 14 suites, **91.89% coverage** (`health.js` 100%, `auth.js` 96%, `vehicles.js` 90%)
-- Client : 64 tests, 7 fichiers (`lib/`, `components/`, `pages/`)
-- Structure : `client/__tests__/` + `server/__tests__/` miroir de l'arbo source
-
-### DevOps
-
-**Pas de CI/CD** — résolu
-- `.github/workflows/ci.yml` — pipeline complet :
-  1. `server npm test` — 124 tests Jest/Supertest
-  2. `client npm test` — 64 tests Vitest
-  3. `client npm run lint` — ESLint
-  4. `client npm run build` — Vite build
-
-**ESLint CI bloqué** — résolu
-- `DashboardProfile.jsx` — `useEffect` supprimé, state initialisé directement depuis le prop (`profile?.first_name || ''`)
-- Fix de la règle `react-hooks/set-state-in-effect` (eslint-plugin-react-hooks v7)
+- `client/src/pages/Catalogue/Catalogue.jsx` — abonnement `postgres_changes` sur `UPDATE` de la table `vehicles`
+- Mise à jour optimiste via `patchCachedVehicle()` : pas de rechargement complet, juste le véhicule modifié
+- Channel proprement nettoyé dans le `return` du `useEffect` (pas de fuite mémoire)
 
 ---
 
@@ -73,57 +64,67 @@
 ### Priorité haute
 
 **Credentials dans git history** — non résolu, irréversible
-```
+
+```text
 server/.env — contenu commité dans des commits anciens
 Action requise : changer les clés Supabase + Gmail AVANT tout déploiement public
 ```
 
 ### Priorité moyenne
 
-**CORS silencieux en production**
+**Route `/api/vehicles/by-slug/:slug` inefficace**
+
 ```javascript
-// setup.js — CORS désactivé si NODE_ENV === 'production'
-// Si frontend et backend ne sont pas sur le même domaine : bug silencieux
-// Fix : configurer CORS avec une whitelist de domaines autorisés
+// vehicles.js:63 — charge TOUS les véhicules depuis Supabase puis filtre en JS
+const { data: vehicles } = await supabase.from('vehicles').select('*').order(...)
+const vehicle = vehicles?.find(v => { /* slugification JS */ })
+// Fix : ajouter une colonne `slug` TEXT UNIQUE en base avec index,
+//       populée par un trigger PostgreSQL → .eq('slug', slug).single()
 ```
 
-**Pas de logging structuré**
+**Rate limiting in-memory non persistant** — non résolu
+
 ```javascript
-// Actuellement : console.error() uniquement
-// Manque : timestamp, IP, méthode, route, durée de réponse
-// Fix (30 min) : npm install morgan + app.use(morgan('combined'))
+// contact.js:14 — Map en mémoire vive, réinitialisée à chaque redémarrage
+const ipRequestCounts = new Map()
+// Si le serveur redémarre (crash, deploy), la fenêtre de 15 min est perdue
+// Fix : Redis avec TTL, ou package express-rate-limit (sans stockage externe acceptable pour ce projet)
 ```
 
 ### Priorité basse
 
-- Pas de TypeScript — zéro type safety
+- Pas de TypeScript — zéro type safety côté client et serveur
 - Pas de Swagger/API docs — jury ne peut pas tester via interface
+- Pas de migrations versionnées en base — schéma uniquement dans Supabase UI
 
 ---
 
 ## État des tests
 
-### Serveur (`server/__tests__/`)
+### Serveur (`server/__tests__/`) — Jest + Supertest
 
 | Suite | Tests | Coverage |
-|-------|-------|---------|
+| ------- | ------- | --------- |
 | `middleware/auth.test.js` | 12 | 96% |
 | `routes/vehicles.test.js` | 18 | 90% |
 | `routes/reservations.test.js` | 22 | 92% |
 | `routes/contact.test.js` | 14 | 90% |
+| `integration/vehicles.test.js` | — | — |
 | `integration/vehicles-validation.test.js` | 6 | — |
+| `integration/reservations.test.js` | — | — |
 | `integration/reservations-validation.test.js` | 7 | — |
 | `integration/health.test.js` | 3 | 100% |
 | `integration/admin.test.js` | 10 | — |
+| `integration/contact.test.js` | — | — |
 | `lib/emailTemplates.test.js` | 8 | — |
 | `utils/errorHandler.test.js` | 6 | — |
 | `constants.test.js` | 8 | — |
 | **Total** | **124** | **91.89%** |
 
-### Client (`client/__tests__/`)
+### Client (`client/__tests__/`) — Vitest + Testing Library
 
 | Suite | Tests |
-|-------|-------|
+| ------- | ------- |
 | `lib/utils.test.js` | 20 |
 | `lib/vehiclesCache.test.js` | 8 |
 | `components/Pagination.test.jsx` | 8 |
@@ -135,21 +136,63 @@ Action requise : changer les clés Supabase + Gmail AVANT tout déploiement publ
 
 ---
 
-## Résumé jury
+## Inventaire complet du projet
 
-**Points forts à mettre en avant :**
-- 188 tests automatisés avec 92% de coverage serveur — rare chez les étudiants
-- CI/CD complet sur GitHub Actions (tests + lint + build)
-- Sécurité : rate limiting, XSS escaping, validation email, protection header injection, RBAC
-- Architecture SPA avec cache client intelligent (slug direct sans charger le catalogue)
-- ErrorBoundary pour les erreurs inattendues en production
+### Serveur (`server/`)
 
-**Questions probables du jury :**
-- *"Qu'est-ce que tu testerais en priorité si tu avais plus de temps ?"* → TypeScript pour la safety, Swagger pour la doc API, migrations versionnées en DB
-- *"Comment tu gères les credentials en prod ?"* → Variables d'environnement sur le serveur, jamais en git, rotation obligatoire avant déploiement
-- *"Pourquoi Express et pas Fastify ou NestJS ?"* → Simplicité et rapidité de développement pour un projet de cette taille
-- *"Comment tu scalerais à 10 000 users ?"* → Redis pour le cache, load balancer, pool de connexions DB, CDN pour les assets
+| Fichier | Rôle |
+| --------- | ------ |
+| `app.js` | Express + Helmet + middleware + routes + handler d'erreur global |
+| `index.js` | Point d'entrée, écoute sur PORT |
+| `constants.js` | `VEHICLE_STATUSES`, `RESERVATION_STATUSES`, `FUEL_TYPES`, `TRANSMISSIONS` |
+| `supabase.js` | Client Supabase (service role) |
+| `middleware/auth.js` | `requireAuth` + `requireAdmin` via Supabase JWT |
+| `middleware/setup.js` | CORS, morgan, express.json |
+| `routes/api.js` | Routeur central (`/vehicles`, `/reservations`, `/admin`, `/contact`, `/health`) |
+| `routes/vehicles.js` | CRUD véhicules (GET liste, GET by-slug, GET by-id, POST, PUT, DELETE) |
+| `routes/reservations.js` | Réservations + envoi email de confirmation Nodemailer |
+| `routes/admin.js` | Stats dashboard, liste clients, suppression client |
+| `routes/contact.js` | Formulaire contact avec rate limiting in-memory, validation email, XSS escape |
+| `routes/health.js` | GET `/api/health` |
+| `lib/emailTemplates.js` | Template HTML email de confirmation |
+
+### Client (`client/src/`)
+
+| Couche | Fichiers clés |
+| -------- | -------------- |
+| **Auth** | `lib/AuthContext.jsx` (context + `useAuth`), `lib/auth.js`, `lib/supabase.js` |
+| **Cache** | `lib/vehiclesCache.js` — cache mémoire 3 min, `patchCachedVehicle`, `invalidateVehiclesCache` |
+| **Routing** | `App.jsx` — 13 routes lazy-loaded, `ProtectedRoute` avec `requireAdmin` |
+| **Pages publiques** | `Home`, `Catalogue`, `VehicleDetail`, `Contact`, `MentionsLegales`, `Login`, `Register`, `ForgotPassword`, `ResetPassword`, `NotFound` |
+| **Pages client** | `Dashboard` (profil + réservations), `Reservation` |
+| **Pages admin** | `AdminDashboard` (stats + charts), `AdminVehicles` (CRUD), `AdminReservations` (statuts), `AdminUsers` |
+| **Composants** | `Navbar`, `Footer`, `Filters`, `Pagination`, `VehicleCard`, `ErrorBoundary`, `ConfirmModal`, `AdminCharts` (Recharts), `AdminVehicleModal`, `ReservationForm` |
+| **Filtres URL** | `pages/Catalogue/catalogueFilters.js` — `filtersFromParams`, `buildParams` |
 
 ---
 
-*Audit v4 — 1er juin 2026*
+## Résumé jury
+
+### Points forts à mettre en avant
+
+- 188 tests automatisés (124 serveur Jest + 64 client Vitest), 92% coverage serveur
+- CI/CD complet sur GitHub Actions — tests + lint + build à chaque push
+- Sécurité : Helmet, rate limiting, XSS escaping, validation email + injection header, RBAC (requireAuth / requireAdmin)
+- Morgan logging en production (`combined`) : chaque requête tracée
+- CORS configuré via variable d'environnement, pas hard-codé
+- Realtime Supabase : le catalogue se met à jour sans rechargement quand un admin change le statut d'un véhicule
+- Performance front : preload LCP Hero image (desktop + mobile), preconnect fonts, sitemap + robots.txt
+- Architecture propre : cache client 3 min avec patch optimiste, filtres entièrement dans l'URL (partageable, rechargeable)
+
+### Questions probables du jury
+
+- *"Qu'est-ce que tu testerais en priorité si tu avais plus de temps ?"* → Cypress pour les tests end-to-end (flux réservation complet), TypeScript pour la safety, colonne `slug` indexée en DB
+- *"Comment tu gères les credentials en prod ?"* → Variables d'environnement sur le serveur, jamais en git, rotation obligatoire avant déploiement public
+- *"Pourquoi Express et pas Fastify ou NestJS ?"* → Simplicité et rapidité de développement pour un projet de cette taille ; Fastify serait un bon choix suivant pour les perfs brutes
+- *"Comment tu scalerais à 10 000 users ?"* → Redis pour le cache et le rate limiting, load balancer (sticky sessions pour les WebSockets Realtime), pool de connexions Supabase, CDN pour les assets
+- *"Pourquoi Supabase Realtime sur le catalogue ?"* → Évite le polling ; si un admin change un véhicule en `reserved`, les visiteurs voient le badge mis à jour en temps réel sans refresh
+- *"Comment fonctionne ton cache côté client ?"* → `vehiclesCache.js` garde les données 3 min en mémoire. Si le cache est froid et qu'on arrive sur une fiche véhicule directement, on appelle `/api/vehicles/by-slug/:slug` sans charger tout le catalogue. `patchCachedVehicle` permet à la mise à jour Realtime d'être cohérente avec le cache local.
+
+---
+
+Audit v5 — 15 juin 2026
