@@ -89,7 +89,7 @@
 .footer-credit-item a:hover { color: var(--white); }
 
 .footer-sep {
-  color: var(--border-light);
+  color: var(--gray-dark);
   font-size: 11px;
 }
 
