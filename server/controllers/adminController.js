@@ -1,0 +1,43 @@
+const adminModel = require('../models/adminModel')
+
+// GET /api/admin/stats — statistiques du dashboard
+async function stats(req, res) {
+  const [
+    { count: totalVehicles },
+    { count: available },
+    { count: reserved },
+    { count: sold },
+    { count: totalReservations },
+    { count: pending },
+    { count: confirmed },
+    { count: clients },
+  ] = await adminModel.getStats()
+
+  res.json({
+    vehicles: { total: totalVehicles, available, reserved, sold },
+    reservations: { total: totalReservations, pending, confirmed },
+    clients,
+  })
+}
+
+// GET /api/admin/clients — liste des clients
+async function listClients(req, res) {
+  const { limit = 50, offset = 0 } = req.query
+
+  const limitNum = Math.min(parseInt(limit) || 50, 100)
+  const offsetNum = Math.max(parseInt(offset) || 0, 0)
+
+  const { data, error, count } = await adminModel.findClients({ limit: limitNum, offset: offsetNum })
+
+  if (error) return res.status(500).json({ error: error.message })
+  res.json({ data, total: count, limit: limitNum, offset: offsetNum })
+}
+
+// DELETE /api/admin/clients/:id — supprimer un client (auth + profil)
+async function deleteClient(req, res) {
+  const { error } = await adminModel.deleteClient(req.params.id)
+  if (error) return res.status(500).json({ error: error.message })
+  res.json({ success: true })
+}
+
+module.exports = { stats, listClients, deleteClient }
