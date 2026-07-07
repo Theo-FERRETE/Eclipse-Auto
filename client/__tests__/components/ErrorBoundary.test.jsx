@@ -30,7 +30,7 @@ describe('ErrorBoundary', () => {
     expect(screen.getByText('Contenu normal')).toBeInTheDocument()
   })
 
-  it('affiche la page d\'erreur si un enfant crash', () => {
+  it('affiche la page d\'erreur et logue l\'erreur si un enfant crash', () => {
     render(
       <ErrorBoundary>
         <ThrowError />
@@ -38,14 +38,6 @@ describe('ErrorBoundary', () => {
     )
     expect(screen.getByText(/erreur inattendue/i)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /recharger/i })).toBeInTheDocument()
-  })
-
-  it('appelle console.error quand une erreur est capturée', () => {
-    render(
-      <ErrorBoundary>
-        <ThrowError />
-      </ErrorBoundary>
-    )
     expect(consoleError).toHaveBeenCalled()
   })
 

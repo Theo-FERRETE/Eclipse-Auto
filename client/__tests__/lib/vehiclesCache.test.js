@@ -12,7 +12,7 @@ vi.mock('@/lib/supabase', () => ({
 }))
 
 import { supabase } from '@/lib/supabase'
-import { getVehicles, getVehicleBySlug, patchCachedVehicle, invalidateVehiclesCache } from '@/lib/vehiclesCache'
+import { getVehicles, getVehicleBySlug, invalidateVehiclesCache } from '@/lib/vehiclesCache'
 
 const mockVehicle = { id: '1', brand: 'Toyota', model: 'Corolla', status: 'available' }
 
@@ -104,11 +104,5 @@ describe('getVehicleBySlug — cache chaud', () => {
 
     expect(data).toBeNull()
     expect(error).toHaveProperty('message')
-  })
-})
-
-describe('patchCachedVehicle', () => {
-  it('ne plante pas si le cache est vide', () => {
-    expect(() => patchCachedVehicle({ id: '99', status: 'sold' })).not.toThrow()
   })
 })

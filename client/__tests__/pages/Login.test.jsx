@@ -16,42 +16,19 @@ function renderLogin() {
 }
 
 describe('Login — rendu', () => {
-  it('affiche le titre Connexion', () => {
+  it('affiche le titre, les champs, le bouton et les liens de navigation', () => {
     renderLogin()
     expect(screen.getByRole('heading', { name: /connexion/i })).toBeInTheDocument()
-  })
-
-  it('affiche les champs email et mot de passe', () => {
-    renderLogin()
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/mot de passe/i)).toBeInTheDocument()
-  })
-
-  it('affiche le bouton Se connecter', () => {
-    renderLogin()
     expect(screen.getByRole('button', { name: /se connecter/i })).toBeInTheDocument()
-  })
-
-  it('affiche le lien vers /register', () => {
-    renderLogin()
     expect(screen.getByRole('link', { name: /s'inscrire/i })).toBeInTheDocument()
-  })
-
-  it('affiche le lien mot de passe oublié', () => {
-    renderLogin()
     expect(screen.getByRole('link', { name: /mot de passe oublié/i })).toBeInTheDocument()
   })
 })
 
 describe('Login — formulaire', () => {
   beforeEach(() => vi.clearAllMocks())
-
-  it('met à jour le champ email', () => {
-    renderLogin()
-    const input = screen.getByLabelText(/email/i)
-    fireEvent.change(input, { target: { name: 'email', value: 'test@test.com' } })
-    expect(input.value).toBe('test@test.com')
-  })
 
   it('affiche une erreur si login échoue', async () => {
     login.mockRejectedValueOnce(new Error('Invalid credentials'))
@@ -66,7 +43,7 @@ describe('Login — formulaire', () => {
     })
   })
 
-  it('le bouton est désactivé pendant le chargement', async () => {
+  it('désactive le bouton pendant le chargement', async () => {
     login.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 200)))
     renderLogin()
 

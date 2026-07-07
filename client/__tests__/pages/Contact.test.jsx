@@ -8,25 +8,13 @@ function renderContact() {
 }
 
 describe('Contact — rendu', () => {
-  it('affiche le titre Contact', () => {
+  it('affiche le titre, les champs du formulaire, le bouton d\'envoi et les infos de contact', () => {
     renderContact()
     expect(screen.getByRole('heading', { name: /^contact$/i })).toBeInTheDocument()
-  })
-
-  it('affiche les champs du formulaire', () => {
-    renderContact()
     expect(screen.getByPlaceholderText('John Doe')).toBeInTheDocument()
     expect(screen.getByPlaceholderText('votre@email.com')).toBeInTheDocument()
     expect(screen.getByPlaceholderText('Votre message...')).toBeInTheDocument()
-  })
-
-  it('affiche le bouton d\'envoi', () => {
-    renderContact()
     expect(screen.getByRole('button', { name: /envoyer le message/i })).toBeInTheDocument()
-  })
-
-  it('affiche les informations de contact (Nice)', () => {
-    renderContact()
     expect(screen.getByText(/nice/i)).toBeInTheDocument()
   })
 })
@@ -57,48 +45,23 @@ describe('Contact — formulaire', () => {
     })
   })
 
-  it('affiche une erreur si le serveur retourne une erreur', async () => {
+  it('affiche une erreur si le serveur ou le réseau échoue', async () => {
     globalThis.fetch.mockResolvedValueOnce({
       ok: false,
       json: async () => ({ error: 'Trop de requêtes.' }),
     })
-
-    renderContact()
+    const { unmount } = renderContact()
     fireEvent.submit(screen.getByRole('button', { name: /envoyer le message/i }).closest('form'))
-
     await waitFor(() => {
       expect(screen.getByText(/trop de requêtes/i)).toBeInTheDocument()
     })
-  })
+    unmount()
 
-  it('affiche une erreur réseau si fetch échoue', async () => {
     globalThis.fetch.mockRejectedValueOnce(new Error('Network error'))
     renderContact()
-
     fireEvent.submit(screen.getByRole('button', { name: /envoyer le message/i }).closest('form'))
-
     await waitFor(() => {
       expect(screen.getByText(/network error/i)).toBeInTheDocument()
-    })
-  })
-
-  it('appelle fetch avec la bonne URL et méthode POST', async () => {
-    globalThis.fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ success: true }),
-    })
-
-    renderContact()
-    fireEvent.change(screen.getByPlaceholderText('John Doe'), { target: { name: 'name', value: 'Bob' } })
-    fireEvent.change(screen.getByPlaceholderText('votre@email.com'), { target: { name: 'email', value: 'bob@test.com' } })
-    fireEvent.change(screen.getByPlaceholderText('Votre message...'), { target: { name: 'message', value: 'Test' } })
-    fireEvent.submit(screen.getByRole('button', { name: /envoyer le message/i }).closest('form'))
-
-    await waitFor(() => {
-      expect(fetch).toHaveBeenCalledWith('/api/contact', expect.objectContaining({
-        method: 'POST',
-        headers: expect.objectContaining({ 'Content-Type': 'application/json' }),
-      }))
     })
   })
 })

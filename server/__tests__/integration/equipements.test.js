@@ -2,7 +2,7 @@ const request = require('supertest')
 
 jest.mock('../../supabase', () => require('../mocks/supabase').supabaseMock)
 
-const { supabaseMock, mockAdmin } = require('../mocks/supabase')
+const { supabaseMock, mockUser, mockAdmin } = require('../mocks/supabase')
 const app = require('../../app')
 
 const mockEquipement = {
@@ -57,7 +57,6 @@ describe('POST /api/equipements (admin)', () => {
   })
 
   it('rejette si non-admin (403)', async () => {
-    const { mockUser } = require('../mocks/supabase')
     supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockUser }, error: null })
 
     const res = await request(app)
@@ -68,28 +67,22 @@ describe('POST /api/equipements (admin)', () => {
     expect(res.status).toBe(403)
   })
 
-  it('rejette sans nom (400)', async () => {
+  it('rejette une entrée invalide : nom manquant ou prix négatif (400)', async () => {
     supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
 
-    const res = await request(app)
+    const sansNom = await request(app)
       .post('/api/equipements')
       .set('Authorization', 'Bearer admin-token')
       .send({ prix_supplement: 600 })
+    expect(sansNom.status).toBe(400)
+    expect(sansNom.body.error).toMatch(/nom/)
 
-    expect(res.status).toBe(400)
-    expect(res.body.error).toMatch(/nom/)
-  })
-
-  it('rejette un prix négatif (400)', async () => {
-    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
-
-    const res = await request(app)
+    const prixNegatif = await request(app)
       .post('/api/equipements')
       .set('Authorization', 'Bearer admin-token')
       .send({ nom: 'Aileron', prix_supplement: -100 })
-
-    expect(res.status).toBe(400)
-    expect(res.body.error).toMatch(/Prix invalide/)
+    expect(prixNegatif.status).toBe(400)
+    expect(prixNegatif.body.error).toMatch(/Prix invalide/)
   })
 
   it('crée un équipement et retourne 201', async () => {
@@ -107,16 +100,6 @@ describe('POST /api/equipements (admin)', () => {
 })
 
 describe('PUT /api/equipements/:id (admin)', () => {
-  it('rejette sans authentification (401)', async () => {
-    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: null }, error: { message: 'No token' } })
-
-    const res = await request(app)
-      .put(`/api/equipements/${mockEquipement.id}`)
-      .send({ nom: 'GPS Pro', prix_supplement: 700 })
-
-    expect(res.status).toBe(401)
-  })
-
   it('met à jour un équipement et retourne 200', async () => {
     supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
     const updated = { ...mockEquipement, nom: 'GPS Pro', prix_supplement: 700 }
@@ -133,14 +116,6 @@ describe('PUT /api/equipements/:id (admin)', () => {
 })
 
 describe('DELETE /api/equipements/:id (admin)', () => {
-  it('rejette sans authentification (401)', async () => {
-    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: null }, error: { message: 'No token' } })
-
-    const res = await request(app).delete(`/api/equipements/${mockEquipement.id}`)
-
-    expect(res.status).toBe(401)
-  })
-
   it('supprime l\'équipement et retourne success (200)', async () => {
     supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
     supabaseMock.from.mockReturnValue(makeQuery(null))

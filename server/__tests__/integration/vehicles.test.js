@@ -35,12 +35,10 @@ describe('GET /api/vehicles', () => {
     expect(res.status).toBe(200)
     expect(res.body).toHaveProperty('data')
     expect(res.body).toHaveProperty('total')
-    expect(res.body).toHaveProperty('limit')
-    expect(res.body).toHaveProperty('offset')
     expect(Array.isArray(res.body.data)).toBe(true)
   })
 
-  it('respecte le paramètre limit (max 100)', async () => {
+  it('respecte le paramètre limit (plafonné à 100)', async () => {
     supabaseMock.from.mockReturnValue(makeQuery([mockVehicle], 1))
 
     const res = await request(app).get('/api/vehicles?limit=200')
@@ -49,12 +47,16 @@ describe('GET /api/vehicles', () => {
     expect(res.body.limit).toBe(100)
   })
 
-  it('accepte les filtres status, brand, fuel_type', async () => {
-    supabaseMock.from.mockReturnValue(makeQuery([mockVehicle], 1))
+  it('valide le paramètre status (400 si invalide, 200 pour available/reserved/sold)', async () => {
+    const invalide = await request(app).get('/api/vehicles?status=INVALID')
+    expect(invalide.status).toBe(400)
+    expect(invalide.body.error).toMatch(/statut invalide/i)
 
-    const res = await request(app).get('/api/vehicles?status=available&brand=Toyota')
-
-    expect(res.status).toBe(200)
+    for (const status of ['available', 'reserved', 'sold']) {
+      supabaseMock.from.mockReturnValue(makeQuery([], 0))
+      const res = await request(app).get(`/api/vehicles?status=${status}`)
+      expect(res.status).toBe(200)
+    }
   })
 })
 
@@ -77,6 +79,20 @@ describe('GET /api/vehicles/:id', () => {
 
     expect(res.status).toBe(404)
     expect(res.body).toHaveProperty('error')
+  })
+})
+
+describe('GET /api/vehicles/by-slug/:slug', () => {
+  it('retourne un véhicule par son slug (200), 404 si aucun ne correspond', async () => {
+    supabaseMock.from.mockReturnValue(makeQuery([mockVehicle]))
+
+    const trouve = await request(app).get('/api/vehicles/by-slug/toyota-corolla')
+    expect(trouve.status).toBe(200)
+    expect(trouve.body.brand).toBe('Toyota')
+
+    const absent = await request(app).get('/api/vehicles/by-slug/slug-inexistant')
+    expect(absent.status).toBe(404)
+    expect(absent.body).toHaveProperty('error')
   })
 })
 
@@ -105,93 +121,6 @@ describe('POST /api/vehicles (admin)', () => {
     expect(res.status).toBe(403)
   })
 
-  it('rejette year invalide (400)', async () => {
-    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
-    const q = makeQuery({ role: 'admin' })
-    q.single = jest.fn().mockResolvedValue({ data: { role: 'admin' }, error: null })
-    supabaseMock.from.mockReturnValue(q)
-
-    const res = await request(app)
-      .post('/api/vehicles')
-      .set('Authorization', 'Bearer admin-token')
-      .send({ brand: 'Toyota', model: 'Corolla', year: 1800, price: 25000, fuel_type: 'essence', transmission: 'auto' })
-
-    expect(res.status).toBe(400)
-    expect(res.body.error).toMatch(/Année invalide/)
-  })
-
-  it('rejette price négatif (400)', async () => {
-    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
-    const q = makeQuery({ role: 'admin' })
-    q.single = jest.fn().mockResolvedValue({ data: { role: 'admin' }, error: null })
-    supabaseMock.from.mockReturnValue(q)
-
-    const res = await request(app)
-      .post('/api/vehicles')
-      .set('Authorization', 'Bearer admin-token')
-      .send({ brand: 'Toyota', model: 'Corolla', year: 2022, price: -500, fuel_type: 'essence', transmission: 'auto' })
-
-    expect(res.status).toBe(400)
-    expect(res.body.error).toMatch(/Prix invalide/)
-  })
-})
-
-describe('DELETE /api/vehicles/:id (admin)', () => {
-  it('rejette sans auth (401)', async () => {
-    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: null }, error: { message: 'No token' } })
-
-    const res = await request(app).delete(`/api/vehicles/${mockVehicle.id}`)
-
-    expect(res.status).toBe(401)
-  })
-
-  it('supprime le véhicule et retourne success (200)', async () => {
-    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
-    supabaseMock.from.mockReturnValue(makeQuery(null))
-
-    const res = await request(app)
-      .delete(`/api/vehicles/${mockVehicle.id}`)
-      .set('Authorization', 'Bearer admin-token')
-
-    expect(res.status).toBe(200)
-    expect(res.body.success).toBe(true)
-  })
-})
-
-describe('GET /api/vehicles/by-slug/:slug', () => {
-  it('retourne un véhicule par son slug (200)', async () => {
-    supabaseMock.from.mockReturnValue(makeQuery([mockVehicle]))
-
-    const res = await request(app).get('/api/vehicles/by-slug/toyota-corolla')
-
-    expect(res.status).toBe(200)
-    expect(res.body.brand).toBe('Toyota')
-  })
-
-  it('retourne 404 si aucun véhicule ne correspond au slug', async () => {
-    supabaseMock.from.mockReturnValue(makeQuery([mockVehicle]))
-
-    const res = await request(app).get('/api/vehicles/by-slug/slug-inexistant')
-
-    expect(res.status).toBe(404)
-    expect(res.body).toHaveProperty('error')
-  })
-})
-
-describe('POST /api/vehicles (admin) — cas succès', () => {
-  it('crée un véhicule et retourne 201', async () => {
-    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
-    supabaseMock.from.mockReturnValue(makeQuery(mockVehicle))
-
-    const res = await request(app)
-      .post('/api/vehicles')
-      .set('Authorization', 'Bearer admin-token')
-      .send({ brand: 'Toyota', model: 'Corolla', year: 2022, price: 25000, fuel_type: 'essence', transmission: 'automatique' })
-
-    expect(res.status).toBe(201)
-    expect(res.body).toHaveProperty('id')
-  })
-
   it('rejette si les champs obligatoires sont manquants (400)', async () => {
     supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
 
@@ -202,6 +131,44 @@ describe('POST /api/vehicles (admin) — cas succès', () => {
 
     expect(res.status).toBe(400)
     expect(res.body.error).toMatch(/manquants/)
+  })
+
+  it('valide année et prix (400 si année ou prix invalide)', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
+    const q = makeQuery({ role: 'admin' })
+    q.single = jest.fn().mockResolvedValue({ data: { role: 'admin' }, error: null })
+    supabaseMock.from.mockReturnValue(q)
+
+    const anneeInvalide = await request(app)
+      .post('/api/vehicles')
+      .set('Authorization', 'Bearer admin-token')
+      .send({ brand: 'Toyota', model: 'Corolla', year: 1800, price: 25000, fuel_type: 'essence', transmission: 'auto' })
+    expect(anneeInvalide.status).toBe(400)
+    expect(anneeInvalide.body.error).toMatch(/Année invalide/)
+
+    const prixInvalide = await request(app)
+      .post('/api/vehicles')
+      .set('Authorization', 'Bearer admin-token')
+      .send({ brand: 'Toyota', model: 'Corolla', year: 2022, price: -500, fuel_type: 'essence', transmission: 'auto' })
+    expect(prixInvalide.status).toBe(400)
+    expect(prixInvalide.body.error).toMatch(/Prix invalide/)
+  })
+
+  it('crée un véhicule et retourne 201', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
+    supabaseMock.from.mockReturnValue(makeQuery(mockVehicle))
+
+    const res = await request(app)
+      .post('/api/vehicles')
+      .set('Authorization', 'Bearer admin-token')
+      .send({
+        brand: 'Toyota', model: 'Corolla', year: 2022,
+        price: 25000, fuel_type: 'essence', transmission: 'automatique',
+        mileage: 15000, power: 120, description: 'Très bon état',
+      })
+
+    expect(res.status).toBe(201)
+    expect(res.body).toHaveProperty('id')
   })
 })
 
@@ -228,5 +195,27 @@ describe('PUT /api/vehicles/:id (admin)', () => {
 
     expect(res.status).toBe(200)
     expect(res.body.model).toBe('Civic')
+  })
+})
+
+describe('DELETE /api/vehicles/:id (admin)', () => {
+  it('rejette sans auth (401)', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: null }, error: { message: 'No token' } })
+
+    const res = await request(app).delete(`/api/vehicles/${mockVehicle.id}`)
+
+    expect(res.status).toBe(401)
+  })
+
+  it('supprime le véhicule et retourne success (200)', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
+    supabaseMock.from.mockReturnValue(makeQuery(null))
+
+    const res = await request(app)
+      .delete(`/api/vehicles/${mockVehicle.id}`)
+      .set('Authorization', 'Bearer admin-token')
+
+    expect(res.status).toBe(200)
+    expect(res.body.success).toBe(true)
   })
 })

@@ -8,14 +8,10 @@ describe('Pagination — rendu', () => {
     expect(container.firstChild).toBeNull()
   })
 
-  it('affiche toutes les pages si totalPages <= 7', () => {
-    render(<Pagination page={1} totalPages={5} onPageChange={vi.fn()} />)
+  it('affiche toutes les pages si totalPages <= 7 et marque la page active', () => {
+    render(<Pagination page={3} totalPages={5} onPageChange={vi.fn()} />)
     expect(screen.getByLabelText('Page 1')).toBeInTheDocument()
     expect(screen.getByLabelText('Page 5')).toBeInTheDocument()
-  })
-
-  it('marque la page active avec aria-current="page"', () => {
-    render(<Pagination page={3} totalPages={5} onPageChange={vi.fn()} />)
     expect(screen.getByLabelText('Page 3')).toHaveAttribute('aria-current', 'page')
   })
 
