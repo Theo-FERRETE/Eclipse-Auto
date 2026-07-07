@@ -78,6 +78,15 @@ VITE_SUPABASE_ANON_KEY=...
 | `/api/reservations/:id/status` | PATCH | Admin | Changer le statut |
 | `/api/reservations/:id/cancel` | PATCH | Auth | Annuler (client) |
 
+### Équipements
+
+| Route | Méthode | Auth | Description |
+|-------|---------|------|-------------|
+| `/api/equipements` | GET | Public | Catalogue des équipements en option |
+| `/api/equipements` | POST | Admin | Créer un équipement |
+| `/api/equipements/:id` | PUT | Admin | Modifier un équipement |
+| `/api/equipements/:id` | DELETE | Admin | Supprimer un équipement |
+
 ### Administration & autres
 
 | Route | Méthode | Auth | Description |
@@ -104,10 +113,10 @@ VITE_SUPABASE_ANON_KEY=...
 ## Tests
 
 ```bash
-# Serveur (124 tests, ~92% coverage)
+# Serveur (57 tests, 7 suites, 91.8% coverage — routes + controllers + models + middleware)
 cd server && npm test
 
-# Client (64 tests)
+# Client (37 tests, 7 suites)
 cd client && npm test
 ```
 

@@ -113,7 +113,9 @@ async function cancel(req, res) {
 
   if (!reservation) return res.status(404).json({ error: 'Réservation introuvable.' })
   if (reservation.client_id !== req.user.id) return res.status(403).json({ error: 'Accès refusé.' })
-  if (reservation.status !== 'pending') return res.status(400).json({ error: 'Seules les réservations en attente peuvent être annulées.' })
+  if (!['pending', 'confirmed'].includes(reservation.status)) {
+    return res.status(400).json({ error: 'Seules les réservations en attente ou confirmées peuvent être annulées.' })
+  }
 
   const { data, error } = await reservationModel.cancel(req.params.id)
 

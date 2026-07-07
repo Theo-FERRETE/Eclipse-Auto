@@ -1,25 +1,25 @@
 # Rapport d'Audit — Eclipse Auto v2
 
-**Date :** 15 juin 2026 | **Version :** 5.0
+**Date :** 7 juillet 2026 | **Version :** 6.0
 
 ---
 
 ## Notes
 
-| Catégorie | v4 (1er juin) | v5 (15 juin) | Évolution |
-| ----------- | --------------- | ------------ | --------- |
-| **Sécurité** | 9/10 | 9/10 | = |
-| **Architecture** | 7.5/10 | 8/10 | +0.5 — Realtime subscription, découpage admin en 4 pages |
-| **Performance** | 7.5/10 | 8.5/10 | +1 — preload Hero, preconnect Fonts, sitemap, robots.txt |
-| **Code Quality** | 8/10 | 8/10 | = |
-| **Tests** | 9/10 | 9/10 | = — 188 tests, 91.89% coverage serveur |
-| **Documentation** | 7/10 | 7/10 | = |
-| **DevOps** | 8.5/10 | 8.5/10 | = |
-| **UX/Frontend** | 7.5/10 | 8/10 | +0.5 — mises à jour temps réel catalogue, images responsives |
-| **Base de Données** | 6/10 | 6/10 | = |
-| **Gestion d'Erreurs** | 8/10 | 8/10 | = |
+| Catégorie | v4 (1er juin) | v5 (15 juin) | v6 (7 juillet) | Évolution v5→v6 |
+| ----------- | --------------- | ------------ | -------------- | --------------- |
+| **Sécurité** | 9/10 | 9/10 | 9/10 | = |
+| **Architecture** | 7.5/10 | 8/10 | 8.5/10 | +0.5 — refactor MVC, séparation route/controller/model |
+| **Performance** | 7.5/10 | 8.5/10 | 8.5/10 | = |
+| **Code Quality** | 8/10 | 8/10 | 8/10 | = |
+| **Tests** | 9/10 | 9/10 | 9/10 | = — chiffres corrigés : 57 tests serveur (7 suites) + 37 tests client (7 suites), 91.8% coverage serveur (mesure controllers/ et models/ incluse désormais, cf. Problèmes résolus) |
+| **Documentation** | 7/10 | 7/10 | 7/10 | = |
+| **DevOps** | 8.5/10 | 8.5/10 | 8.5/10 | = |
+| **UX/Frontend** | 7.5/10 | 8/10 | 8/10 | = |
+| **Base de Données** | 6/10 | 6/10 | 6/10 | = |
+| **Gestion d'Erreurs** | 8/10 | 8/10 | 8/10 | = |
 
-### Moyenne v4 : 7.8 / 10 → Moyenne v5 : **8.05 / 10**
+### Moyenne v4 : 7.8 / 10 → Moyenne v5 : 8.05 / 10 → Moyenne v6 : **8.1 / 10**
 
 ---
 
@@ -50,6 +50,15 @@
 - `client/public/sitemap.xml` — 4 URLs avec priorités (`/` 1.0, `/catalogue` 0.9, `/contact` 0.5, `/mentions-legales` 0.3)
 
 ### Architecture
+
+**Refactor backend route → controller → model** — ajouté
+
+- `server/models/*.js` — un fichier par ressource (véhicules, réservations, admin, équipements), une fonction = une requête Supabase, aucune logique métier
+- `server/controllers/*.js` — validation des entrées, règles métier (ex : une réservation `pending` ou `confirmed` peut être annulée), formatage des réponses, appel aux modèles
+- `server/routes/*.js` — routage pur : verbe HTTP + chemin + middleware (`requireAuth`/`requireAdmin`) → fonction du contrôleur ; plus aucun `require('../supabase')` dans les routes
+- `contact.js` n'a pas de modèle (aucune table associée, l'email n'est pas persisté) ; `health.js` reste une route statique, sans logique à extraire
+- Refactorisation pure : comportement identique à avant, les 57 tests serveur passent sans modification de la logique métier (tests d'intégration via `supertest`, donc invisibles au découpage interne)
+- `server/jest.config.js` — `collectCoverageFrom` mesure désormais `controllers/**/*.js` et `models/**/*.js` en plus de `routes/**/*.js` et `middleware/**/*.js` : le chiffre de couverture reflète maintenant tout le code qui compte (avant le refactor, la logique métier vivait dans les routes et était donc déjà couverte ; ce n'est que depuis l'extraction en controllers/models que le fichier de config avait pris du retard)
 
 **Realtime Supabase sur le Catalogue** — ajouté
 
@@ -103,36 +112,39 @@ const ipRequestCounts = new Map()
 
 ### Serveur (`server/__tests__/`) — Jest + Supertest
 
-| Suite | Tests | Coverage |
-| ------- | ------- | --------- |
-| `middleware/auth.test.js` | 12 | 96% |
-| `routes/vehicles.test.js` | 18 | 90% |
-| `routes/reservations.test.js` | 22 | 92% |
-| `routes/contact.test.js` | 14 | 90% |
-| `integration/vehicles.test.js` | — | — |
-| `integration/vehicles-validation.test.js` | 6 | — |
-| `integration/reservations.test.js` | — | — |
-| `integration/reservations-validation.test.js` | 7 | — |
-| `integration/health.test.js` | 3 | 100% |
-| `integration/admin.test.js` | 10 | — |
-| `integration/contact.test.js` | — | — |
-| `lib/emailTemplates.test.js` | 8 | — |
-| `utils/errorHandler.test.js` | 6 | — |
-| `constants.test.js` | 8 | — |
-| **Total** | **124** | **91.89%** |
+| Suite | Tests |
+| ------- | ------- |
+| `integration/vehicles.test.js` | 15 |
+| `integration/reservations.test.js` | 18 |
+| `integration/admin.test.js` | 5 |
+| `integration/equipements.test.js` | 7 |
+| `integration/contact.test.js` | 4 |
+| `integration/health.test.js` | 1 |
+| `lib/emailTemplates.test.js` | 7 |
+| **Total** | **57** |
+
+Couverture par couche (`collectCoverageFrom` inclut désormais `controllers/` et `models/`, cf. Problèmes résolus / Architecture) :
+
+| Couche | Statements | Branches | Functions | Lines |
+| ------- | ---------- | -------- | --------- | ----- |
+| `routes/` | 100% | 100% | 100% | 100% |
+| `middleware/` | 94.73% | 85% | 100% | 94.11% |
+| `models/` | 95.34% | 75% | 100% | 100% |
+| `controllers/` | 88.09% | 80.41% | 96.55% | 97.25% |
+| **Total** | **91.8%** | **80.63%** | **98.3%** | **97.79%** |
 
 ### Client (`client/__tests__/`) — Vitest + Testing Library
 
 | Suite | Tests |
 | ------- | ------- |
-| `lib/utils.test.js` | 20 |
-| `lib/vehiclesCache.test.js` | 8 |
+| `lib/utils.test.js` | 9 |
+| `lib/vehiclesCache.test.js` | 6 |
 | `components/Pagination.test.jsx` | 8 |
-| `components/ErrorBoundary.test.jsx` | 4 |
-| `pages/Login.test.jsx` | 9 |
-| `pages/Register.test.jsx` | 7 |
-| `pages/Contact.test.jsx` | 8 |
-| **Total** | **64** |
+| `components/ErrorBoundary.test.jsx` | 3 |
+| `pages/Login.test.jsx` | 4 |
+| `pages/Register.test.jsx` | 4 |
+| `pages/Contact.test.jsx` | 3 |
+| **Total** | **37** |
 
 ---
 
@@ -148,12 +160,22 @@ const ipRequestCounts = new Map()
 | `supabase.js` | Client Supabase (service role) |
 | `middleware/auth.js` | `requireAuth` + `requireAdmin` via Supabase JWT |
 | `middleware/setup.js` | CORS, morgan, express.json |
-| `routes/api.js` | Routeur central (`/vehicles`, `/reservations`, `/admin`, `/contact`, `/health`) |
-| `routes/vehicles.js` | CRUD véhicules (GET liste, GET by-slug, GET by-id, POST, PUT, DELETE) |
-| `routes/reservations.js` | Réservations + envoi email de confirmation Nodemailer |
-| `routes/admin.js` | Stats dashboard, liste clients, suppression client |
-| `routes/contact.js` | Formulaire contact avec rate limiting in-memory, validation email, XSS escape |
+| `routes/api.js` | Routeur central (`/vehicles`, `/reservations`, `/admin`, `/contact`, `/equipements`, `/health`) |
+| `routes/vehicles.js` | Routage CRUD véhicules (thin) → `vehicleController` |
+| `routes/reservations.js` | Routage réservations (thin) → `reservationController` |
+| `routes/admin.js` | Routage stats/clients (thin) → `adminController` |
+| `routes/equipements.js` | Routage CRUD équipements (thin) → `equipementController` |
+| `routes/contact.js` | Routage formulaire contact (thin) → `contactController` |
 | `routes/health.js` | GET `/api/health` |
+| `controllers/vehicleController.js` | Validation, logique CRUD véhicules, appelle `vehicleModel` |
+| `controllers/reservationController.js` | Règles de réservation (statuts annulables, liaison équipements), envoi email de confirmation Nodemailer, appelle `reservationModel` |
+| `controllers/adminController.js` | Agrégation des stats dashboard, liste/suppression clients, appelle `adminModel` |
+| `controllers/equipementController.js` | Validation, logique CRUD équipements, appelle `equipementModel` |
+| `controllers/contactController.js` | Rate limiting in-memory, validation email, XSS escape, envoi email (pas de modèle — aucune table associée) |
+| `models/vehicleModel.js` | Accès Supabase table `vehicles` |
+| `models/reservationModel.js` | Accès Supabase table `reservations` (jointures véhicule/équipements, lookup auth pour l'email de confirmation) |
+| `models/adminModel.js` | Comptages Supabase agrégés (véhicules, réservations, clients) |
+| `models/equipementModel.js` | Accès Supabase table `equipements` |
 | `lib/emailTemplates.js` | Template HTML email de confirmation |
 
 ### Client (`client/src/`)
@@ -175,14 +197,16 @@ const ipRequestCounts = new Map()
 
 ### Points forts à mettre en avant
 
-- 188 tests automatisés (124 serveur Jest + 64 client Vitest), 92% coverage serveur
+- 94 tests automatisés (57 serveur Jest + 37 client Vitest), 91.8% coverage serveur (routes + controllers + models + middleware)
 - CI/CD complet sur GitHub Actions — tests + lint + build à chaque push
+- Architecture backend en couches route → controller → model : routes = routage pur, controllers = logique métier/validation, models = accès Supabase (une fonction = une requête)
+- Relation many-to-many réservations ↔ équipements (`reservation_equipements`) exposée via `/api/equipements`, démonstration du CP6
 - Sécurité : Helmet, rate limiting, XSS escaping, validation email + injection header, RBAC (requireAuth / requireAdmin)
 - Morgan logging en production (`combined`) : chaque requête tracée
 - CORS configuré via variable d'environnement, pas hard-codé
 - Realtime Supabase : le catalogue se met à jour sans rechargement quand un admin change le statut d'un véhicule
 - Performance front : preload LCP Hero image (desktop + mobile), preconnect fonts, sitemap + robots.txt
-- Architecture propre : cache client 3 min avec patch optimiste, filtres entièrement dans l'URL (partageable, rechargeable)
+- Architecture propre côté client : cache 3 min avec patch optimiste, filtres entièrement dans l'URL (partageable, rechargeable)
 
 ### Questions probables du jury
 
@@ -195,4 +219,4 @@ const ipRequestCounts = new Map()
 
 ---
 
-Audit v5 — 15 juin 2026
+Audit v6 — 7 juillet 2026
