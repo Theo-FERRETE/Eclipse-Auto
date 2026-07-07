@@ -67,11 +67,11 @@ export default function DashboardReservations({ reservations, loading, cancellin
                 <span className={`reservation-status ${RESERVATION_STATUS[r.status]?.class}`}>
                   {RESERVATION_STATUS[r.status]?.label}
                 </span>
-                {r.status === 'pending' && (
+                {(r.status === 'pending' || r.status === 'confirmed') && (
                   <button
                     className="btn-ghost"
                     style={{ padding: '8px 16px', fontSize: '11px' }}
-                    onClick={() => onCancel(r.id)}
+                    onClick={() => onCancel(r.id, r.status)}
                     disabled={cancelling.has(r.id)}
                   >
                     {cancelling.has(r.id) ? '...' : 'Annuler'}

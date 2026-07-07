@@ -4,6 +4,7 @@ import { supabase } from '@/lib/supabase'
 import DashboardSidebar from '@/components/DashboardSidebar/DashboardSidebar'
 import DashboardReservations from '@/components/DashboardReservations/DashboardReservations'
 import DashboardProfile from '@/components/DashboardProfile/DashboardProfile'
+import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import './Dashboard.css'
 
 export default function Dashboard() {
@@ -13,6 +14,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true)
   const [cancelling, setCancelling] = useState(new Set())
   const [cancelError, setCancelError] = useState(null)
+  const [confirmCancelId, setConfirmCancelId] = useState(null)
 
   useEffect(() => {
     async function fetchReservations() {
@@ -51,6 +53,19 @@ export default function Dashboard() {
     setCancelling(prev => { const s = new Set(prev); s.delete(id); return s })
   }
 
+  function requestCancel(id, status) {
+    if (status === 'confirmed') {
+      setConfirmCancelId(id)
+    } else {
+      handleCancel(id)
+    }
+  }
+
+  function confirmCancel() {
+    handleCancel(confirmCancelId)
+    setConfirmCancelId(null)
+  }
+
   return (
     <main className="dashboard">
       <div className="dashboard-hero">
@@ -76,7 +91,7 @@ export default function Dashboard() {
                 reservations={reservations}
                 loading={loading}
                 cancelling={cancelling}
-                onCancel={handleCancel}
+                onCancel={requestCancel}
               />
             </>
           )}
@@ -85,6 +100,14 @@ export default function Dashboard() {
           )}
         </div>
       </div>
+
+      {confirmCancelId && (
+        <ConfirmModal
+          message="Cette réservation est déjà confirmée. Voulez-vous vraiment l'annuler ?"
+          onConfirm={confirmCancel}
+          onCancel={() => setConfirmCancelId(null)}
+        />
+      )}
     </main>
   )
 }

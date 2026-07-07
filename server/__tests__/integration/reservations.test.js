@@ -305,9 +305,9 @@ describe('PATCH /api/reservations/:id/cancel', () => {
     expect(res.status).toBe(403)
   })
 
-  it('rejette si la réservation n\'est pas en attente (400)', async () => {
+  it('rejette si la réservation est déjà annulée (400)', async () => {
     supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockUser }, error: null })
-    const q = makeQuery({ client_id: mockUser.id, status: 'confirmed' })
+    const q = makeQuery({ client_id: mockUser.id, status: 'cancelled' })
     supabaseMock.from.mockReturnValue(q)
 
     const res = await request(app)
@@ -318,9 +318,9 @@ describe('PATCH /api/reservations/:id/cancel', () => {
     expect(res.body.error).toMatch(/annulées/)
   })
 
-  it('annule la réservation avec succès (200)', async () => {
+  it.each(['pending', 'confirmed'])('annule une réservation %s avec succès (200)', async (status) => {
     supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockUser }, error: null })
-    const selectQuery = makeQuery({ client_id: mockUser.id, status: 'pending' })
+    const selectQuery = makeQuery({ client_id: mockUser.id, status })
     const updateQuery = makeQuery({ ...mockReservation, status: 'cancelled' })
     supabaseMock.from
       .mockReturnValueOnce(selectQuery)
