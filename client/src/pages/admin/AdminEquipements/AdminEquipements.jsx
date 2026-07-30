@@ -21,8 +21,12 @@ export default function AdminEquipements() {
   async function fetchEquipements() {
     setLoading(true)
     const res = await fetch('/api/equipements')
-    const data = await res.json()
-    setEquipements(data || [])
+
+    // Sans ce contrôle, une réponse d'erreur ({ error }) passait dans setEquipements
+    // et le .map() du rendu faisait planter la page.
+    if (!res.ok) { setError('Impossible de charger les équipements.'); setLoading(false); return }
+
+    setEquipements(await res.json())
     setLoading(false)
   }
 

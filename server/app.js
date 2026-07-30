@@ -7,11 +7,21 @@ const apiRouter = require('./routes/api')
 
 const app = express()
 
-app.set('trust proxy', 1)
-app.use(helmet())
+// Uniquement si un proxy inverse réécrit réellement X-Forwarded-For.
+// Sinon req.ip serait pilotable par le client, ce qui contournerait le rate limiting.
+if (process.env.TRUST_PROXY === '1') {
+  app.set('trust proxy', 1)
+}
+
+app.use(helmet({ contentSecurityPolicy: { directives: buildCspDirectives() } }))
 setupMiddleware(app)
 
 app.use('/api', apiRouter)
+
+// Une route /api inconnue doit répondre en JSON, pas renvoyer le HTML du SPA
+app.use('/api', (req, res) => {
+  res.status(404).json({ error: 'Route introuvable.' })
+})
 
 // Frontend statique (production)
 const distPath = path.join(__dirname, '../client/dist')
@@ -30,5 +40,24 @@ app.use((err, req, res, next) => {
   if (isDev) console.error(err)
   res.status(err.status || 500).json({ error: message })
 })
+
+// La CSP par défaut d'Helmet n'autorise que 'self' : en production, où Express sert
+// le build Vite, elle bloque tous les appels du navigateur vers Supabase (REST, Auth,
+// Realtime, Storage). Il faut donc déclarer explicitement l'origine Supabase.
+function buildCspDirectives() {
+  const defaults = helmet.contentSecurityPolicy.getDefaultDirectives()
+  const connect = ["'self'"]
+  const img = ["'self'", 'data:']
+
+  try {
+    const { origin } = new URL(process.env.SUPABASE_URL)
+    connect.push(origin, origin.replace(/^https:/, 'wss:'))
+    img.push(origin)
+  } catch {
+    console.warn('[CSP] SUPABASE_URL absente ou invalide : connect-src reste limité à self.')
+  }
+
+  return { ...defaults, 'connect-src': connect, 'img-src': img }
+}
 
 module.exports = app

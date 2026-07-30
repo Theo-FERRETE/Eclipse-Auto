@@ -2,6 +2,13 @@ const adminModel = require('../models/adminModel')
 
 // GET /api/admin/stats — statistiques du dashboard
 async function stats(req, res) {
+  const results = await adminModel.getStats()
+
+  // Sans ce contrôle, une requête en échec donnerait un count undefined et la route
+  // répondrait 200 avec des valeurs nulles : dashboard vide et aucune erreur visible.
+  const failed = results.find(r => r.error)
+  if (failed) return res.status(500).json({ error: failed.error.message })
+
   const [
     { count: totalVehicles },
     { count: available },
@@ -11,7 +18,7 @@ async function stats(req, res) {
     { count: pending },
     { count: confirmed },
     { count: clients },
-  ] = await adminModel.getStats()
+  ] = results
 
   res.json({
     vehicles: { total: totalVehicles, available, reserved, sold },

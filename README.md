@@ -42,11 +42,17 @@ npm run dev
 ```env
 PORT=3001
 NODE_ENV=development
+CLIENT_URL=http://localhost:5173
+TRUST_PROXY=0
 SUPABASE_URL=...
 SUPABASE_SERVICE_ROLE_KEY=...
 GMAIL_USER=...
 GMAIL_APP_PASSWORD=...
 ```
+
+`TRUST_PROXY` ne doit valoir `1` que si l'application tourne derrière un proxy inverse
+qui réécrit `X-Forwarded-For`. Sinon un client pourrait forger cet en-tête et contourner
+le rate limiting du formulaire de contact.
 
 ### Client (`client/.env`)
 
@@ -113,7 +119,8 @@ VITE_SUPABASE_ANON_KEY=...
 ## Tests
 
 ```bash
-# Serveur (57 tests, 7 suites, 91.8% coverage — routes + controllers + models + middleware)
+# Serveur (65 tests, 8 suites, 92.7% coverage — routes + controllers + models + middleware)
+# Seuils de couverture verrouillés dans jest.config.js : la CI échoue en cas de régression
 cd server && npm test
 
 # Client (37 tests, 7 suites)
@@ -133,10 +140,16 @@ Un trigger PostgreSQL met à jour automatiquement `vehicles.status` lors d'un ch
 ## Sécurité
 
 - Authentification JWT via Supabase Auth
-- RBAC (admin / user) via `profiles.role`
+- RBAC : autorisation serveur sur `app_metadata.role` (non modifiable par le client) ;
+  `profiles.role` ne sert qu'à l'affichage côté React
+- Toutes les lectures et écritures sensibles passent par l'API Express : la clé anon
+  publique ne donne accès qu'aux véhicules, qui sont des données publiques
 - Validation des entrées sur toutes les routes sensibles
 - Sanitization des emails (protection header injection)
+- CSP explicite (Helmet) autorisant uniquement l'origine Supabase en plus de `self`
 - CORS restreint en production
+- Rate limiting du formulaire de contact, non contournable via `X-Forwarded-For`
+  hors configuration proxy explicite (`TRUST_PROXY`)
 - ErrorBoundary React pour les erreurs inattendues côté client
 
 ## Production

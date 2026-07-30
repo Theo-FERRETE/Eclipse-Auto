@@ -19,6 +19,12 @@ function findAll({ status, limit, offset }) {
   return query.range(offset, offset + limit - 1)
 }
 
+// Pas de clé étrangère reservations.client_id -> profiles.id, donc pas d'embed
+// PostgREST possible : les profils sont résolus en une seconde requête.
+function findProfilesByIds(ids) {
+  return supabase.from('profiles').select('id, first_name, last_name').in('id', ids)
+}
+
 function findVehicleStatus(vehicleId) {
   return supabase.from('vehicles').select('status').eq('id', vehicleId).single()
 }
@@ -62,6 +68,7 @@ function cancel(id) {
 module.exports = {
   findByClient,
   findAll,
+  findProfilesByIds,
   findVehicleStatus,
   create,
   linkEquipements,

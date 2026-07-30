@@ -70,6 +70,10 @@ export default function Catalogue() {
     vehicles.length ? Math.max(...vehicles.map(v => v.price || 0)) : null
   , [vehicles])
 
+  const years = useMemo(() =>
+    [...new Set(vehicles.map(v => v.year).filter(Boolean))].sort((a, b) => b - a)
+  , [vehicles])
+
   const filtered = useMemo(() => {
     let result = [...vehicles]
     if (search) {
@@ -116,6 +120,7 @@ export default function Catalogue() {
           brands={brands}
           fuelTypes={fuelTypes}
           transmissions={transmissions}
+          years={years}
           priceMax={priceMax}
         />
         <div className="catalogue-main">
