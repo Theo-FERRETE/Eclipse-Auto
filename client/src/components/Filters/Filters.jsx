@@ -1,6 +1,6 @@
 import './Filters.css'
 
-export default function Filters({ filters, onChange, onReset, brands = [], fuelTypes = [], transmissions = [], priceMax = null }) {
+export default function Filters({ filters, onChange, onReset, brands = [], fuelTypes = [], transmissions = [], years = [], priceMax = null }) {
   const sliderValue = filters.price_max === Infinity ? priceMax : Math.min(Number(filters.price_max), priceMax)
   const isMaxPrice = filters.price_max === Infinity || Number(filters.price_max) >= priceMax
   const sliderStep = priceMax ? Math.max(1000, Math.round(priceMax / 100 / 1000) * 1000) : 1000
@@ -88,7 +88,7 @@ export default function Filters({ filters, onChange, onReset, brands = [], fuelT
           onChange={e => onChange('year_min', e.target.value)}
         >
           <option value="">Toutes</option>
-          {[2024, 2023, 2022, 2021, 2020].map(y => (
+          {years.map(y => (
             <option key={y} value={y}>{y}</option>
           ))}
         </select>

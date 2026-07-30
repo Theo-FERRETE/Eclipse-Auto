@@ -26,7 +26,36 @@ function validateVehicleInput(body) {
     }
   }
 
+  if (body.status !== undefined && !VEHICLE_STATUSES.includes(body.status)) {
+    return `Statut invalide (${VEHICLE_STATUSES.join(', ')}).`
+  }
+
   return null
+}
+
+// Champs modifiables et conversion associée. Sert à ne construire le payload
+// qu'avec les champs réellement envoyés : un PUT partiel ne doit pas écraser
+// les autres colonnes (parseInt(undefined) donnerait NaN, sérialisé en null).
+const VEHICLE_FIELDS = {
+  brand:        v => v,
+  model:        v => v,
+  year:         v => parseInt(v),
+  price:        v => parseFloat(v),
+  fuel_type:    v => v,
+  transmission: v => v,
+  mileage:      v => (v === '' || v === null ? 0 : parseInt(v)),
+  power:        v => v || null,
+  description:  v => v || null,
+  status:       v => v,
+  images:       v => v || [],
+}
+
+function buildVehiclePayload(body) {
+  const payload = {}
+  for (const [field, cast] of Object.entries(VEHICLE_FIELDS)) {
+    if (body[field] !== undefined) payload[field] = cast(body[field])
+  }
+  return payload
 }
 
 // GET /api/vehicles — liste tous les véhicules
@@ -76,25 +105,20 @@ async function getById(req, res) {
 
 // POST /api/vehicles — créer un véhicule (admin)
 async function create(req, res) {
-  const { brand, model, year, price, fuel_type, transmission, mileage, power, description, status, images } = req.body
+  const { brand, model, year, price, fuel_type, transmission } = req.body
 
   if (!brand || !model || !year || !price || !fuel_type || !transmission) {
     return res.status(400).json({ error: 'Champs obligatoires manquants.' })
   }
 
-  const validationError = validateVehicleInput({ year, price, mileage })
+  const validationError = validateVehicleInput(req.body)
   if (validationError) return res.status(400).json({ error: validationError })
 
   const { data, error } = await vehicleModel.create({
-    brand, model,
-    year: parseInt(year),
-    price: parseFloat(price),
-    fuel_type, transmission,
-    mileage: mileage ? parseInt(mileage) : 0,
-    power: power || null,
-    description: description || null,
-    status: status || 'available',
-    images: images || [],
+    mileage: 0,
+    status: 'available',
+    images: [],
+    ...buildVehiclePayload(req.body),
   })
 
   if (error) return res.status(500).json({ error: error.message })
@@ -102,23 +126,18 @@ async function create(req, res) {
 }
 
 // PUT /api/vehicles/:id — modifier un véhicule (admin)
+// Mise à jour partielle : seuls les champs présents dans le corps sont écrits.
 async function update(req, res) {
-  const { brand, model, year, price, fuel_type, transmission, mileage, power, description, status, images } = req.body
-
-  const validationError = validateVehicleInput({ year, price, mileage })
+  const validationError = validateVehicleInput(req.body)
   if (validationError) return res.status(400).json({ error: validationError })
 
-  const { data, error } = await vehicleModel.update(req.params.id, {
-    brand, model,
-    year: parseInt(year),
-    price: parseFloat(price),
-    fuel_type, transmission,
-    mileage: mileage ? parseInt(mileage) : 0,
-    power: power || null,
-    description: description || null,
-    status,
-    images: images || [],
-  })
+  const payload = buildVehiclePayload(req.body)
+
+  if (Object.keys(payload).length === 0) {
+    return res.status(400).json({ error: 'Aucun champ à modifier.' })
+  }
+
+  const { data, error } = await vehicleModel.update(req.params.id, payload)
 
   if (error) return res.status(500).json({ error: error.message })
   res.json(data)

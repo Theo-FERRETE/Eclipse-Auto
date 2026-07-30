@@ -7,40 +7,30 @@ import Pagination from '@/components/Pagination/Pagination'
 import './AdminReservations.css'
 
 const ITEMS_PER_PAGE = 8
+const MAX_RESERVATIONS = 100 // plafond appliqué par l'API sur le paramètre limit
 
 export default function AdminReservations() {
   const [reservations, setReservations] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [page, setPage] = useState(1)
   const [filter, setFilter] = useState('all')
 
+  // Passe par l'API, qui renvoie déjà client_name et les équipements liés.
+  // Le select Supabase direct qu'on utilisait avant n'incluait pas la table de
+  // jointure : les équipements demandés n'étaient jamais affichés.
   async function fetchReservations() {
     setLoading(true)
-    const { data, error } = await supabase
-      .from('reservations')
-      .select('*, vehicles(brand, model, images, price)')
-      .order('created_at', { ascending: false })
-
-    if (error) { console.error(error); setLoading(false); return }
-
-    const rows = data || []
-    const clientIds = [...new Set(rows.map(r => r.client_id).filter(Boolean))]
-
-    const { data: profiles } = clientIds.length
-      ? await supabase.from('profiles').select('id, first_name, last_name').in('id', clientIds)
-      : { data: [] }
-
-    const profileMap = Object.fromEntries((profiles || []).map(p => [p.id, p]))
-
-    const enriched = rows.map(r => {
-      const p = profileMap[r.client_id]
-      const client_name = p
-        ? `${p.first_name || ''} ${p.last_name || ''}`.trim() || 'Client inconnu'
-        : 'Client inconnu'
-      return { ...r, client_name }
+    const { data: { session } } = await supabase.auth.getSession()
+    const res = await fetch(`/api/reservations/all?limit=${MAX_RESERVATIONS}`, {
+      headers: { Authorization: `Bearer ${session?.access_token}` },
     })
 
-    setReservations(enriched)
+    if (!res.ok) { setError('Impossible de charger les réservations.'); setLoading(false); return }
+
+    const { data } = await res.json()
+    setReservations(data || [])
+    setError(null)
     setLoading(false)
   }
 
@@ -57,7 +47,7 @@ export default function AdminReservations() {
       },
       body: JSON.stringify({ status }),
     })
-    if (!res.ok) { console.error('Erreur changement statut'); return }
+    if (!res.ok) { setError('Impossible de modifier le statut de cette réservation.'); return }
     fetchReservations()
   }
 
@@ -77,6 +67,9 @@ export default function AdminReservations() {
         <AdminSidebar />
 
         <div className="admin-content">
+          {error && (
+            <div className="form-error" role="alert" style={{ marginBottom: '16px' }}>{error}</div>
+          )}
           <div className="ar-toolbar">
             {['all', 'pending', 'confirmed', 'cancelled'].map(f => (
               <button

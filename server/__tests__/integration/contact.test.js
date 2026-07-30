@@ -67,4 +67,26 @@ describe('POST /api/contact', () => {
     expect(res.status).toBe(429)
     expect(res.body.error).toMatch(/Trop de requêtes/)
   })
+
+  it('ignore X-Forwarded-For quand TRUST_PROXY est désactivé', async () => {
+    // Sans proxy inverse, l'en-tête est forgeable : s'il servait de clé au rate
+    // limiting, il suffirait de le faire varier pour envoyer des mails sans limite.
+    const previous = process.env.TRUST_PROXY
+    delete process.env.TRUST_PROXY
+    jest.resetModules()
+    const freshApp = require('../../app')
+
+    let last
+    for (let i = 0; i < 6; i++) {
+      last = await request(freshApp)
+        .post('/api/contact')
+        .set('X-Forwarded-For', `203.0.113.${i}`)
+        .send(validBody)
+    }
+
+    expect(last.status).toBe(429)
+
+    process.env.TRUST_PROXY = previous
+    jest.resetModules()
+  })
 })

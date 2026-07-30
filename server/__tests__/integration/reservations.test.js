@@ -27,6 +27,7 @@ function makeQuery(data, count = null) {
     update: jest.fn().mockReturnThis(),
     delete: jest.fn().mockReturnThis(),
     eq: jest.fn().mockReturnThis(),
+    in: jest.fn().mockReturnThis(),
     order: jest.fn().mockReturnThis(),
     range: jest.fn().mockResolvedValue(result),
     single: jest.fn().mockResolvedValue({ data, error: null }),
@@ -209,6 +210,20 @@ describe('PATCH /api/reservations/:id/status (admin)', () => {
 
     expect(res.status).toBe(400)
     expect(res.body.error).toMatch(/Statut invalide/)
+  })
+
+  it('retourne 404 si la réservation n\'existe pas', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
+    const q = makeQuery(null)
+    q.single = jest.fn().mockResolvedValue({ data: null, error: { message: 'Not found' } })
+    supabaseMock.from.mockReturnValue(q)
+
+    const res = await request(app)
+      .patch('/api/reservations/id-inexistant/status')
+      .set('Authorization', 'Bearer admin-token')
+      .send({ status: 'confirmed' })
+
+    expect(res.status).toBe(404)
   })
 
   it('met à jour le statut d\'une réservation (200)', async () => {

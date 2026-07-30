@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@/lib/AuthContext'
 import { supabase } from '@/lib/supabase'
-import { toSlug } from '@/lib/utils'
+import { getVehicleBySlug } from '@/lib/vehiclesCache'
 import ReservationBreadcrumb from '@/components/ReservationBreadcrumb/ReservationBreadcrumb'
 import ReservationVehiclePanel from '@/components/ReservationVehiclePanel/ReservationVehiclePanel'
 import ReservationForm from '@/components/ReservationForm/ReservationForm'
@@ -30,11 +30,9 @@ export default function Reservation() {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) { navigate('/login'); return }
 
-      const { data, error } = await supabase.from('vehicles').select('*')
-      if (error || !data) { navigate('/catalogue'); return }
-
-      const found = data.find(v => toSlug(v.brand, v.model) === slug)
-      if (!found || found.status !== 'available') { navigate('/catalogue'); return }
+      // Réutilise le cache partagé plutôt que de recharger tout le catalogue
+      const { data: found, error } = await getVehicleBySlug(slug)
+      if (error || !found || found.status !== 'available') { navigate('/catalogue'); return }
 
       setVehicle(found)
       setLoading(false)

@@ -61,6 +61,20 @@ describe('GET /api/admin/stats', () => {
     expect(res.body).toHaveProperty('reservations')
     expect(res.body).toHaveProperty('clients')
   })
+
+  it('remonte une erreur Supabase en 500 au lieu de répondre 200 avec des compteurs vides', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
+    const failing = makeQuery(null)
+    failing.then = (fn) => Promise.resolve({ data: null, error: { message: 'DB down' }, count: null }).then(fn)
+    supabaseMock.from.mockReturnValue(failing)
+
+    const res = await request(app)
+      .get('/api/admin/stats')
+      .set('Authorization', 'Bearer admin-token')
+
+    expect(res.status).toBe(500)
+    expect(res.body.error).toBe('DB down')
+  })
 })
 
 describe('GET /api/admin/clients', () => {

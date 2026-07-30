@@ -36,7 +36,25 @@ async function listAll(req, res) {
 
   const { data, error, count } = await reservationModel.findAll({ status, limit: limitNum, offset: offsetNum })
   if (error) return res.status(500).json({ error: error.message })
-  res.json({ data: data.map(formatReservationEquipements), total: count, limit: limitNum, offset: offsetNum })
+
+  const formatted = await withClientNames(data.map(formatReservationEquipements))
+  res.json({ data: formatted, total: count, limit: limitNum, offset: offsetNum })
+}
+
+// Ajoute client_name à chaque réservation. Sans clé étrangère vers profiles,
+// il faut une seconde requête groupée sur les client_id distincts.
+async function withClientNames(reservations) {
+  const ids = [...new Set(reservations.map(r => r.client_id).filter(Boolean))]
+  if (ids.length === 0) return reservations
+
+  const { data: profiles } = await reservationModel.findProfilesByIds(ids)
+  const byId = new Map((profiles || []).map(p => [p.id, p]))
+
+  return reservations.map(r => {
+    const p = byId.get(r.client_id)
+    const name = p ? `${p.first_name || ''} ${p.last_name || ''}`.trim() : ''
+    return { ...r, client_name: name || 'Client inconnu' }
+  })
 }
 
 // POST /api/reservations — créer une réservation
@@ -76,17 +94,19 @@ async function create(req, res) {
 async function updateStatus(req, res) {
   const { status } = req.body
 
-  if (!['pending', 'confirmed', 'cancelled'].includes(status)) {
+  if (!RESERVATION_STATUSES.includes(status)) {
     return res.status(400).json({ error: 'Statut invalide.' })
   }
 
   const { data: resData } = await reservationModel.findWithVehicleForEmail(req.params.id)
 
+  if (!resData) return res.status(404).json({ error: 'Réservation introuvable.' })
+
   const { data, error } = await reservationModel.updateStatus(req.params.id, status)
 
   if (error) return res.status(500).json({ error: error.message })
 
-  if (status === 'confirmed' && resData) {
+  if (status === 'confirmed') {
     try {
       const [{ data: { user: clientUser } }, { data: profile }] = await reservationModel.getAuthUserAndProfile(resData.client_id)
 

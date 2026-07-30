@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer')
+const { escapeHtml } = require('../lib/emailTemplates')
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -9,11 +10,22 @@ const transporter = nodemailer.createTransport({
 })
 
 const ipRequestCounts = new Map()
+const WINDOW_MS = 15 * 60 * 1000
+const MAX_REQUESTS = 5
+
+// Sans purge, la Map conserverait une entrée par IP vue depuis le démarrage.
+function purgeExpired(now) {
+  for (const [ip, times] of ipRequestCounts) {
+    if (times.every(t => now - t >= WINDOW_MS)) ipRequestCounts.delete(ip)
+  }
+}
 
 function checkRateLimit(ip) {
   const now = Date.now()
-  const windowMs = 15 * 60 * 1000
-  const maxRequests = 5
+  const windowMs = WINDOW_MS
+  const maxRequests = MAX_REQUESTS
+
+  purgeExpired(now)
 
   if (!ipRequestCounts.has(ip)) {
     ipRequestCounts.set(ip, [])
@@ -33,17 +45,6 @@ function checkRateLimit(ip) {
 
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email.length <= 254
-}
-
-function escapeHtml(text) {
-  const map = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;',
-  }
-  return text.replace(/[&<>"']/g, char => map[char])
 }
 
 // POST /api/contact — formulaire de contact

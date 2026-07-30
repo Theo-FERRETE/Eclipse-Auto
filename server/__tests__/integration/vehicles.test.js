@@ -196,6 +196,47 @@ describe('PUT /api/vehicles/:id (admin)', () => {
     expect(res.status).toBe(200)
     expect(res.body.model).toBe('Civic')
   })
+
+  it('un PUT partiel n\'écrase pas les champs absents du corps', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
+    const q = makeQuery({ ...mockVehicle, status: 'sold' })
+    supabaseMock.from.mockReturnValue(q)
+
+    const res = await request(app)
+      .put(`/api/vehicles/${mockVehicle.id}`)
+      .set('Authorization', 'Bearer admin-token')
+      .send({ status: 'sold' })
+
+    expect(res.status).toBe(200)
+
+    // Seul status doit partir en base : sans ce garde-fou, parseInt(undefined)
+    // envoyait year: null, price: null, images: [] et détruisait la fiche.
+    expect(q.update).toHaveBeenCalledWith({ status: 'sold' })
+  })
+
+  it('rejette un PUT sans aucun champ modifiable (400)', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
+
+    const res = await request(app)
+      .put(`/api/vehicles/${mockVehicle.id}`)
+      .set('Authorization', 'Bearer admin-token')
+      .send({})
+
+    expect(res.status).toBe(400)
+    expect(res.body.error).toMatch(/Aucun champ/)
+  })
+
+  it('rejette un statut de véhicule invalide (400)', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
+
+    const res = await request(app)
+      .put(`/api/vehicles/${mockVehicle.id}`)
+      .set('Authorization', 'Bearer admin-token')
+      .send({ status: 'offert' })
+
+    expect(res.status).toBe(400)
+    expect(res.body.error).toMatch(/Statut invalide/)
+  })
 })
 
 describe('DELETE /api/vehicles/:id (admin)', () => {

@@ -20,10 +20,14 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: server/package-lock.json
+          cache-dependency-path: |
+            server/package-lock.json
+            client/package-lock.json
 
+      # npm ci (et non npm install) : installe exactement les versions du lockfile,
+      # sinon la CI peut valider des versions différentes de celles testées en local.
       - name: Install server dependencies
-        run: npm install
+        run: npm ci
         working-directory: server
 
       - name: Run tests
@@ -35,9 +39,10 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: test-key
           GMAIL_USER: test@gmail.com
           GMAIL_APP_PASSWORD: test-password
+          TRUST_PROXY: '1'
 
       - name: Install client dependencies
-        run: npm install
+        run: npm ci
         working-directory: client
 
       - name: Run client tests

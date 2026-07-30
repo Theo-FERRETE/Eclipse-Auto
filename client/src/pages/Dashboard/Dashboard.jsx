@@ -17,15 +17,16 @@ export default function Dashboard() {
   const [confirmCancelId, setConfirmCancelId] = useState(null)
 
   useEffect(() => {
+    // Passe par l'API : le client_id est extrait du JWT côté serveur, et la réponse
+    // inclut les équipements de la relation many-to-many (absents d'un select direct).
     async function fetchReservations() {
       if (!user) return
-      const { data, error } = await supabase
-        .from('reservations')
-        .select('*, vehicles(brand, model, images, price)')
-        .eq('client_id', user.id)
-        .order('created_at', { ascending: false })
+      const { data: { session } } = await supabase.auth.getSession()
+      const res = await fetch('/api/reservations', {
+        headers: { Authorization: `Bearer ${session?.access_token}` },
+      })
 
-      if (!error) setReservations(data || [])
+      if (res.ok) setReservations(await res.json())
       setLoading(false)
     }
     fetchReservations()

@@ -12,6 +12,23 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        // Découpage explicite des dépendances : les libs changent moins souvent que
+        // le code applicatif, donc leur chunk reste en cache navigateur entre deux
+        // déploiements. Ne pas s'en remettre à l'heuristique par défaut de Vite,
+        // qui a déjà changé d'une version mineure à l'autre.
+        // rolldown (Vite 8) attend une fonction, pas un objet
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return
+          if (id.includes('@supabase')) return 'supabase'
+          if (id.includes('chart.js') || id.includes('react-chartjs-2')) return 'charts'
+          if (/node_modules\/(react|react-dom|react-router|react-router-dom|scheduler)\//.test(id)) return 'react'
+        },
+      },
+    },
+  },
   test: {
     globals: true,
     environment: 'jsdom',
