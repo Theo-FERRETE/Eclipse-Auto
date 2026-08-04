@@ -1,3 +1,5 @@
+// Page 404.
+
 import { Link } from 'react-router-dom'
 import './NotFound.css'
 

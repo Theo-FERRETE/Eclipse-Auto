@@ -1,3 +1,5 @@
+// Liste des réservations du client. `cancelling` évite le double-clic.
+
 import { Link } from 'react-router-dom'
 import { RESERVATION_STATUS, optimizeImageUrl, formatPrice } from '@/lib/utils'
 

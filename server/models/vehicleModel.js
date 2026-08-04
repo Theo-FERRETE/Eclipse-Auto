@@ -1,3 +1,5 @@
+// Requêtes Supabase des véhicules. Ni validation ni code HTTP ici.
+
 const supabase = require('../supabase')
 
 function findAll({ status, brand, fuel_type, limit, offset }) {

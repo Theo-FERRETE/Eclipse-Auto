@@ -1,8 +1,13 @@
+// Filtres du catalogue. Le curseur de prix attend de connaître le prix max réel.
+
 import './Filters.css'
 
 export default function Filters({ filters, onChange, onReset, brands = [], fuelTypes = [], transmissions = [], years = [], priceMax = null }) {
+  // « Pas de filtre de prix » vaut Infinity, mais un <input range> veut un nombre : on
+  // retombe sur le prix max du catalogue.
   const sliderValue = filters.price_max === Infinity ? priceMax : Math.min(Number(filters.price_max), priceMax)
   const isMaxPrice = filters.price_max === Infinity || Number(filters.price_max) >= priceMax
+  // Calculés depuis les données réelles : ~100 crans, arrondis au millier.
   const sliderStep = priceMax ? Math.max(1000, Math.round(priceMax / 100 / 1000) * 1000) : 1000
   const sliderMin = priceMax ? Math.round(priceMax * 0.05 / sliderStep) * sliderStep : 0
 

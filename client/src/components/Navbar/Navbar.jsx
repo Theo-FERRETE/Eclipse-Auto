@@ -1,3 +1,5 @@
+// Navigation. Le lien Admin n'apparaît que si isAdmin — affichage seulement.
+
 import { useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/lib/AuthContext'

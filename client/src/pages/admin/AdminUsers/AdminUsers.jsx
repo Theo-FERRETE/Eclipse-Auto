@@ -1,3 +1,5 @@
+// Gestion des clients. La suppression passe par l'API, qui supprime aussi le compte auth.
+
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import AdminSidebar from '@/components/AdminSidebar/AdminSidebar'

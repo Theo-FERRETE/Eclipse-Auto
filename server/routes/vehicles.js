@@ -1,3 +1,5 @@
+// Véhicules : lecture publique, écritures réservées aux admins.
+
 const { Router } = require('express')
 const { requireAdmin } = require('../middleware/auth')
 const vehicleController = require('../controllers/vehicleController')

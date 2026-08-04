@@ -1,3 +1,5 @@
+// Stats du tableau de bord et gestion des comptes clients.
+
 const adminModel = require('../models/adminModel')
 
 // GET /api/admin/stats — statistiques du dashboard

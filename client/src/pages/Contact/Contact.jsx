@@ -1,3 +1,5 @@
+// Formulaire de contact.
+
 import { useState } from 'react'
 import './Contact.css'
 

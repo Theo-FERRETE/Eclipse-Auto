@@ -1,3 +1,5 @@
+// Ligne véhicule du back-office.
+
 import { optimizeImageUrl, formatPrice } from '@/lib/utils'
 
 export default function AdminVehicleCard({ vehicle: v, editing, onEdit, onDelete, onStatusChange }) {

@@ -1,3 +1,5 @@
+// Demande de réinitialisation du mot de passe, gérée par Supabase.
+
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'

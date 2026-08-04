@@ -1,3 +1,5 @@
+// Fiche véhicule (/vehicles/:slug). Charge aussi les équipements, transmis à la réservation.
+
 import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { optimizeImageUrl, formatPrice, VEHICLE_STATUS } from '@/lib/utils'

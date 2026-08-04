@@ -1,3 +1,5 @@
+// Écran de confirmation après envoi.
+
 import { Link } from 'react-router-dom'
 
 export default function ReservationSuccess({ vehicle }) {

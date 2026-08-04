@@ -1,3 +1,5 @@
+// Monte les six routeurs sous /api.
+
 const { Router } = require('express')
 
 const vehiclesRouter     = require('./vehicles')

@@ -1,3 +1,5 @@
+// Recherche et tri du catalogue. Composant contrôlé.
+
 export default function CatalogueToolbar({ search, sort, onSearchChange, onSortChange }) {
   return (
     <div className="catalogue-toolbar">

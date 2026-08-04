@@ -1,3 +1,5 @@
+// Répond 200 si l'API est debout. Sert à la CI et aux déploiements.
+
 const { Router } = require('express')
 
 const router = Router()

@@ -1,3 +1,6 @@
+// Connexion, inscription, session. Le mot de passe part direct chez Supabase, l'app ne le
+// voit jamais. Ces fonctions lèvent l'erreur, les pages les entourent d'un try/catch.
+
 import { supabase } from './supabase'
 
 export async function login(email, password) {
@@ -9,6 +12,9 @@ export async function login(email, password) {
   return data
 }
 
+// options.data remplit user_metadata : de là viennent le prénom et le nom qu'on retrouve
+// dans profiles. Attention, l'utilisateur peut le modifier lui-même — acceptable pour un
+// prénom, ce serait une faille pour un rôle, d'où le rôle rangé dans app_metadata.
 export async function register(email, password, firstName, lastName) {
   const { data, error } = await supabase.auth.signUp({
     email,

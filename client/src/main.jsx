@@ -1,3 +1,5 @@
+// Monte l'app dans #root. AuthProvider au-dessus pour que la session soit partout.
+
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'

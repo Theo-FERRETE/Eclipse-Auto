@@ -1,3 +1,6 @@
+// Configuration de l'app Express : sécurité, middlewares, routes, build React, erreurs.
+// Exporté sans listen() pour que les tests puissent l'utiliser.
+
 require('dotenv').config()
 const express = require('express')
 const helmet = require('helmet')

@@ -1,3 +1,5 @@
+// Gestion des réservations. Confirmer envoie l'email et passe le véhicule en réservé.
+
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { RESERVATION_STATUS, optimizeImageUrl, formatPrice } from '@/lib/utils'

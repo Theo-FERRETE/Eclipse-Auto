@@ -1,3 +1,5 @@
+// CRUD véhicules. Lecture directe via Supabase, écritures par l'API.
+
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import AdminSidebar from '@/components/AdminSidebar/AdminSidebar'

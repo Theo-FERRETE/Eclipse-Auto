@@ -1,12 +1,8 @@
-/**
- * Réduit le poids des images en utilisant les API de transformation
- * de Supabase Storage (/render/image) et Unsplash (imgix).
- * Pour toute autre source, retourne l'URL d'origine.
- *
- * @param {string} url     URL d'origine
- * @param {number} width   Largeur cible en px (2x la taille d'affichage pour retina)
- * @param {number} quality Qualité 1-100 (défaut 75)
- */
+// Helpers du front : images, slug d'URL, prix, libellés de statuts.
+
+// Allège les images : Supabase Storage passe par son API de transformation, les images
+// locales de /img/ basculent en .webp, le reste est renvoyé tel quel.
+// width : 2x la taille d'affichage, pour les écrans retina.
 export function optimizeImageUrl(url, width = 800, quality = 75) {
   if (!url) return url
 
@@ -24,6 +20,9 @@ export function optimizeImageUrl(url, width = 800, quality = 75) {
   return url
 }
 
+// "Renault M\u00e9gane RS" -> "renault-megane-rs". normalize('NFD') d\u00e9tache les accents pour
+// que le replace suivant les retire proprement.
+// Le serveur fait la m\u00eame chose dans vehicleController.getBySlug.
 export function toSlug(brand, model) {
   return `${brand}-${model}`
     .toLowerCase()

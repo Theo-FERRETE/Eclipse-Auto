@@ -1,3 +1,5 @@
+// Carte véhicule du catalogue.
+
 import { Link } from 'react-router-dom'
 import { toSlug, optimizeImageUrl, formatPrice, VEHICLE_STATUS } from '@/lib/utils'
 import './VehicleCard.css'

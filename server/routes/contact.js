@@ -1,3 +1,5 @@
+// Formulaire de contact. Publique, mais rate-limitée dans le contrôleur.
+
 const { Router } = require('express')
 const contactController = require('../controllers/contactController')
 

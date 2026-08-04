@@ -1,3 +1,5 @@
+// Profil et mot de passe. Seule écriture qui passe encore en direct par Supabase.
+
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 

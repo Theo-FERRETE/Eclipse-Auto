@@ -1,3 +1,6 @@
+// Espace client : réservations et profil. Les réservations passent par l'API, qui filtre sur
+// le JWT et renvoie les équipements liés.
+
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/lib/AuthContext'
 import { supabase } from '@/lib/supabase'
@@ -33,7 +36,9 @@ export default function Dashboard() {
   }, [user])
 
   async function handleCancel(id) {
+    // Anti-double-clic. Un Set plutôt qu'un booléen, pour ne bloquer que cette ligne-là.
     if (cancelling.has(id)) return
+    // Nouveau Set : muter l'existant ne changerait pas la référence, React ne redessinerait rien.
     setCancelling(prev => new Set(prev).add(id))
 
     const { data: { session } } = await supabase.auth.getSession()
@@ -43,6 +48,7 @@ export default function Dashboard() {
     })
 
     if (res.ok) {
+      // Mise à jour locale plutôt qu'un rechargement : on connaît déjà le résultat.
       setReservations(prev =>
         prev.map(r => r.id === id ? { ...r, status: 'cancelled' } : r)
       )
@@ -54,6 +60,8 @@ export default function Dashboard() {
     setCancelling(prev => { const s = new Set(prev); s.delete(id); return s })
   }
 
+  // Une demande en attente s'annule directement ; une réservation déjà confirmée demande
+  // une confirmation.
   function requestCancel(id, status) {
     if (status === 'confirmed') {
       setConfirmCancelId(id)

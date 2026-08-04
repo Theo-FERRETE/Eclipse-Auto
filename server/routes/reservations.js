@@ -1,3 +1,5 @@
+// Tout est protégé : le client ne voit que les siennes, l'admin voit tout.
+
 const { Router } = require('express')
 const { requireAuth, requireAdmin } = require('../middleware/auth')
 const reservationController = require('../controllers/reservationController')

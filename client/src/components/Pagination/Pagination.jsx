@@ -1,11 +1,16 @@
+// Pagination réutilisable, avec des « ... » au-delà de 7 pages.
+
 import './Pagination.css'
 
+// Construit la liste à afficher, par exemple [1, '...', 7, 8, 9, '...', 42] : toujours la
+// première page, la page courante et ses voisines, la dernière.
 function getPages(page, totalPages) {
   if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1)
 
   const pages = []
   pages.push(1)
 
+  // « ... » seulement s'il y a vraiment un trou entre 1 et start.
   if (page > 3) pages.push('...')
 
   const start = Math.max(2, page - 1)

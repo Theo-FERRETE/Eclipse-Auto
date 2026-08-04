@@ -1,3 +1,5 @@
+// Titre des pages d'administration.
+
 export default function AdminPageHeader({ title }) {
   return (
     <>

@@ -1,3 +1,6 @@
+// Catalogue : filtres, tri, pagination. Les filtres sont dans l'URL pour que la recherche
+// soit partageable. Filtrage en mémoire, et le Realtime met à jour les statuts en direct.
+
 import { useState, useMemo, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import Filters from '@/components/Filters/Filters'
@@ -28,8 +31,12 @@ export default function Catalogue() {
     }
 
     fetchVehicles()
+    // L'utilisateur revient sur l'onglet après un moment : le cache a pu expirer entre-temps.
     window.addEventListener('focus', fetchVehicles)
 
+    // Supabase pousse chaque UPDATE de la table vehicles par WebSocket : quand l'admin
+    // confirme une réservation, le badge change ici en direct. Seul UPDATE est écouté,
+    // un ajout ou une suppression sera repris au prochain chargement.
     const channel = supabase
       .channel('catalogue-vehicles')
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'vehicles' }, payload => {
@@ -38,6 +45,7 @@ export default function Catalogue() {
       })
       .subscribe()
 
+    // Sans removeChannel, chaque visite du catalogue laisserait un WebSocket ouvert.
     return () => {
       window.removeEventListener('focus', fetchVehicles)
       supabase.removeChannel(channel)
@@ -54,6 +62,8 @@ export default function Catalogue() {
     setPage(1)
   }
 
+  // Options déduites des véhicules présents plutôt que codées en dur : un filtre ne propose
+  // donc jamais un choix vide. useMemo évite de recalculer à chaque frappe.
   const brands = useMemo(() =>
     [...new Set(vehicles.map(v => v.brand).filter(Boolean))].sort()
   , [vehicles])
@@ -66,6 +76,7 @@ export default function Catalogue() {
     [...new Set(vehicles.map(v => v.transmission).filter(Boolean))].sort()
   , [vehicles])
 
+  // null tant que rien n'est chargé : Filters s'en sert pour masquer le curseur de prix.
   const priceMax = useMemo(() =>
     vehicles.length ? Math.max(...vehicles.map(v => v.price || 0)) : null
   , [vehicles])

@@ -1,3 +1,5 @@
+// Requêtes des équipements.
+
 const supabase = require('../supabase')
 
 function findAll() {

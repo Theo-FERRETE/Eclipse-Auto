@@ -1,3 +1,5 @@
+// Toutes les routes du site. Pages chargées à la demande sauf Home.
+
 import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Navbar from '@/components/Navbar/Navbar'
@@ -25,9 +27,11 @@ const NotFound = lazy(() => import('@/pages/NotFound/NotFound'))
 
 function App() {
   return (
+    // Navbar et Footer sont hors des Routes : ils restent affichés d'une page à l'autre.
     <BrowserRouter>
       <ErrorBoundary>
       <Navbar />
+      {/* fallback={null} : les chunks font quelques Ko, un loader clignoterait pour rien. */}
       <Suspense fallback={null}>
       <Routes>
         <Route path="/" element={<Home />} />

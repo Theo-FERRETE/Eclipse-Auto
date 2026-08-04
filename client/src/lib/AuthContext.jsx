@@ -1,3 +1,6 @@
+// Session partagée à toute l'app via useAuth().
+// `loading` évite de rediriger vers /login un utilisateur connecté pendant le chargement.
+
 import { createContext, useContext, useEffect, useState } from 'react'
 import { supabase } from './supabase'
 
@@ -18,6 +21,8 @@ export function AuthProvider({ children }) {
   }
 
   useEffect(() => {
+    // « Suis-je déjà connecté ? » — la session est relue du localStorage, c'est ce qui fait
+    // qu'un F5 ne déconnecte pas.
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
       if (session?.user) {
@@ -27,6 +32,8 @@ export function AuthProvider({ children }) {
       }
     })
 
+    // « Quelque chose change-t-il ? » — sans cet abonnement, se connecter n'aurait aucun
+    // effet visible avant un rechargement manuel.
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
       if (session?.user) {
@@ -48,6 +55,8 @@ export function AuthProvider({ children }) {
       user,
       profile,
       loading,
+      // Rôle lu dans profiles : sert seulement à l'affichage. Le serveur, lui, vérifie
+      // app_metadata.role, qui est dans le JWT signé.
       isAdmin: profile?.role === 'admin',
       isClient: profile?.role === 'client',
       refreshProfile,

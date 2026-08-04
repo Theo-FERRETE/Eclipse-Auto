@@ -1,3 +1,5 @@
+// Back-office : 4 indicateurs et 2 graphiques, depuis /api/admin/stats.
+
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'

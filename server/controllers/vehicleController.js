@@ -1,10 +1,15 @@
+// Validation et logique des véhicules. Les requêtes SQL sont dans models/vehicleModel.js.
+
 const vehicleModel = require('../models/vehicleModel')
 const { VEHICLE_STATUSES } = require('../constants')
 
+// Retourne un message d'erreur, ou null si tout va bien. Partagée entre POST et PUT.
+// Chaque champ n'est testé que s'il est présent, pour servir aussi aux modifications partielles.
 function validateVehicleInput(body) {
   const { year, price, mileage } = body
   const currentYear = new Date().getFullYear()
 
+  // +1 parce que les concessions vendent les millésimes de l'année à venir.
   if (year) {
     const y = parseInt(year)
     if (isNaN(y) || y < 1900 || y > currentYear + 1) {
@@ -26,6 +31,7 @@ function validateVehicleInput(body) {
     }
   }
 
+  // !== undefined et pas `if (body.status)` : une chaîne vide passerait au travers.
   if (body.status !== undefined && !VEHICLE_STATUSES.includes(body.status)) {
     return `Statut invalide (${VEHICLE_STATUSES.join(', ')}).`
   }
@@ -82,6 +88,8 @@ async function getBySlug(req, res) {
   const { data: vehicles, error } = await vehicleModel.findAllOrderedByDate()
   if (error) return res.status(500).json({ error: error.message })
 
+  // Le slug n'existe pas en base, donc on le recalcule pour chaque véhicule. Ça lit toute
+  // la table pour une seule fiche : une colonne slug indexée réglerait ça.
   const vehicle = vehicles?.find(v => {
     const vehicleSlug = `${v.brand}-${v.model}`
       .toLowerCase()

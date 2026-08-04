@@ -1,3 +1,5 @@
+// Mentions légales (page statique).
+
 import './MentionsLegales.css'
 
 export default function MentionsLegales() {

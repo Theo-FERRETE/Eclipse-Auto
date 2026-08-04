@@ -1,3 +1,5 @@
+// Équipements en option : lecture publique, écritures admin.
+
 const { Router } = require('express')
 const { requireAdmin } = require('../middleware/auth')
 const equipementController = require('../controllers/equipementController')

@@ -1,3 +1,5 @@
+// Formulaire de création / modification d'un véhicule.
+
 export default function AdminVehicleModal({ form, onChange, onSubmit, onClose, editing, submitting, error, success }) {
   return (
     <div className="vehicle-modal-overlay" onClick={e => { if (e.target === e.currentTarget) onClose() }}>

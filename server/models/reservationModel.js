@@ -1,5 +1,9 @@
+// Requêtes des réservations, avec les équipements liés.
+
 const supabase = require('../supabase')
 
+// La syntaxe « table(colonnes) » est l'embed PostgREST : une jointure en une seule requête.
+// Ne marche que s'il existe une clé étrangère (voir findProfilesByIds pour le contre-exemple).
 function findByClient(clientId) {
   return supabase
     .from('reservations')

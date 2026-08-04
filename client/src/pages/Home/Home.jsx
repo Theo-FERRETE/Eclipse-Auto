@@ -1,3 +1,5 @@
+// Accueil : hero, chiffres, 3 véhicules mis en avant. Lit le cache partagé.
+
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { toSlug, optimizeImageUrl, formatPrice } from '@/lib/utils'

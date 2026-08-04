@@ -1,3 +1,5 @@
+// Back-office : stats et gestion des clients. Tout en requireAdmin.
+
 const { Router } = require('express')
 const { requireAdmin } = require('../middleware/auth')
 const adminController = require('../controllers/adminController')

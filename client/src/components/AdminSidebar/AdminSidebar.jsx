@@ -1,3 +1,5 @@
+// Menu latéral du back-office.
+
 import { Link, useLocation } from 'react-router-dom'
 import './AdminSidebar.css'
 

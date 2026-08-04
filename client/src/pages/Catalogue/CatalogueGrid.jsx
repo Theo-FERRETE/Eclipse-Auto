@@ -1,3 +1,5 @@
+// Grille de résultats : chargement, erreur, vide, liste, pagination.
+
 import VehicleCard from '@/components/VehicleCard/VehicleCard'
 import Pagination from '@/components/Pagination/Pagination'
 

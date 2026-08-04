@@ -1,3 +1,5 @@
+// Menu de l'espace client.
+
 import { Link } from 'react-router-dom'
 
 export default function DashboardSidebar({ profile, user, view, onViewChange }) {

@@ -1,3 +1,6 @@
+// Gabarit de l'email de confirmation. Tables et styles inline : c'est le seul rendu fiable
+// dans les clients mail.
+
 function escapeHtml(text) {
   return String(text).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))
 }

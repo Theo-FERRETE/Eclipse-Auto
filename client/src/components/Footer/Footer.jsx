@@ -1,3 +1,5 @@
+// Pied de page.
+
 import { Link } from 'react-router-dom'
 import './Footer.css'
 

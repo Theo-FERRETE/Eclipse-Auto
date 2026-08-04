@@ -1,3 +1,5 @@
+// Connexion. AuthContext met à jour l'interface tout seul derrière.
+
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { login } from '@/lib/auth'

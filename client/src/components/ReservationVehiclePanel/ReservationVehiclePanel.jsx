@@ -1,3 +1,5 @@
+// Rappel du véhicule choisi.
+
 import { optimizeImageUrl, formatPrice } from '@/lib/utils'
 
 export default function ReservationVehiclePanel({ vehicle }) {

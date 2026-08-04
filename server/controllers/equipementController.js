@@ -1,3 +1,5 @@
+// CRUD des équipements. Validation partagée entre create et update.
+
 const equipementModel = require('../models/equipementModel')
 
 function validateEquipementInput(body) {

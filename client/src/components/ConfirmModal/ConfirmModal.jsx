@@ -1,3 +1,5 @@
+// Confirmation avant une action destructive.
+
 import './ConfirmModal.css'
 
 export default function ConfirmModal({ message, onConfirm, onCancel }) {
