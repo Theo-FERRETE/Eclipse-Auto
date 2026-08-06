@@ -1,6 +1,6 @@
 ← [Documentation](../README.md)
 
-# Front — l'application React
+# Front : l'application React
 
 Dossier : `client/`. Environ 3 900 lignes.
 React 19 · Vite 8 · React Router 7 · Chart.js · Vitest. En **modules ES** (`import`/`export`).
@@ -30,7 +30,7 @@ client/
 │
 └── src/
     ├── main.jsx        Point d'entrée : monte <AuthProvider><App /> dans #root
-    ├── App.jsx         TOUTES les routes du site — le plan du site
+    ├── App.jsx         TOUTES les routes du site - le plan du site
     ├── index.css       Styles globaux : variables CSS, reset, classes utilitaires
     │
     ├── lib/            Code partagé, sans JSX

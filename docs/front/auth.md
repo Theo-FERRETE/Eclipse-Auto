@@ -1,6 +1,6 @@
 ← [Front](README.md)
 
-# Front — l'authentification
+# Front : l'authentification
 
 Trois fichiers, et c'est tout :
 
@@ -10,7 +10,7 @@ Trois fichiers, et c'est tout :
 | `lib/AuthContext.jsx` | Le contexte React qui rend la session disponible partout |
 | `components/ProtectedRoute/ProtectedRoute.jsx` | Le garde-barrière des routes privées |
 
-## `lib/auth.js` — les fonctions brutes
+## `lib/auth.js` : les fonctions brutes
 
 De simples enveloppes autour de Supabase Auth. Elles **lèvent une exception** en cas
 d'erreur (`if (error) throw error`), à charge des pages appelantes de les attraper dans un
@@ -19,16 +19,16 @@ d'erreur (`if (error) throw error`), à charge des pages appelantes de les attra
 | Fonction | Appel Supabase |
 |---|---|
 | `login(email, password)` | `auth.signInWithPassword()` |
-| `register(email, password, firstName, lastName)` | `auth.signUp()` — prénom/nom passés en `options.data` |
+| `register(email, password, firstName, lastName)` | `auth.signUp()` : prénom/nom passés en `options.data` |
 | `logout()` | `auth.signOut()` |
 | `getSession()` | `auth.getSession()` |
 | `getProfile()` | `auth.getUser()` puis `from('profiles').select().eq('id', user.id).single()` |
 
 **Le mot de passe ne transite jamais par ton serveur.** Il part directement du navigateur
-vers Supabase, qui le hashe et le stocke. Le projet ne détient aucun mot de passe — c'est
+vers Supabase, qui le hashe et le stocke. Le projet ne détient aucun mot de passe, c'est
 un argument de sécurité solide à donner à l'oral.
 
-## `lib/AuthContext.jsx` — la session partagée
+## `lib/AuthContext.jsx` : la session partagée
 
 Monté tout en haut de l'application, dans `main.jsx` :
 
@@ -44,8 +44,8 @@ Ce qu'il expose via `useAuth()` :
 
 | Valeur | Contenu |
 |---|---|
-| `user` | L'utilisateur Supabase Auth (id, email…) ou `null` |
-| `profile` | La ligne `profiles` correspondante (first_name, last_name, role…) |
+| `user` | L'utilisateur Supabase Auth (id, email...) ou `null` |
+| `profile` | La ligne `profiles` correspondante (first_name, last_name, role...) |
 | `loading` | `true` tant que la session initiale n'est pas résolue |
 | `isAdmin` | `profile?.role === 'admin'` |
 | `isClient` | `profile?.role === 'client'` |
@@ -54,10 +54,10 @@ Ce qu'il expose via `useAuth()` :
 ### Pourquoi un Context et pas un état local
 
 Sans lui, chaque composant devrait appeler `getSession()` de son côté : la Navbar, le
-Dashboard, `ProtectedRoute`… Autant d'appels redondants et de risques de désynchronisation.
+Dashboard, `ProtectedRoute`... Autant d'appels redondants et de risques de désynchronisation.
 Le Context résout la session **une fois** et la diffuse à tout l'arbre.
 
-C'est aussi ce qui évite le *prop drilling* — passer `user` de composant en composant sur
+C'est aussi ce qui évite le *prop drilling*, passer `user` de composant en composant sur
 cinq niveaux jusqu'à celui qui en a besoin.
 
 ### Le cycle de vie, dans le `useEffect`
@@ -81,16 +81,16 @@ Démontage
 
 **Les deux étapes sont nécessaires et différentes** :
 
-- `getSession()` répond à « suis-je *déjà* connecté ? » — au chargement de la page, la
+- `getSession()` répond à « suis-je *déjà* connecté ? », au chargement de la page, la
   session vient du `localStorage`, c'est pour ça qu'on reste connecté après un F5.
-- `onAuthStateChange()` répond à « quelque chose *change*-t-il ? » — connexion, déconnexion,
+- `onAuthStateChange()` répond à « quelque chose *change*-t-il ? », connexion, déconnexion,
   expiration. Sans lui, se connecter n'aurait aucun effet visible avant un rechargement
   manuel, et la Navbar continuerait d'afficher « Connexion ».
 
-### Le rôle de `loading` — et pourquoi il est indispensable
+### Le rôle de `loading` : et pourquoi il est indispensable
 
 Au premier rendu, `user` vaut `null` : la session n'est pas encore lue. Sans `loading`,
-`ProtectedRoute` verrait `user === null` et redirigerait immédiatement vers `/login` —
+`ProtectedRoute` verrait `user === null` et redirigerait immédiatement vers `/login` :
 **même un utilisateur connecté serait éjecté de son dashboard à chaque rechargement**.
 
 `loading` dit « je ne sais pas encore, attends ». C'est un des bugs les plus classiques de
@@ -98,7 +98,7 @@ l'auth côté React, et une très bonne réponse si le jury demande une difficul
 
 ---
 
-## ProtectedRoute — le garde-barrière
+## ProtectedRoute : le garde-barrière
 
 Quinze lignes, trois décisions dans l'ordre :
 
@@ -119,7 +119,7 @@ Usage dans `App.jsx` :
 
 **Le `replace`** remplace l'entrée dans l'historique au lieu d'en ajouter une. Sans lui,
 le bouton Précédent renverrait sur la page protégée, qui redirigerait à nouveau vers
-`/login` — l'utilisateur serait piégé dans une boucle.
+`/login` : l'utilisateur serait piégé dans une boucle.
 
 **Un non-admin est renvoyé vers `/dashboard`, pas vers `/login`** : il est bien connecté,
 lui redemander de se connecter n'aurait aucun sens.
@@ -131,14 +131,14 @@ lui redemander de se connecter n'aurait aucun sens.
 Il empêche d'afficher une page. Il n'empêche pas d'appeler l'API. N'importe qui peut ouvrir
 la console de son navigateur, forcer `profile.role = 'admin'` et faire apparaître le menu
 admin. Mais chaque appel vers `/api/admin/*` partirait quand même avec **son** JWT, et le
-serveur le rejetterait en **403** — parce que le rôle qui fait foi est dans
+serveur le rejetterait en **403** : parce que le rôle qui fait foi est dans
 `app_metadata`, inscrit dans un token signé, impossible à falsifier depuis le navigateur.
 
 > **Le front décide ce qu'on voit. Le serveur décide ce qu'on peut faire.**
 
 Détail cohérent avec ça : le front lit le rôle dans `profiles.role` (une colonne de table,
 pratique pour l'affichage), le serveur le lit dans `app_metadata.role` (dans le JWT).
-Deux sources différentes pour deux usages différents — c'est expliqué en détail dans
+Deux sources différentes pour deux usages différents, c'est expliqué en détail dans
 [../back/securite.md](../back/securite.md#attention--deux-notions-de--admin--cohabitent).
 
 ---
@@ -160,21 +160,21 @@ Deux sources différentes pour deux usages différents — c'est expliqué en d�
 9. Le serveur le vérifie                           server/middleware/auth.js
 ```
 
-Le détail du jeton — où il vit, ce qu'il contient, combien de temps — est dans
-[../JWT.md](../JWT.md).
+Le détail du jeton, où il vit, ce qu'il contient, combien de temps, est dans
+[../back/JWT.md](../back/JWT.md).
 
 ## Le mot de passe oublié
 
-Deux pages, un aller-retour par email — géré entièrement par Supabase Auth, sans code
+Deux pages, un aller-retour par email, géré entièrement par Supabase Auth, sans code
 serveur :
 
-1. **`pages/ForgotPassword`** — `supabase.auth.resetPasswordForEmail(email)`.
+1. **`pages/ForgotPassword`** : `supabase.auth.resetPasswordForEmail(email)`.
    Supabase envoie un email contenant un lien de retour vers le site.
-2. **`pages/ResetPassword`** — le lien ouvre cette page avec un token de récupération dans
+2. **`pages/ResetPassword`** : le lien ouvre cette page avec un token de récupération dans
    l'URL. La page écoute `supabase.auth.onAuthStateChange()` pour attendre que la librairie
    ait consommé ce token et ouvert une session temporaire ; puis
    `supabase.auth.updateUser({ password })` enregistre le nouveau mot de passe.
 
 À noter : ce sont les deux seules pages, avec le Dashboard, à parler à Supabase Auth
-directement plutôt qu'à l'API — parce qu'il s'agit de la gestion de son propre compte,
+directement plutôt qu'à l'API, parce qu'il s'agit de la gestion de son propre compte,
 et que Supabase le fait déjà correctement.

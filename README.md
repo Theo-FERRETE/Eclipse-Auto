@@ -6,13 +6,13 @@ Plateforme de gestion et réservation de véhicules haut de gamme, avec interfac
 
 La doc technique est dans [`docs/`](docs/README.md), séparée en deux :
 
-- **[docs/back/](docs/back/README.md)** — l'API Express : les 4 couches, démarrage et
+- **[docs/back/](docs/back/README.md)** : l'API Express. Les 4 couches, démarrage et
   configuration, ce que fait Supabase (requêtes, schéma, clés et RLS, Auth),
   authentification et sécurité, validation, en-têtes HTTP, emails
-- **[docs/front/](docs/front/README.md)** — l'application React : conventions et structure,
+- **[docs/front/](docs/front/README.md)** : l'application React. Conventions et structure,
   routing, performance et build, d'où viennent les données, cache, Realtime,
   authentification côté client
-- **[docs/JWT.md](docs/JWT.md)** — où est physiquement stocké le jeton, ce qu'il contient,
+- **[docs/back/JWT.md](docs/back/JWT.md)** : où est physiquement stocké le jeton, ce qu'il contient,
   par où il passe, et ce qu'un attaquant peut ou non en faire
 
 Référence complète de l'API : [docs/ENDPOINTS.md](docs/ENDPOINTS.md).
@@ -81,7 +81,7 @@ VITE_SUPABASE_ANON_KEY=...
 
 Les six familles de routes de l'API et leur niveau de protection sont résumées dans
 [docs/back/](docs/back/architecture.md#les-6-familles-de-routes). Le détail complet de chaque
-endpoint — query params, body attendu, réponses, codes d'erreur — est dans
+endpoint, query params, body attendu, réponses, codes d'erreur, est dans
 [docs/ENDPOINTS.md](docs/ENDPOINTS.md).
 
 Les 18 routes du front et leurs trois niveaux d'accès sont dans
@@ -90,7 +90,7 @@ Les 18 routes du front et leurs trois niveaux d'accès sont dans
 ## Rôle de chaque fichier
 
 Chaque fichier source porte un commentaire d'en-tête qui détaille son rôle. Le tableau
-complet fichier par fichier — serveur, pages, composants, `lib/` — est dans
+complet fichier par fichier, serveur, pages, composants, `lib/` : est dans
 `docs/documentation.html` (sections « Fichiers du serveur », « Composants », « Utilitaires »).
 
 L'arborescence commentée de chaque côté est en tête de [docs/back/](docs/back/README.md#arborescence-commentée)
@@ -99,7 +99,7 @@ et de [docs/front/](docs/front/README.md#arborescence-commentée).
 ## Tests
 
 ```bash
-# Serveur (65 tests, 8 suites, 92.7% coverage — routes + controllers + models + middleware)
+# Serveur (65 tests, 8 suites, 92.7% coverage - routes + controllers + models + middleware)
 # Seuils de couverture verrouillés dans jest.config.js : la CI échoue en cas de régression
 cd server && npm test
 
@@ -111,9 +111,9 @@ cd client && npm test
 
 ### Tables principales
 
-- `profiles` — profils utilisateurs (rôle, prénom, nom, téléphone)
-- `vehicles` — catalogue véhicules (marque, modèle, prix, statut…)
-- `reservations` — réservations (statut, date RDV, message)
+- `profiles` : profils utilisateurs (rôle, prénom, nom, téléphone)
+- `vehicles` : catalogue véhicules (marque, modèle, prix, statut...)
+- `reservations` : réservations (statut, date RDV, message)
 
 Un trigger PostgreSQL met à jour automatiquement `vehicles.status` lors d'un changement de statut de réservation.
 

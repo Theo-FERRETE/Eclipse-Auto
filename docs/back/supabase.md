@@ -1,6 +1,6 @@
 ← [Back](README.md)
 
-# Supabase — ce que c'est et ce qu'il fait ici
+# Supabase : ce que c'est et ce qu'il fait ici
 
 ## En une phrase
 
@@ -9,11 +9,11 @@ autour d'elle qu'on utiliserait sinon séparément :
 
 | Service | Ce que ça remplace | Utilisé ici ? |
 |---|---|---|
-| **Database** | Un PostgreSQL que tu installerais toi-même | ✅ toutes les tables |
-| **Auth** | Ton propre système d'inscription/connexion + hashage des mots de passe + JWT | ✅ tout le login |
-| **REST (PostgREST)** | Écrire toi-même le SQL et les routes qui l'exposent | ✅ via la librairie JS |
-| **Realtime** | Un WebSocket + un système d'écoute des changements | ✅ uniquement sur le catalogue |
-| **Storage** | Un serveur de fichiers pour les images | ⚠️ prévu (`optimizeImageUrl` sait le gérer), mais les images actuelles sont dans `client/public/img/` |
+| **Database** | Un PostgreSQL que tu installerais toi-même | oui, toutes les tables |
+| **Auth** | Ton propre système d'inscription/connexion + hashage des mots de passe + JWT | oui, tout le login |
+| **REST (PostgREST)** | Écrire toi-même le SQL et les routes qui l'exposent | oui, via la librairie JS |
+| **Realtime** | Un WebSocket + un système d'écoute des changements | oui, uniquement sur le catalogue |
+| **Storage** | Un serveur de fichiers pour les images | pas encore : prévu (`optimizeImageUrl` sait le gérer), mais les images actuelles sont dans `client/public/img/` |
 
 Autrement dit : **ce n'est pas un ORM, ce n'est pas un framework**. C'est un Postgres
 distant + une librairie JS (`@supabase/supabase-js`) qui traduit des appels de méthodes
@@ -34,7 +34,7 @@ en requêtes HTTP vers ce Postgres.
 | `client/src/pages/ForgotPassword` / `ResetPassword` | Réinitialisation du mot de passe |
 | `client/src/components/DashboardProfile` | `update()` sur sa propre ligne `profiles` + `auth.updateUser()` pour le mot de passe |
 
-Tout le reste du front passe par `fetch('/api/...')` — voir
+Tout le reste du front passe par `fetch('/api/...')` : voir
 [../front/donnees.md](../front/donnees.md).
 
 ---
@@ -76,7 +76,7 @@ Le tableau de correspondance à connaître pour l'oral :
 | `.select('*', { count: 'exact', head: true })` | `SELECT COUNT(*)` sans ramener les lignes |
 
 **Point important** : chaque appel retourne toujours un objet `{ data, error }`. La librairie
-ne lève pas d'exception sur une erreur SQL — elle la met dans `error`. C'est pour ça que
+ne lève pas d'exception sur une erreur SQL, elle la met dans `error`. C'est pour ça que
 tout le code du projet ressemble à :
 
 ```js
@@ -112,7 +112,7 @@ entre les deux tables. PostgREST lit les contraintes du schéma pour savoir comm
 
 ### La conséquence à connaître par cœur pour l'oral
 
-Il n'existe **aucune clé étrangère `reservations.client_id → profiles.id`** — la colonne
+Il n'existe **aucune clé étrangère `reservations.client_id → profiles.id`** : la colonne
 `client_id` référence `auth.users`, pas `profiles`. Donc `select('*, profiles(...)')` sur
 `reservations` **échoue**. C'est pour ça que le nom du client est résolu en **deux requêtes**,
 dans la fonction `withClientNames()` de `reservationController.js` :
@@ -135,11 +135,11 @@ Ce sont les tables et colonnes réellement manipulées dans `models/` et côté 
 | Colonne | Notes |
 |---|---|
 | `id` | UUID, clé primaire |
-| `brand`, `model` | obligatoires — servent aussi à fabriquer le **slug** de l'URL |
+| `brand`, `model` | obligatoires, servent aussi à fabriquer le **slug** de l'URL |
 | `year`, `price`, `mileage` | validés côté serveur (année 1900 → année+1, prix ≥ 0, km ≥ 0) |
 | `fuel_type`, `transmission` | obligatoires à la création |
 | `power`, `description` | optionnels |
-| `status` | `available` \| `reserved` \| `sold` — liste dans `server/constants.js` |
+| `status` | `available` \| `reserved` \| `sold` : liste dans `server/constants.js` |
 | `images` | tableau d'URLs |
 | `created_at` | tri par défaut : plus récent d'abord |
 
@@ -190,14 +190,14 @@ Quand le statut d'une réservation change, un **trigger côté base** met à jou
 (commentaire dans `reservationController.updateStatus`). C'est une règle métier
 placée dans la base pour qu'elle s'applique quel que soit le code qui écrit.
 
-⚠️ Il n'est **pas versionné dans le dépôt** : tu ne peux pas en montrer le code au jury,
-seulement expliquer son rôle et où il se trouve (Supabase → Database → Triggers).
+Attention, il n'est **pas versionné dans le dépôt** : tu ne peux pas en montrer le code
+au jury, seulement expliquer son rôle et où il se trouve (Supabase, Database, Triggers).
 
 ---
 
 ## Les deux clés et la RLS
 
-### Les deux clés — le point de sécurité central
+### Les deux clés : le point de sécurité central
 
 Il y a **deux clients Supabase distincts dans le projet**, avec deux clés différentes.
 Confondre les deux serait la faille la plus grave possible.
@@ -207,7 +207,7 @@ Confondre les deux serait la faille la plus grave possible.
 | Fichier | `server/supabase.js` | `client/src/lib/supabase.js` |
 | Clé | `SUPABASE_SERVICE_ROLE_KEY` | `VITE_SUPABASE_ANON_KEY` |
 | Pouvoir | **Contourne toute la RLS.** Peut lire/écrire n'importe quelle ligne, supprimer un compte auth | Limité par la RLS et par les permissions du rôle `anon` / `authenticated` |
-| Visibilité | Dans `server/.env`, jamais envoyée au navigateur | **Publique** — présente dans le bundle JS, visible par n'importe qui |
+| Visibilité | Dans `server/.env`, jamais envoyée au navigateur | **Publique** : présente dans le bundle JS, visible par n'importe qui |
 
 La clé `anon` est *conçue* pour être publique : elle ne dit pas « tu es admin », elle dit
 juste « tu es un client légitime de ce projet Supabase ». Ce qui protège les données,
@@ -231,12 +231,12 @@ base** qui décident, ligne par ligne, ce qu'un rôle a le droit de lire ou d'é
 Exemple de politique : « un utilisateur ne peut lire une ligne de `reservations` que si
 `client_id = auth.uid()` ».
 
-Elle s'applique à la clé `anon` (navigateur) — **pas** à la clé `service_role` (serveur).
+Elle s'applique à la clé `anon` (navigateur) : **pas** à la clé `service_role` (serveur).
 
 **État actuel du projet** : le rôle `anon` est cloisonné (401 sur `reservations` et
 `equipements`, `profiles` renvoie une liste vide). Le rôle `authenticated` n'a pas été
-testé faute de compte de test. Le risque est neutralisé structurellement — depuis que les
-lectures sensibles passent par Express, le navigateur n'a plus besoin d'y accéder — mais
+testé faute de compte de test. Le risque est neutralisé structurellement, depuis que les
+lectures sensibles passent par Express, le navigateur n'a plus besoin d'y accéder, mais
 activer la RLS reste à faire au titre de la **défense en profondeur** : si une faille
 laissait fuiter un accès, la base refuserait quand même.
 
@@ -247,9 +247,12 @@ et pas la première.
 
 ## Supabase Auth
 
+Cette section décrit **qui émet le jeton et par quelles fonctions**. Ce qu'est ce jeton,
+ce qu'il contient et pourquoi le serveur peut lui faire confiance : [JWT.md](JWT.md).
+
 1. Le front appelle `supabase.auth.signInWithPassword({ email, password })`
    (`client/src/lib/auth.js`).
-2. Supabase vérifie le mot de passe (hashé chez lui — le projet ne stocke **jamais** de
+2. Supabase vérifie le mot de passe (hashé chez lui, le projet ne stocke **jamais** de
    mot de passe) et renvoie un **JWT** (`access_token`) + un refresh token.
 3. La librairie stocke la session dans le `localStorage` du navigateur et la rafraîchit
    toute seule à l'expiration.
@@ -258,7 +261,7 @@ et pas la première.
 5. Le serveur le vérifie avec `supabase.auth.getUser(token)` dans `middleware/auth.js`.
 
 **Ce qu'il faut retenir** : le JWT est signé par Supabase. Un utilisateur ne peut ni le
-fabriquer ni en modifier le contenu — la signature ne collerait plus. C'est ce qui rend
+fabriquer ni en modifier le contenu, la signature ne collerait plus. C'est ce qui rend
 `req.user.id` digne de confiance côté serveur, et c'est pourquoi le `client_id` d'une
 réservation est **forcé depuis le token**, jamais lu depuis le body de la requête.
 
@@ -276,5 +279,5 @@ réservation est **forcé depuis le token**, jamais lu depuis le body de la requ
 | `auth.admin.deleteUser(id)` | **serveur** | supprime le compte auth (le profil suit). Impossible avec la clé `anon` |
 | `auth.admin.getUserById(id)` | **serveur** | récupère l'email d'un client pour la confirmation |
 
-Le détail complet du jeton — où il est stocké, ce qu'il contient, par où il passe — est
-dans [../JWT.md](../JWT.md).
+Le détail complet du jeton, où il est stocké, ce qu'il contient, par où il passe, est
+dans [JWT.md](JWT.md).

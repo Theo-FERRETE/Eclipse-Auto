@@ -1,4 +1,4 @@
-# Fiches de révision — SQL (Eclipse Auto)
+# Fiches de révision : SQL (Eclipse Auto)
 
 Retour vers [fiches-react.md](fiches-react.md) · [lexique.md](lexique.md)
 
@@ -117,7 +117,7 @@ GROUP BY v.id, v.brand, v.model
 ORDER BY nb_reservations DESC;
 ```
 
-Si on avait fait un `JOIN` simple ici, les véhicules **jamais réservés** auraient disparu du résultat — c'est la différence clé à savoir expliquer.
+Si on avait fait un `JOIN` simple ici, les véhicules **jamais réservés** auraient disparu du résultat, c'est la différence clé à savoir expliquer.
 
 ### Jointure à 3 tables (client + véhicule dans une réservation)
 
@@ -180,7 +180,7 @@ UPDATE reservations SET status = 'confirmed' WHERE id = '<uuid>';
 DELETE FROM reservations WHERE id = '<uuid>';
 ```
 
-**Attention** : un `UPDATE`/`DELETE` sans `WHERE` s'applique à **toute la table** — piège classique posé à l'oral ("que se passe-t-il si j'oublie le WHERE ?").
+**Attention** : un `UPDATE`/`DELETE` sans `WHERE` s'applique à **toute la table**. Piège classique posé à l'oral ("que se passe-t-il si j'oublie le WHERE ?").
 
 ## 7. CREATE TABLE et contraintes
 
@@ -227,7 +227,7 @@ COMMIT;
 - Garantit que plusieurs écritures liées réussissent **toutes ensemble ou pas du tout** (atomicité).
 - Pertinent à mentionner pour justifier pourquoi un trigger Postgres (plutôt qu'un appel Express en 2 temps) sécurise la synchro `reservations.status` ↔ `vehicles.status` : le trigger s'exécute **dans la même transaction** que l'`UPDATE` qui le déclenche.
 
-## 10. Trigger (rappel, lié à [back/supabase.md — le trigger PostgreSQL](../back/supabase.md#le-trigger-postgresql))
+## 10. Trigger (rappel, lié à [back/supabase.md : le trigger PostgreSQL](../back/supabase.md#le-trigger-postgresql))
 
 ```sql
 CREATE OR REPLACE FUNCTION sync_vehicle_status()
@@ -247,7 +247,7 @@ AFTER UPDATE OF status ON reservations
 FOR EACH ROW EXECUTE FUNCTION sync_vehicle_status();
 ```
 
-Ceci est une **reconstitution pédagogique** de ce que fait probablement le trigger réel du projet (pas versionné dans le repo — cf. [back/supabase.md — le trigger PostgreSQL](../back/supabase.md#le-trigger-postgresql)). Utile pour montrer au jury que tu sais écrire un trigger, même si tu ne peux pas afficher le code exact stocké dans Supabase.
+Ceci est une **reconstitution pédagogique** de ce que fait probablement le trigger réel du projet (pas versionné dans le repo, cf. [back/supabase.md, le trigger PostgreSQL](../back/supabase.md#le-trigger-postgresql)). Utile pour montrer au jury que tu sais écrire un trigger, même si tu ne peux pas afficher le code exact stocké dans Supabase.
 
 ---
 
@@ -263,7 +263,7 @@ Ceci est une **reconstitution pédagogique** de ce que fait probablement le trig
    ```
 2. **"Différence entre JOIN et LEFT JOIN ?"** → JOIN exclut les lignes sans correspondance, LEFT JOIN les garde avec `NULL` à droite.
 3. **"Pourquoi une table associative pour les équipements et pas une colonne dans reservations ?"** → Une réservation peut avoir plusieurs équipements et un équipement peut être choisi par plusieurs réservations → relation many-to-many, impossible à modéliser avec une seule colonne.
-4. **"Comment tu empêches une clé étrangère invalide ?"** → Contrainte `REFERENCES` au niveau de la table, Postgres refuse l'insertion sinon.
+4. **"Comment tu empêches une clé étrangère invalide ?"** → Contrainte `REFERENCES` au niveau de la table : sinon, Postgres refuse l'insertion.
 5. **"WHERE vs HAVING ?"** → `WHERE` avant le `GROUP BY` (ligne par ligne), `HAVING` après (sur le résultat agrégé).
 6. **"Que fait `LIMIT`/`OFFSET` dans le projet ?"** → Pagination de l'API (`GET /api/vehicles?limit=20&offset=40`), plafonné à 100 côté serveur pour éviter qu'un client demande toute la table d'un coup.
-7. **"Pourquoi utiliser Supabase (client) directement pour la lecture mais pas l'écriture ?"** → cf. [front/donnees.md](../front/donnees.md) — pas une question SQL pure mais souvent enchaînée par le jury.
+7. **"Pourquoi utiliser Supabase (client) directement pour la lecture mais pas l'écriture ?"** → cf. [front/donnees.md](../front/donnees.md) : pas une question SQL pure mais souvent enchaînée par le jury.

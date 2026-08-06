@@ -10,7 +10,7 @@ Le CSS est importé dans le `.jsx` (`import './Navbar.css'`). Certains petits co
 n'ont pas de CSS propre et s'appuient sur `index.css`.
 
 **Alias `@` = `client/src/`.**
-`import Navbar from '@/components/Navbar/Navbar'` — pas de `../../../`. Défini deux fois :
+`import Navbar from '@/components/Navbar/Navbar'` : pas de `../../../`. Défini deux fois :
 dans `vite.config.js` (pour le build **et** pour Vitest) et dans `jsconfig.json` (pour l'IDE).
 
 **Un export par défaut par fichier**, nommé comme le fichier.
@@ -29,9 +29,9 @@ dans `vite.config.js` (pour le build **et** pour Vitest) et dans `jsconfig.json`
 Les composants suivent un préfixe par famille, ce qui les regroupe visuellement dans
 l'explorateur de fichiers :
 
-- `Dashboard*` — Sidebar, Reservations, Profile
-- `Reservation*` — Breadcrumb, VehiclePanel, Form, Success
-- `Admin*` — Sidebar, PageHeader, VehicleCard, VehicleModal, Charts
+- `Dashboard*` : Sidebar, Reservations, Profile
+- `Reservation*` : Breadcrumb, VehiclePanel, Form, Success
+- `Admin*` : Sidebar, PageHeader, VehicleCard, VehicleModal, Charts
 
 ## Commandes
 
@@ -46,7 +46,7 @@ npm run lint      # eslint
 
 ---
 
-## Le routing — `src/App.jsx`
+## Le routing : `src/App.jsx`
 
 C'est le plan du site : 18 routes, toutes visibles d'un coup d'œil.
 
@@ -93,11 +93,11 @@ Les URLs de véhicules sont `/vehicles/bmw-m5-competition` et non
 C'est un choix **SEO et lisibilité** : une URL parlante est mieux référencée et se partage
 mieux qu'un UUID.
 
-⚠️ **Limite connue** : il n'y a pas de colonne `slug` en base. Le serveur recalcule donc
+**Limite connue** : il n'y a pas de colonne `slug` en base. Le serveur recalcule donc
 le slug de **tous** les véhicules pour retrouver le bon
 (`vehicleController.getBySlug`). Ça marche parfaitement à l'échelle actuelle, mais ça ne
 passerait pas à l'échelle sur des milliers de véhicules. Ajouter une colonne `slug` indexée
-est dans le « reste à faire » — et si le jury pose la question, c'est la bonne réponse.
+est dans le « reste à faire », et si le jury pose la question, c'est la bonne réponse.
 
 ### La structure enveloppante
 
@@ -129,7 +129,7 @@ Le garde-barrière lui-même est décrit dans [auth.md](auth.md#protectedroute--
 
 ## Performance, build et environnement
 
-### Code splitting — `lazy()` + `<Suspense>`
+### Code splitting : `lazy()` + `<Suspense>`
 
 Toutes les pages sont chargées à la demande, **sauf `Home`** :
 
@@ -139,13 +139,13 @@ const Catalogue = lazy(() => import('@/pages/Catalogue/Catalogue'))  // à la de
 ```
 
 Home est la page d'arrivée : la charger paresseusement ajouterait un aller-retour réseau
-inutile là où l'utilisateur regarde. Tout le reste — et surtout les 5 pages admin, que
-99 % des visiteurs ne verront jamais — n'est téléchargé que si on y va.
+inutile là où l'utilisateur regarde. Tout le reste, et surtout les 5 pages admin, que
+99 % des visiteurs ne verront jamais, n'est téléchargé que si on y va.
 
 Le `fallback` de `<Suspense>` vaut `null` : les chunks font quelques kilo-octets, un écran
 de chargement clignoterait plus qu'il n'informerait.
 
-### Découpage des dépendances — `vite.config.js`
+### Découpage des dépendances : `vite.config.js`
 
 `manualChunks` sépare `react`, `supabase` et `charts` en fichiers distincts. Les
 bibliothèques changent moins souvent que ton code : leur fichier reste en cache navigateur
@@ -159,13 +159,13 @@ mineures.
 
 Toutes en `.webp` dans `public/img/`. `optimizeImageUrl()` (`lib/utils.js`) sait en plus
 réécrire une URL Supabase Storage vers l'API de transformation d'images
-(`/render/image/public/?width=...&quality=...&format=webp`) — utile le jour où les photos
+(`/render/image/public/?width=...&quality=...&format=webp`) : utile le jour où les photos
 seront téléversées plutôt que livrées avec le site.
 
 Les cartes du catalogue chargent les **trois premières images en priorité** : ce sont les
 seules visibles sans défilement.
 
-### Dev vs prod — comment `/api` est résolu
+### Dev vs prod : comment `/api` est résolu
 
 | | Dev | Prod |
 |---|---|---|
@@ -176,7 +176,7 @@ C'est pour ça que le code appelle toujours `/api/...` en chemin **relatif**, ja
 `http://localhost:3001/api/...` : le même code marche dans les deux cas, sans variable
 d'environnement d'URL d'API.
 
-⚠️ En dev il faut donc **deux terminaux** : `npm run dev` dans `server/` et dans `client/`.
+En dev il faut donc **deux terminaux** : `npm run dev` dans `server/` et dans `client/`.
 
 ### Variables d'environnement
 
@@ -188,7 +188,7 @@ VITE_SUPABASE_ANON_KEY=<clé anon>
 ```
 
 Le préfixe `VITE_` est obligatoire : Vite n'expose au navigateur que les variables ainsi
-préfixées. Corollaire à bien avoir en tête — **tout ce qui commence par `VITE_` finit dans
+préfixées. Corollaire à bien avoir en tête, **tout ce qui commence par `VITE_` finit dans
 le bundle JS et est donc public**. La clé `anon` est faite pour ça ; jamais on ne mettrait
 la clé `service_role` ici. Voir
 [../back/supabase.md](../back/supabase.md#les-deux-clés-et-la-rls).

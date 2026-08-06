@@ -1,6 +1,6 @@
 ← [Back](README.md)
 
-# Back — les emails
+# Back : les emails
 
 Le projet envoie **deux emails**, tous les deux via [Nodemailer](https://nodemailer.com/)
 et un compte Gmail.
@@ -24,14 +24,14 @@ passe d'application* à 16 caractères, généré depuis les paramètres de séc
 (la validation en deux étapes doit être active). Google refuse depuis 2022 la connexion
 SMTP avec le mot de passe principal.
 
-## Email n°1 — le formulaire de contact
+## Email n°1 : le formulaire de contact
 
 **Fichier** : `server/controllers/contactController.js` → `send()`
 **Déclenché par** : `POST /api/contact` (route publique)
-**Destinataire** : toi (`GMAIL_USER` — le site s'envoie le message à lui-même)
+**Destinataire** : toi (`GMAIL_USER`, le site s'envoie le message à lui-même)
 
 Le champ `replyTo` est renseigné avec l'email du visiteur : quand tu réponds depuis ta boîte,
-la réponse part chez lui et non chez toi. Le champ `from`, lui, reste ton adresse — mettre
+la réponse part chez lui et non chez toi. Le champ `from`, lui, reste ton adresse, mettre
 celle du visiteur ferait passer le message pour une usurpation aux yeux de Gmail.
 
 Le corps HTML est court et toutes les valeurs passent par `escapeHtml()`.
@@ -39,7 +39,7 @@ Le corps HTML est court et toutes les valeurs passent par `escapeHtml()`.
 C'est la seule route publique du projet qui déclenche un envoi d'email, donc la seule qui
 a besoin d'être limitée en débit → [rate limiting](#le-rate-limiting-du-formulaire-de-contact).
 
-## Email n°2 — la confirmation de réservation
+## Email n°2 : la confirmation de réservation
 
 **Fichier** : `server/controllers/reservationController.js` → `updateStatus()`
 **Déclenché par** : `PATCH /api/reservations/:id/status` avec `{ status: "confirmed" }`
@@ -53,7 +53,7 @@ a besoin d'être limitée en débit → [rate limiting](#le-rate-limiting-du-for
    *Pourquoi avant ?* Parce qu'il faut de toute façon vérifier que la réservation existe
    (**404** sinon), et autant récupérer les données de l'email au passage.
 2. Le statut est mis à jour.
-3. **Uniquement si `status === 'confirmed'`** — pas d'email pour `pending` ou `cancelled`.
+3. **Uniquement si `status === 'confirmed'`** : pas d'email pour `pending` ou `cancelled`.
 4. `getAuthUserAndProfile(clientId)` fait deux appels **en parallèle** avec `Promise.all` :
    - `supabase.auth.admin.getUserById()` → l'email (il est dans `auth.users`, pas dans `profiles`)
    - `supabase.from('profiles').select('first_name')` → le prénom
@@ -83,7 +83,7 @@ l'email. À l'oral, c'est exactement le genre de décision à savoir justifier.
 
 ## Le rate limiting du formulaire de contact
 
-C'est le seul endroit du projet qui en a besoin — une route publique qui déclenche un envoi
+C'est le seul endroit du projet qui en a besoin, une route publique qui déclenche un envoi
 d'email est une cible évidente pour du spam ou pour épuiser le quota Gmail.
 
 L'implémentation est **maison, en mémoire** (`server/controllers/contactController.js`) :
@@ -98,7 +98,7 @@ MAX_REQUESTS    : 5
 
 À chaque requête :
 
-1. `purgeExpired()` supprime les IP dont tous les horodatages sont périmés — sans ça, la
+1. `purgeExpired()` supprime les IP dont tous les horodatages sont périmés, sans ça, la
    `Map` grossirait indéfiniment (une entrée par IP vue depuis le démarrage : une fuite de
    mémoire).
 2. On filtre les horodatages de l'IP courante pour ne garder que ceux de la fenêtre.
@@ -117,26 +117,26 @@ Le compteur vit dans la mémoire du processus. Un redémarrage le remet à zéro
 plusieurs instances du serveur chacune aurait le sien. Pour une vraie mise en production à
 l'échelle, il faudrait Redis ou `express-rate-limit` avec un store partagé.
 
-À l'échelle du projet, c'est suffisant et ça évite une dépendance de plus — c'est une
+À l'échelle du projet, c'est suffisant et ça évite une dépendance de plus, c'est une
 réponse honnête à donner si le jury pose la question.
 
 ### Lien avec `trust proxy`
 
 Le rate limiting s'appuie sur `req.ip`. Si Express faisait aveuglément confiance à l'en-tête
 `X-Forwarded-For`, n'importe qui pourrait le falsifier à chaque requête et se donner une IP
-différente. D'où le `TRUST_PROXY` conditionnel dans `app.js` — voir
+différente. D'où le `TRUST_PROXY` conditionnel dans `app.js` : voir
 [securite.md](securite.md#le-reste-des-protections).
 
 ---
 
-## Le gabarit HTML — `server/lib/emailTemplates.js`
+## Le gabarit HTML : `server/lib/emailTemplates.js`
 
 Deux fonctions exportées :
 
-- **`escapeHtml(text)`** — remplace `& < > " '` par leurs entités HTML. Appelée sur toutes
+- **`escapeHtml(text)`** : remplace `& < > " '` par leurs entités HTML. Appelée sur toutes
   les données utilisateur avant insertion (voir
   [securite.md](securite.md#échappement-html-dans-les-emails)).
-- **`buildConfirmationEmail(firstName, vehicle, rdvDate)`** — retourne le HTML complet.
+- **`buildConfirmationEmail(firstName, vehicle, rdvDate)`** : retourne le HTML complet.
 
 ### Pourquoi ce HTML est écrit « comme en 2005 »
 
@@ -156,17 +156,17 @@ Contenu : le prénom, la marque/modèle/année, le prix formaté en euros
 est renseignée (`rdvLine` vaut la chaîne vide sinon). Un pied de page rappelle qu'il
 s'agit d'un projet éducatif sans transaction réelle.
 
-**Objet** : `Votre réservation est confirmée — {Brand} {Model}`
+**Objet** : `Votre réservation est confirmée, {Brand} {Model}`
 
 ---
 
 ## Tests
 
-- `server/__tests__/lib/emailTemplates.test.js` teste le gabarit et l'échappement — c'est
+- `server/__tests__/lib/emailTemplates.test.js` teste le gabarit et l'échappement, c'est
   de la logique pure, facile à vérifier.
 - Les tests d'intégration **mockent** Nodemailer : ils vérifient que l'envoi est déclenché
   aux bonnes conditions, pas qu'un email part réellement.
 
-⚠️ **À faire** : tester manuellement les deux envois au moins une fois avant l'oral.
-Les tests ne couvrent pas la connexion SMTP réelle — une variable d'environnement mal
+**À faire** : tester manuellement les deux envois au moins une fois avant l'oral.
+Les tests ne couvrent pas la connexion SMTP réelle, une variable d'environnement mal
 renseignée ne serait vue qu'en conditions réelles.

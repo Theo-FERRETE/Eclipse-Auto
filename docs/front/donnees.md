@@ -1,6 +1,6 @@
 ← [Front](README.md)
 
-# Front — d'où viennent les données
+# Front : d'où viennent les données
 
 C'est **le** point qui peut perdre à la lecture du code : le front a deux façons d'obtenir
 des données. Elles coexistent volontairement, mais il faut savoir laquelle s'applique où.
@@ -36,7 +36,7 @@ seul endroit où l'identité peut être vérifiée de façon fiable
 
 ## Le motif d'appel à l'API
 
-Il est identique partout — apprends-le, il revient une douzaine de fois :
+Il est identique partout, apprends-le, il revient une douzaine de fois :
 
 ```js
 const { data: { session } } = await supabase.auth.getSession()
@@ -59,7 +59,7 @@ Trois choses à noter :
    ne jamais envoyer un token expiré.
 2. **Chemin relatif `/api/...`.** Résolu par le proxy Vite en dev, par Express en prod
    (voir [architecture.md](architecture.md#dev-vs-prod--comment-api-est-résolu)).
-3. **`res.ok` est testé.** `fetch` ne lève pas d'exception sur une 4xx/5xx — sans ce test,
+3. **`res.ok` est testé.** `fetch` ne lève pas d'exception sur une 4xx/5xx, sans ce test,
    une erreur passerait inaperçue.
 
 ## Carte des appels API par fichier
@@ -79,7 +79,7 @@ Trois choses à noter :
 
 ---
 
-## Le cache véhicules — `lib/vehiclesCache.js`
+## Le cache véhicules : `lib/vehiclesCache.js`
 
 Le catalogue est chargé une fois et gardé **3 minutes** dans une variable de module.
 
@@ -94,7 +94,7 @@ l'onglet, quel que soit le nombre de composants qui importent le fichier. C'est 
 le cache réellement partagé entre l'accueil, le catalogue et les fiches véhicule.
 
 C'est un cache **en mémoire de l'onglet** : il disparaît au rechargement de la page. Pas de
-`localStorage` — pour une donnée qui bouge (les statuts de véhicules), un cache persistant
+`localStorage` : pour une donnée qui bouge (les statuts de véhicules), un cache persistant
 afficherait des informations périmées au retour de l'utilisateur.
 
 ### Les quatre fonctions
@@ -102,9 +102,9 @@ afficherait des informations périmées au retour de l'utilisateur.
 | Fonction | Rôle |
 |---|---|
 | `getVehicles()` | Retourne le cache s'il est frais, sinon recharge depuis Supabase |
-| `getVehicleBySlug(slug)` | **Si le cache est chaud** : cherche dedans, zéro requête réseau. **Sinon** : appelle `GET /api/vehicles/by-slug/:slug` — un appel ciblé plutôt que recharger tout le catalogue pour une seule fiche |
+| `getVehicleBySlug(slug)` | **Si le cache est chaud** : cherche dedans, zéro requête réseau. **Sinon** : appelle `GET /api/vehicles/by-slug/:slug` : un appel ciblé plutôt que recharger tout le catalogue pour une seule fiche |
 | `patchCachedVehicle(v)` | Met à jour une entrée du cache sans tout invalider (utilisé par le [Realtime](#le-realtime--pagescataloguecataloguejsx)) |
-| `invalidateVehiclesCache()` | Vide tout. ⚠️ **Exportée mais jamais appelée** — c'est du code mort aujourd'hui. Soit on la branche après une modification en back-office, soit on la supprime |
+| `invalidateVehiclesCache()` | Vide tout. **Exportée mais jamais appelée** : c'est du code mort aujourd'hui. Soit on la branche après une modification en back-office, soit on la supprime |
 
 Pourquoi ce cache existe : sans lui, aller du catalogue à une fiche puis revenir
 rechargerait la liste complète trois fois.
@@ -114,7 +114,7 @@ rechargerait la liste complète trois fois.
 Le cache n'est écrit **que si la requête a ramené des données** : en cas d'erreur réseau,
 on garde l'ancien contenu plutôt que d'écraser le catalogue avec du vide.
 
-`patchCachedVehicle` **remplace le tableau** au lieu de modifier l'objet en place — React
+`patchCachedVehicle` **remplace le tableau** au lieu de modifier l'objet en place : React
 compare les références, une mutation ne déclencherait aucun rendu. Le TTL n'est pas remis à
 zéro pour autant : la ligne reçue est fraîche, mais le reste du cache a toujours le même âge.
 
@@ -122,14 +122,14 @@ zéro pour autant : la ligne reçue est fraîche, mais le reste du cache a toujo
 
 Ils se complètent :
 
-1. **Le cache 3 min** — évite de recharger inutilement
-2. **`window.addEventListener('focus', ...)`** — recharge quand l'utilisateur revient sur
+1. **Le cache 3 min** : évite de recharger inutilement
+2. **`window.addEventListener('focus', ...)`** : recharge quand l'utilisateur revient sur
    l'onglet, cas typique où les données ont eu le temps de changer
-3. **Le Realtime** — met à jour instantanément pendant qu'il regarde
+3. **Le Realtime** : met à jour instantanément pendant qu'il regarde
 
 ---
 
-## Le Realtime — `pages/Catalogue/Catalogue.jsx`
+## Le Realtime : `pages/Catalogue/Catalogue.jsx`
 
 C'est la seule utilisation du Realtime Supabase du projet.
 
@@ -157,7 +157,7 @@ qui sera reprise au prochain chargement.
 ### Le nettoyage est obligatoire
 
 Le `return` du `useEffect` fait `removeEventListener` + `supabase.removeChannel(channel)`.
-Sans ce nettoyage, chaque visite du catalogue ouvrirait un WebSocket de plus, jamais fermé —
+Sans ce nettoyage, chaque visite du catalogue ouvrirait un WebSocket de plus, jamais fermé,
 une fuite classique.
 
 ### Le lien avec la CSP
@@ -168,7 +168,7 @@ Voir [../back/securite.md](../back/securite.md#la-csp-content-security-policy--l
 
 ---
 
-## Les filtres dans l'URL — `pages/Catalogue/`
+## Les filtres dans l'URL : `pages/Catalogue/`
 
 Les filtres du catalogue vivent dans l'**URL**, pas dans un `useState` :
 
@@ -186,17 +186,17 @@ L'état est lu et écrit avec `useSearchParams()` de React Router. Deux fonction
 du navigateur fonctionne, et un rafraîchissement de page ne perd rien.
 
 **Le détail soigné** : `buildParams` **n'écrit pas les valeurs par défaut** dans l'URL.
-Si les trois statuts sont cochés (l'état initial), le paramètre `status` est omis — l'URL
+Si les trois statuts sont cochés (l'état initial), le paramètre `status` est omis, l'URL
 reste `/catalogue` et non `/catalogue?status=available&status=reserved&status=sold`.
 
 **Le choix assumé** : `page` reste en `useState` local. La pagination est un détail de
-consultation, pas un critère de recherche — l'inclure alourdirait l'URL sans bénéfice.
+consultation, pas un critère de recherche, l'inclure alourdirait l'URL sans bénéfice.
 
 ### Deux subtilités du code
 
 `status` est le seul filtre **multi-valeurs** : il apparaît autant de fois qu'il y a de
 statuts cochés. D'où `params.getAll('status')` à la lecture et `params.append()` à
-l'écriture — `set()` écraserait la valeur précédente à chaque tour de boucle.
+l'écriture, `set()` écraserait la valeur précédente à chaque tour de boucle.
 
 `price_max` vaut **`Infinity`** quand aucun plafond n'est choisi. Le filtre s'écrit alors
 `v.price <= Infinity`, toujours vrai, sans cas particulier dans `Catalogue.jsx`.
@@ -208,7 +208,7 @@ Tout le filtrage, le tri et la pagination du catalogue se font **côté client**
 réseau à chaque changement de filtre : c'est instantané.
 
 C'est viable parce que le catalogue tient largement en mémoire. Sur une base de plusieurs
-milliers de véhicules, il faudrait basculer sur les filtres serveur — que l'API sait déjà
+milliers de véhicules, il faudrait basculer sur les filtres serveur, que l'API sait déjà
 faire, d'ailleurs : `GET /api/vehicles` accepte `status`, `brand`, `fuel_type`, `limit` et
 `offset`. Bonne réponse à garder pour le jury.
 
@@ -234,7 +234,7 @@ Rien de cassé, mais autant le savoir avant de tomber dessus.
 | `client/src/lib/utils.js` | `['Essence', 'Diesel', 'Hybride', 'Électrique']` |
 | `server/constants.js` | `['essence', 'diesel', 'hybride', 'électrique']` |
 
-Les deux listes ne servent pas au même usage — celle du front alimente les menus déroulants,
+Les deux listes ne servent pas au même usage, celle du front alimente les menus déroulants,
 celle du serveur n'est pas utilisée pour valider `fuel_type` (seul `status` l'est). Aucun
 bug aujourd'hui, mais c'est un piège si un jour on ajoute une validation stricte du
 carburant côté serveur.

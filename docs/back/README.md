@@ -1,6 +1,6 @@
 ← [Documentation](../README.md)
 
-# Back — l'API Express
+# Back : l'API Express
 
 Dossier : `server/`. Environ 1 100 lignes de code métier (hors tests).
 Express 5, en **CommonJS** (`require` / `module.exports`, pas d'`import`).
@@ -11,11 +11,14 @@ Express 5, en **CommonJS** (`require` / `module.exports`, pas d'`import`).
 |---|---|
 | [architecture.md](architecture.md) | Les 4 couches, le trajet d'une requête, les 6 familles de routes, le démarrage et la configuration |
 | [supabase.md](supabase.md) | Ce qu'est Supabase, les requêtes et les jointures, le schéma des tables, les deux clés et la RLS, Supabase Auth |
+| [JWT.md](JWT.md) | Le jeton lui-même : sa structure, son payload, où il vit, pourquoi le serveur peut lui faire confiance, ce qu'un attaquant peut ou non en faire |
 | [securite.md](securite.md) | Les middlewares, 401 vs 403, le rôle admin, la validation des entrées, la CSP et les en-têtes HTTP |
 | [emails.md](emails.md) | Nodemailer et les deux emails, le rate limiting, le gabarit HTML |
 
+Ces trois-là se lisent dans l'ordre : `supabase.md` dit **qui émet** le jeton,
+`JWT.md` dit **ce qu'il est**, `securite.md` dit **ce que le serveur en fait**.
+
 Référence des routes (body attendu, réponses, codes d'erreur) : [../ENDPOINTS.md](../ENDPOINTS.md).
-Le jeton lui-même — où il vit, ce qu'il contient : [../JWT.md](../JWT.md).
 
 ## Arborescence commentée
 
@@ -28,7 +31,7 @@ server/
 │
 ├── middleware/
 │   ├── setup.js        CORS, compression, morgan (logs), express.json()
-│   └── auth.js         requireAuth / requireAdmin — vérifient le JWT
+│   └── auth.js         requireAuth / requireAdmin - vérifient le JWT
 │
 ├── routes/             « Quelle URL, quelle méthode, qui a le droit »
 │   ├── api.js          Le hub : monte les 6 routeurs sous /api

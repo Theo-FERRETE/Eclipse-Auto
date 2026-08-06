@@ -1,6 +1,6 @@
 ← [Back](README.md)
 
-# Architecture — les 4 couches
+# Architecture : les 4 couches
 
 ## Le principe : 4 couches, toujours dans le même ordre
 
@@ -51,26 +51,26 @@ connecté pourrait annuler la réservation de quelqu'un d'autre en devinant un U
 | `/api/admin` | `routes/admin.js` | tout en `requireAdmin` |
 | `/api/equipements` | `routes/equipements.js` | GET public · écritures `requireAdmin` |
 | `/api/contact` | `routes/contact.js` | public, mais **rate-limité** (5 req / 15 min / IP) |
-| `/api/health` | `routes/health.js` | public — sert à vérifier que l'API répond |
+| `/api/health` | `routes/health.js` | public, sert à vérifier que l'API répond |
 
 Le détail de chaque route (body attendu, réponses, codes d'erreur) est dans
 [../ENDPOINTS.md](../ENDPOINTS.md).
 
 ## Ce que fait `app.js`, dans l'ordre
 
-1. **Helmet + CSP personnalisée** — en-têtes de sécurité. La CSP est construite par
+1. **Helmet + CSP personnalisée** : en-têtes de sécurité. La CSP est construite par
    `buildCspDirectives()` pour autoriser explicitement l'origine Supabase en `connect-src`
    et `img-src`. Sans ça, en production, **tous** les appels du navigateur vers Supabase
    sont bloqués (voir [securite.md](securite.md#la-csp-content-security-policy--le-piège-de-production)).
-2. **`setupMiddleware(app)`** — compression gzip, CORS limité à `CLIENT_URL`, logs morgan,
+2. **`setupMiddleware(app)`** : compression gzip, CORS limité à `CLIENT_URL`, logs morgan,
    parsing du JSON.
-3. **`app.use('/api', apiRouter)`** — les routes de l'API.
-4. **404 JSON pour `/api/*` inconnu** — sinon une URL d'API mal orthographiée renverrait
+3. **`app.use('/api', apiRouter)`** : les routes de l'API.
+4. **404 JSON pour `/api/*` inconnu** : sinon une URL d'API mal orthographiée renverrait
    le HTML du site, très pénible à déboguer.
-5. **Fichiers statiques** — en production, Express sert le build React (`client/dist`)
+5. **Fichiers statiques** : en production, Express sert le build React (`client/dist`)
    avec un cache d'un an, et renvoie `index.html` pour toute autre URL (c'est ce qui fait
    marcher les URLs du routeur React en accès direct).
-6. **Gestionnaire d'erreurs global** — en production, le message d'erreur réel est masqué
+6. **Gestionnaire d'erreurs global** : en production, le message d'erreur réel est masqué
    et remplacé par « Erreur interne du serveur. », pour ne pas fuiter d'infos techniques.
 
 `app.js` exporte l'application **sans appeler `listen()`** : c'est ce qui permet aux tests
@@ -83,7 +83,7 @@ Supertest de l'utiliser directement, sans ouvrir de port.
 | Variable | Rôle |
 |---|---|
 | `SUPABASE_URL` | URL du projet Supabase |
-| `SUPABASE_SERVICE_ROLE_KEY` | Clé admin — **jamais** exposée au navigateur |
+| `SUPABASE_SERVICE_ROLE_KEY` | Clé admin, **jamais** exposée au navigateur |
 | `GMAIL_USER` | Compte Gmail émetteur des emails |
 | `GMAIL_APP_PASSWORD` | Mot de passe d'application Gmail (pas le mot de passe du compte) |
 

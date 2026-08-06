@@ -1,4 +1,4 @@
-# Eclipse Auto — Documentation API
+# Eclipse Auto : Documentation API
 
 Base URL : `http://localhost:3001/api` (dev) | `https://ton-domaine.fr/api` (prod)
 
@@ -27,9 +27,9 @@ Liste paginée des véhicules.
 |-------|------|--------|-------------|
 | `limit` | number | 50 | Résultats par page (max 100) |
 | `offset` | number | 0 | Décalage pour la pagination |
-| `status` | string | — | Filtre : `available`, `reserved`, `sold` |
-| `brand` | string | — | Filtre par marque |
-| `fuel_type` | string | — | Filtre par carburant |
+| `status` | string |, | Filtre : `available`, `reserved`, `sold` |
+| `brand` | string |, | Filtre par marque |
+| `fuel_type` | string |, | Filtre par carburant |
 
 **Réponse 200**
 ```json
@@ -96,7 +96,7 @@ Créer un véhicule.
 ```
 
 **Validations**
-- `year` : 1900 — année courante + 1
+- `year` : 1900, année courante + 1
 - `price` : >= 0
 - `mileage` : >= 0
 
@@ -162,7 +162,7 @@ Supprimer un équipement du catalogue.
 
 ---
 
-Le client choisit librement parmi ce catalogue au moment de sa demande de réservation (voir `POST /reservations` ci-dessous) — les équipements ne sont pas rattachés à un véhicule en particulier.
+Le client choisit librement parmi ce catalogue au moment de sa demande de réservation (voir `POST /reservations` ci-dessous) : les équipements ne sont pas rattachés à un véhicule en particulier.
 
 ---
 
