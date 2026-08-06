@@ -19,7 +19,7 @@ Version courte. Le but : que tu puisses regarder une fonction de ton code et dir
 ## Anatomie des fonctions principales
 
 ### `handleChange` — un seul handler pour tout un formulaire
-[AdminVehicles.jsx:45](../client/src/pages/admin/AdminVehicles/AdminVehicles.jsx#L45)
+[AdminVehicles.jsx:45](../../client/src/pages/admin/AdminVehicles/AdminVehicles.jsx#L45)
 ```js
 function handleChange(e) {
   setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
@@ -31,7 +31,7 @@ function handleChange(e) {
 - Un seul `onChange={handleChange}` branché sur tous les inputs du modal.
 
 ### `fetchVehicles` — le pattern loading / fetch / setState
-[AdminVehicles.jsx:35](../client/src/pages/admin/AdminVehicles/AdminVehicles.jsx#L35)
+[AdminVehicles.jsx:35](../../client/src/pages/admin/AdminVehicles/AdminVehicles.jsx#L35)
 ```js
 async function fetchVehicles() {
   setLoading(true)
@@ -43,7 +43,7 @@ async function fetchVehicles() {
 Ce pattern (`setLoading(true)` → `await` → `setState(data)` → `setLoading(false)`) revient dans presque toutes les pages qui chargent des données (Catalogue, Dashboard, AdminReservations...).
 
 ### `handleSubmit` — un seul formulaire pour créer ET modifier
-[AdminVehicles.jsx:74](../client/src/pages/admin/AdminVehicles/AdminVehicles.jsx#L74)
+[AdminVehicles.jsx:74](../../client/src/pages/admin/AdminVehicles/AdminVehicles.jsx#L74)
 ```js
 async function handleSubmit(e) {
   e.preventDefault()
@@ -74,7 +74,7 @@ async function handleSubmit(e) {
 - Après succès : on recharge la liste (`fetchVehicles()`) puis on ferme le modal après un court délai (`setTimeout`) pour laisser voir le message de succès.
 
 ### `toggleEquipement` — ajouter/retirer un id d'une liste
-[VehicleDetail.jsx:37](../client/src/pages/VehicleDetail/VehicleDetail.jsx#L37)
+[VehicleDetail.jsx:37](../../client/src/pages/VehicleDetail/VehicleDetail.jsx#L37)
 ```js
 function toggleEquipement(id) {
   setSelectedEquipementIds(prev =>
@@ -85,7 +85,7 @@ function toggleEquipement(id) {
 Déjà dedans → on le retire (`filter`). Pas encore dedans → on l'ajoute (`[...prev, id]`). Jamais de mutation directe du tableau.
 
 ### `handleCancel` — état de chargement par élément (pas global)
-[Dashboard.jsx:32](../client/src/pages/Dashboard/Dashboard.jsx#L32)
+[Dashboard.jsx:32](../../client/src/pages/Dashboard/Dashboard.jsx#L32)
 ```js
 async function handleCancel(id) {
   if (cancelling.has(id)) return
@@ -110,7 +110,7 @@ async function handleCancel(id) {
 - Le token JWT est repris de la session Supabase et envoyé en `Authorization` — le serveur revérifie que la réservation appartient bien à l'utilisateur avant d'annuler.
 
 ### `useEffect` de chargement — VehicleDetail
-[VehicleDetail.jsx:16](../client/src/pages/VehicleDetail/VehicleDetail.jsx#L16)
+[VehicleDetail.jsx:16](../../client/src/pages/VehicleDetail/VehicleDetail.jsx#L16)
 ```js
 useEffect(() => {
   async function fetchVehicle() {
@@ -130,7 +130,7 @@ useEffect(() => {
 - Si le véhicule n'existe pas → redirection vers le catalogue plutôt qu'une page cassée.
 
 ### `useEffect` avec nettoyage (cleanup) — Catalogue
-[Catalogue.jsx:22](../client/src/pages/Catalogue/Catalogue.jsx#L22)
+[Catalogue.jsx:22](../../client/src/pages/Catalogue/Catalogue.jsx#L22)
 ```js
 useEffect(() => {
   fetchVehicles()
@@ -153,7 +153,7 @@ useEffect(() => {
 - Le `return () => {...}` désabonne les deux quand le composant quitte l'écran — sinon fuite mémoire et mises à jour d'état sur un composant qui n'existe plus.
 
 ### `filtered` — useMemo pour éviter de refiltrer à chaque rendu
-[Catalogue.jsx:73](../client/src/pages/Catalogue/Catalogue.jsx#L73)
+[Catalogue.jsx:73](../../client/src/pages/Catalogue/Catalogue.jsx#L73)
 ```js
 const filtered = useMemo(() => {
   let result = [...vehicles]
@@ -166,7 +166,7 @@ const filtered = useMemo(() => {
 Ne recalcule le filtrage/tri que si `vehicles`, `filters`, `sort` ou `search` changent — pas quand `page` change par exemple.
 
 ### `useAuth()` — le contexte en une ligne d'usage
-[lib/AuthContext.jsx:61](../client/src/lib/AuthContext.jsx#L61)
+[lib/AuthContext.jsx:61](../../client/src/lib/AuthContext.jsx#L61)
 ```js
 export function useAuth() {
   return useContext(AuthContext)

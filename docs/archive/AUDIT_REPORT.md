@@ -89,18 +89,18 @@ content-security-policy: default-src 'self';base-uri 'self';font-src 'self' http
   upgrade-insecure-requests
 ```
 
-`helmet()` est appelé sans configuration ([server/app.js:11](server/app.js#L11)) et applique donc sa CSP par défaut. Il **n'y a pas de directive `connect-src`**, qui retombe donc sur `default-src 'self'`.
+`helmet()` est appelé sans configuration ([server/app.js:11](../../server/app.js#L11)) et applique donc sa CSP par défaut. Il **n'y a pas de directive `connect-src`**, qui retombe donc sur `default-src 'self'`.
 
-Conséquence en production (où Express sert `client/dist` — [server/app.js:17-21](server/app.js#L17-L21)) : **toutes** les requêtes du navigateur vers `https://yksnqtdppbeultmxkagq.supabase.co` sont bloquées par le navigateur. Or l'application en dépend pour :
+Conséquence en production (où Express sert `client/dist` — [server/app.js:17-21](../../server/app.js#L17-L21)) : **toutes** les requêtes du navigateur vers `https://yksnqtdppbeultmxkagq.supabase.co` sont bloquées par le navigateur. Or l'application en dépend pour :
 
-- l'authentification (`supabase.auth.signInWithPassword` — [client/src/lib/auth.js:4](client/src/lib/auth.js#L4)) → **connexion impossible**
-- le chargement du catalogue (`supabase.from('vehicles')` — [client/src/lib/vehiclesCache.js:9-12](client/src/lib/vehiclesCache.js#L9-L12)) → **catalogue vide**
-- le WebSocket Realtime (`wss://…`) — [client/src/pages/Catalogue/Catalogue.jsx:33-39](client/src/pages/Catalogue/Catalogue.jsx#L33-L39)
+- l'authentification (`supabase.auth.signInWithPassword` — [client/src/lib/auth.js:4](../../client/src/lib/auth.js#L4)) → **connexion impossible**
+- le chargement du catalogue (`supabase.from('vehicles')` — [client/src/lib/vehiclesCache.js:9-12](../../client/src/lib/vehiclesCache.js#L9-L12)) → **catalogue vide**
+- le WebSocket Realtime (`wss://…`) — [client/src/pages/Catalogue/Catalogue.jsx:33-39](../../client/src/pages/Catalogue/Catalogue.jsx#L33-L39)
 - les lectures de `reservations` et `profiles` des dashboards
 
 **Pourquoi ça n'a jamais été vu :** en développement, le frontend est servi par Vite (port 5173) et ne passe pas par Helmet. Le bug n'existe que dans le mode de déploiement décrit dans le README. Les 57 tests serveur interrogent l'API en HTTP direct, sans navigateur, donc aucun n'exerce la CSP.
 
-**Correctif** dans [server/app.js:11](server/app.js#L11) :
+**Correctif** dans [server/app.js:11](../../server/app.js#L11) :
 
 ```javascript
 const SUPABASE_ORIGIN = new URL(process.env.SUPABASE_URL).origin
@@ -116,9 +116,9 @@ app.use(helmet({
 }))
 ```
 
-`img-src` est ajouté par anticipation : aujourd'hui toutes les images sont locales (`/img/*.webp`) donc non concernées, mais `optimizeImageUrl()` gère déjà les URLs Supabase Storage ([client/src/lib/utils.js:13-18](client/src/lib/utils.js#L13-L18)) et la première image uploadée en Storage serait bloquée.
+`img-src` est ajouté par anticipation : aujourd'hui toutes les images sont locales (`/img/*.webp`) donc non concernées, mais `optimizeImageUrl()` gère déjà les URLs Supabase Storage ([client/src/lib/utils.js:13-18](../../client/src/lib/utils.js#L13-L18)) et la première image uploadée en Storage serait bloquée.
 
-**Appliqué** dans [server/app.js](server/app.js) via `buildCspDirectives()`, qui dérive l'origine de `SUPABASE_URL` et retombe proprement sur `'self'` avec un avertissement si la variable est absente. Verrouillé par un test dans [server/\_\_tests\_\_/integration/app.test.js](server/__tests__/integration/app.test.js) qui vérifie la présence de l'origine Supabase dans `connect-src`.
+**Appliqué** dans [server/app.js](../../server/app.js) via `buildCspDirectives()`, qui dérive l'origine de `SUPABASE_URL` et retombe proprement sur `'self'` avec un avertissement si la variable est absente. Verrouillé par un test dans [server/\_\_tests\_\_/integration/app.test.js](../../server/__tests__/integration/app.test.js) qui vérifie la présence de l'origine Supabase dans `connect-src`.
 
 ### 2. ✅ CORRIGÉ — La relation many-to-many équipements n'était affichée nulle part
 
@@ -126,8 +126,8 @@ C'est la démonstration du CP6 mise en avant dans le résumé jury du rapport v6
 
 Les deux pages affichent les équipements sous condition `r.equipements?.length > 0` :
 
-- [client/src/components/DashboardReservations/DashboardReservations.jsx:54-56](client/src/components/DashboardReservations/DashboardReservations.jsx#L54-L56)
-- [client/src/pages/admin/AdminReservations/AdminReservations.jsx:136-140](client/src/pages/admin/AdminReservations/AdminReservations.jsx#L136-L140)
+- [client/src/components/DashboardReservations/DashboardReservations.jsx:54-56](../../client/src/components/DashboardReservations/DashboardReservations.jsx#L54-L56)
+- [client/src/pages/admin/AdminReservations/AdminReservations.jsx:136-140](../../client/src/pages/admin/AdminReservations/AdminReservations.jsx#L136-L140)
 
 Mais aucune des deux ne charge ce champ, parce que toutes deux contournent l'API et interrogent Supabase directement avec un `select` qui omet la table de jointure :
 
@@ -138,7 +138,7 @@ Mais aucune des deux ne charge ce champ, parce que toutes deux contournent l'API
 
 `r.equipements` est donc toujours `undefined` : **les deux branches sont mortes**.
 
-L'ironie est que le backend fait le travail correctement. `formatReservationEquipements()` ([server/controllers/reservationController.js:14-17](server/controllers/reservationController.js#L14-L17)) aplatit proprement la jointure, et `reservationModel` sélectionne bien `reservation_equipements(equipements(id, nom, prix_supplement))`. Mais :
+L'ironie est que le backend fait le travail correctement. `formatReservationEquipements()` ([server/controllers/reservationController.js:14-17](../../server/controllers/reservationController.js#L14-L17)) aplatit proprement la jointure, et `reservationModel` sélectionne bien `reservation_equipements(equipements(id, nom, prix_supplement))`. Mais :
 
 ```bash
 grep -rn "reservations/all" client/src
@@ -147,7 +147,7 @@ grep -rn "reservations/all" client/src
 
 **`GET /api/reservations` et `GET /api/reservations/all` ne sont jamais appelés par le client.** Ce sont deux routes développées, documentées dans le README, couvertes par les tests d'intégration… et mortes en pratique.
 
-**Correctif** — remplacer les lectures Supabase directes par l'API existante. Dans [client/src/pages/Dashboard/Dashboard.jsx:22-26](client/src/pages/Dashboard/Dashboard.jsx#L22-L26) :
+**Correctif** — remplacer les lectures Supabase directes par l'API existante. Dans [client/src/pages/Dashboard/Dashboard.jsx:22-26](../../client/src/pages/Dashboard/Dashboard.jsx#L22-L26) :
 
 ```javascript
 const { data: { session } } = await supabase.auth.getSession()
@@ -159,7 +159,7 @@ if (res.ok) setReservations(await res.json())
 
 Et dans `AdminReservations.fetchReservations()`, `GET /api/reservations/all` — qui renvoie déjà les équipements formatés. Ce changement résout d'un coup trois choses : la fonctionnalité redevient visible, les deux routes mortes reprennent du sens, et les lectures cessent de dépendre de la configuration RLS (point 4).
 
-**Appliqué.** Les deux pages passent désormais par l'API ([Dashboard.jsx](client/src/pages/Dashboard/Dashboard.jsx), [AdminReservations.jsx](client/src/pages/admin/AdminReservations/AdminReservations.jsx)) : les équipements s'affichent, et les deux routes mortes sont utilisées.
+**Appliqué.** Les deux pages passent désormais par l'API ([Dashboard.jsx](../../client/src/pages/Dashboard/Dashboard.jsx), [AdminReservations.jsx](../../client/src/pages/admin/AdminReservations/AdminReservations.jsx)) : les équipements s'affichent, et les deux routes mortes sont utilisées.
 
 **Détail rencontré en route, qui vaut d'être connu pour l'oral.** Je voulais ajouter la jointure `profiles(first_name, last_name)` dans `reservationModel.findAll()` pour récupérer le nom du client côté API. PostgREST l'a refusée :
 
@@ -170,7 +170,7 @@ Et dans `AdminReservations.fetchReservations()`, `GET /api/reservations/all` —
 
 **Il n'existe aucune clé étrangère `reservations.client_id → profiles.id`** dans ton schéma — `client_id` référence `auth.users`, pas `profiles`. PostgREST ne sait embarquer une table liée que s'il trouve une FK déclarée. C'est précisément pour ça que l'ancien code faisait deux requêtes.
 
-La logique de résolution des noms a donc été déplacée du client vers le contrôleur (`withClientNames()` dans [reservationController.js](server/controllers/reservationController.js), + `findProfilesByIds()` dans le modèle) : même approche en deux requêtes, mais côté serveur, où elle appartient. `client_name` fait maintenant partie du contrat de l'API.
+La logique de résolution des noms a donc été déplacée du client vers le contrôleur (`withClientNames()` dans [reservationController.js](../../server/controllers/reservationController.js), + `findProfilesByIds()` dans le modèle) : même approche en deux requêtes, mais côté serveur, où elle appartient. `client_name` fait maintenant partie du contrat de l'API.
 
 Si tu ajoutes un jour la FK (`alter table reservations add constraint … foreign key (client_id) references profiles(id)`), la jointure devient possible et les deux requêtes se réduisent à une. C'est une bonne réponse à « comment optimiserais-tu ? ».
 
@@ -189,15 +189,15 @@ payload transmis à Supabase →
 
 L'année, le prix, le kilométrage, la puissance, la description et les images du véhicule sont **écrasés**.
 
-Cause : `update` ne vérifie aucun champ obligatoire, contrairement à `create` ([server/controllers/vehicleController.js:81-83](server/controllers/vehicleController.js#L81-L83) fait ce contrôle, [vehicleController.js:105-121](server/controllers/vehicleController.js#L105-L121) ne le fait pas). `parseInt(undefined)` vaut `NaN`, et `JSON.stringify(NaN)` produit `null` — la valeur part donc en base. `validateVehicleInput` ne rattrape rien : ses gardes `if (year)` laissent passer `undefined`.
+Cause : `update` ne vérifie aucun champ obligatoire, contrairement à `create` ([server/controllers/vehicleController.js:81-83](../../server/controllers/vehicleController.js#L81-L83) fait ce contrôle, [vehicleController.js:105-121](../../server/controllers/vehicleController.js#L105-L121) ne le fait pas). `parseInt(undefined)` vaut `NaN`, et `JSON.stringify(NaN)` produit `null` — la valeur part donc en base. `validateVehicleInput` ne rattrape rien : ses gardes `if (year)` laissent passer `undefined`.
 
 `brand`, `model`, `fuel_type` et `transmission` sont épargnés (restés `undefined`, ils sont retirés du JSON), ce qui rend le bug d'autant plus sournois : la fiche garde son titre mais perd son prix et ses photos.
 
-L'interface actuelle ne le déclenche pas — `AdminVehicles` envoie toujours l'objet complet (`{...vehicle, status}` — [AdminVehicles.jsx:120](client/src/pages/admin/AdminVehicles/AdminVehicles.jsx#L120)). Le contrat d'API est néanmoins cassé pour tout autre appelant, et un `PUT` est précisément le verbe qu'un correcteur testera avec un corps minimal.
+L'interface actuelle ne le déclenche pas — `AdminVehicles` envoie toujours l'objet complet (`{...vehicle, status}` — [AdminVehicles.jsx:120](../../client/src/pages/admin/AdminVehicles/AdminVehicles.jsx#L120)). Le contrat d'API est néanmoins cassé pour tout autre appelant, et un `PUT` est précisément le verbe qu'un correcteur testera avec un corps minimal.
 
 **Appliqué** : `buildVehiclePayload()` ne construit le payload qu'avec les clés réellement présentes dans `req.body`, et `update` refuse un corps vide (400). `create` et `update` partagent désormais la même construction, ce qui supprime la duplication des onze champs. Bonus : `validateVehicleInput` valide maintenant `status` contre `VEHICLE_STATUSES` — la constante était importée mais ne servait qu'au filtrage des requêtes GET, donc `POST`/`PUT` acceptaient n'importe quelle chaîne.
 
-Trois tests ajoutés dans [vehicles.test.js](server/__tests__/integration/vehicles.test.js) : le PUT partiel n'envoie que `status`, le corps vide donne 400, le statut invalide donne 400.
+Trois tests ajoutés dans [vehicles.test.js](../../server/__tests__/integration/vehicles.test.js) : le PUT partiel n'envoie que `status`, le corps vide donne 400, le statut invalide donne 400.
 
 ### 4. ⚠️ ACTION REQUISE — La sécurité des lectures reposait sur une RLS non documentée
 
@@ -218,7 +218,7 @@ Le rôle anonyme est donc bien cloisonné. **Mais le rôle qui compte n'a pas pu
 Le risque précis : dans Supabase, un client et un admin portent **tous les deux** le rôle Postgres `authenticated` (le rôle applicatif vit dans `app_metadata.role`, pas dans le JWT Postgres). Or `AdminReservations` fait un `select('*')` **sans filtre** sur `reservations` et l'admin y voit bien toutes les lignes. Deux configurations produisent ce résultat :
 
 - **Sûre** — une policy du type `(auth.jwt() -> 'app_metadata' ->> 'role') = 'admin' OR client_id = auth.uid()`.
-- **Vulnérable** — RLS désactivée ou policy permissive sur `authenticated`. Dans ce cas **n'importe quel client connecté peut lire toutes les réservations et tous les profils** (nom, prénom, téléphone de tous les clients) avec la clé anon publique. Le filtre `.eq('client_id', user.id)` de [Dashboard.jsx:25](client/src/pages/Dashboard/Dashboard.jsx#L25) ne protège rien : il est côté client, donc modifiable dans la console du navigateur.
+- **Vulnérable** — RLS désactivée ou policy permissive sur `authenticated`. Dans ce cas **n'importe quel client connecté peut lire toutes les réservations et tous les profils** (nom, prénom, téléphone de tous les clients) avec la clé anon publique. Le filtre `.eq('client_id', user.id)` de [Dashboard.jsx:25](../../client/src/pages/Dashboard/Dashboard.jsx#L25) ne protège rien : il est côté client, donc modifiable dans la console du navigateur.
 
 **À exécuter dans le SQL Editor de Supabase pour trancher :**
 
@@ -240,15 +240,15 @@ C'est un argument fort à présenter : *« la clé publique ne donne accès qu'a
 
 ### 5. ✅ CORRIGÉ — Le rate limiting du formulaire de contact était contournable
 
-[server/app.js:10](server/app.js#L10) fait `app.set('trust proxy', 1)`, ce qui indique à Express de faire confiance à l'en-tête `X-Forwarded-For` pour calculer `req.ip`. Or [server/controllers/contactController.js:51](server/controllers/contactController.js#L51) utilise exactement `req.ip` comme clé de limitation.
+[server/app.js:10](../../server/app.js#L10) fait `app.set('trust proxy', 1)`, ce qui indique à Express de faire confiance à l'en-tête `X-Forwarded-For` pour calculer `req.ip`. Or [server/controllers/contactController.js:51](../../server/controllers/contactController.js#L51) utilise exactement `req.ip` comme clé de limitation.
 
 Si le serveur n'est pas réellement derrière un proxy inverse qui réécrit cet en-tête, n'importe qui peut envoyer une valeur arbitraire à chaque requête et disposer d'un compteur neuf à chaque fois — la limite de 5 messages / 15 min tombe. L'impact concret : envoi illimité de mails via ton compte Gmail, jusqu'au blocage du compte par Google pour abus.
 
 **Correctif** : ne mettre `trust proxy` que si un proxy est réellement présent (`app.set('trust proxy', process.env.TRUST_PROXY === '1')`), et documenter la variable. Passer à `express-rate-limit` réglerait aussi le point au passage — le paquet gère la validation de `trust proxy` et refuse de démarrer dans une configuration ambiguë.
 
-Deux défauts secondaires sur le même mécanisme : la `Map` ([contactController.js:11](server/controllers/contactController.js#L11)) n'est jamais purgée des IP expirées (croissance mémoire non bornée), et elle est réinitialisée à chaque redémarrage (déjà noté en v6).
+Deux défauts secondaires sur le même mécanisme : la `Map` ([contactController.js:11](../../server/controllers/contactController.js#L11)) n'est jamais purgée des IP expirées (croissance mémoire non bornée), et elle est réinitialisée à chaque redémarrage (déjà noté en v6).
 
-**Appliqué** : `trust proxy` n'est activé que si `TRUST_PROXY === '1'` ([app.js](server/app.js)), variable documentée dans `.env.example` et le README. `purgeExpired()` nettoie la `Map` à chaque appel. La réinitialisation au redémarrage reste (⏳ acceptée : un stockage Redis serait disproportionné ici — c'est la réponse à donner si on te pose la question).
+**Appliqué** : `trust proxy` n'est activé que si `TRUST_PROXY === '1'` ([app.js](../../server/app.js)), variable documentée dans `.env.example` et le README. `purgeExpired()` nettoie la `Map` à chaque appel. La réinitialisation au redémarrage reste (⏳ acceptée : un stockage Redis serait disproportionné ici — c'est la réponse à donner si on te pose la question).
 
 Point d'attention pour comprendre les tests : les tests du formulaire de contact **simulent** plusieurs IP via `X-Forwarded-For`, donc ils ont besoin de `trust proxy`. `TRUST_PROXY=1` a été ajouté à `.env.test` et au bloc `env` de la CI. Un test supplémentaire vérifie l'inverse — avec `TRUST_PROXY` absent, six requêtes portant six `X-Forwarded-For` différents finissent bien en 429, donc l'en-tête est ignoré.
 
@@ -297,7 +297,7 @@ GET /api/route-qui-nexiste-pas
 → 200 | content-type: text/html | body: <!doctype html><html lang="fr">…
 ```
 
-Le *catch-all* SPA ([server/app.js:22-24](server/app.js#L22-L24)) intercepte tout ce qui n'a pas été routé, y compris `/api/*`. Conséquences : une faute de frappe dans un `fetch` côté client donne `res.ok === true`, puis un `res.json()` qui explose sur `Unexpected token '<'` — une erreur qui n'a aucun rapport avec la cause. Et un client d'API reçoit une page web là où il attend du JSON.
+Le *catch-all* SPA ([server/app.js:22-24](../../server/app.js#L22-L24)) intercepte tout ce qui n'a pas été routé, y compris `/api/*`. Conséquences : une faute de frappe dans un `fetch` côté client donne `res.ok === true`, puis un `res.json()` qui explose sur `Unexpected token '<'` — une erreur qui n'a aucun rapport avec la cause. Et un client d'API reçoit une page web là où il attend du JSON.
 
 **Correctif** — un 404 JSON pour l'API, avant le catch-all :
 
@@ -305,21 +305,21 @@ Le *catch-all* SPA ([server/app.js:22-24](server/app.js#L22-L24)) intercepte tou
 app.use('/api', (req, res) => res.status(404).json({ error: 'Route introuvable.' }))
 ```
 
-**Appliqué** dans [server/app.js](server/app.js), placé après le routeur API et avant le service des fichiers statiques. Verrouillé par un test dans [app.test.js](server/__tests__/integration/app.test.js) qui vérifie le code 404 *et* le `content-type: application/json`.
+**Appliqué** dans [server/app.js](../../server/app.js), placé après le routeur API et avant le service des fichiers statiques. Verrouillé par un test dans [app.test.js](../../server/__tests__/integration/app.test.js) qui vérifie le code 404 *et* le `content-type: application/json`.
 
 ### 8. ✅ CORRIGÉ — `adminController.stats` avalait silencieusement les erreurs Supabase
 
-[server/controllers/adminController.js:4-21](server/controllers/adminController.js#L4-L21) déstructure les huit résultats de `Promise.all` sans jamais regarder `error`. Si une requête échoue, `count` vaut `undefined` et la route renvoie **`200` avec des `null`**. Le dashboard admin affiche alors des KPI vides et des graphiques à zéro sans qu'aucune erreur n'apparaisse — ni à l'écran, ni dans les logs. C'est le seul contrôleur du projet qui ne teste pas `error` ; tous les autres le font.
+[server/controllers/adminController.js:4-21](../../server/controllers/adminController.js#L4-L21) déstructure les huit résultats de `Promise.all` sans jamais regarder `error`. Si une requête échoue, `count` vaut `undefined` et la route renvoie **`200` avec des `null`**. Le dashboard admin affiche alors des KPI vides et des graphiques à zéro sans qu'aucune erreur n'apparaisse — ni à l'écran, ni dans les logs. C'est le seul contrôleur du projet qui ne teste pas `error` ; tous les autres le font.
 
-**Appliqué** : `stats` inspecte les huit résultats et renvoie 500 avec le message de la première requête en échec. Test ajouté dans [admin.test.js](server/__tests__/integration/admin.test.js) — une requête en erreur donne bien 500 et non 200 avec des compteurs vides.
+**Appliqué** : `stats` inspecte les huit résultats et renvoie 500 avec le message de la première requête en échec. Test ajouté dans [admin.test.js](../../server/__tests__/integration/admin.test.js) — une requête en erreur donne bien 500 et non 200 avec des compteurs vides.
 
 ### 9. ⏳ NON CORRIGÉ — `GET /api/vehicles/by-slug/:slug` charge toute la table
 
-Déjà signalé en v6, non résolu. [server/controllers/vehicleController.js:53-64](server/controllers/vehicleController.js#L53-L64) charge tous les véhicules puis slugifie en JavaScript pour en retrouver un. Correctif : colonne `slug TEXT UNIQUE` indexée, alimentée par trigger, puis `.eq('slug', slug).single()`.
+Déjà signalé en v6, non résolu. [server/controllers/vehicleController.js:53-64](../../server/controllers/vehicleController.js#L53-L64) charge tous les véhicules puis slugifie en JavaScript pour en retrouver un. Correctif : colonne `slug TEXT UNIQUE` indexée, alimentée par trigger, puis `.eq('slug', slug).single()`.
 
 ### 10. ⏳ NON CORRIGÉ — Deux implémentations divergentes du slug (latent)
 
-`toSlug()` côté client ([client/src/lib/utils.js:27-34](client/src/lib/utils.js#L27-L34)) et la slugification côté serveur ([vehicleController.js:56-63](server/controllers/vehicleController.js#L56-L63)) suivent des règles différentes : le client **supprime** les caractères non alphanumériques, le serveur les **remplace par un tiret**.
+`toSlug()` côté client ([client/src/lib/utils.js:27-34](../../client/src/lib/utils.js#L27-L34)) et la slugification côté serveur ([vehicleController.js:56-63](../../server/controllers/vehicleController.js#L56-L63)) suivent des règles différentes : le client **supprime** les caractères non alphanumériques, le serveur les **remplace par un tiret**.
 
 J'ai comparé les deux sur les 21 véhicules réellement en base : **0 divergence aujourd'hui**. Le problème est donc latent, pas actif. Mais il se déclenchera au premier modèle contenant un point ou une apostrophe — par exemple `Mégane R.S.` donnerait `renault-megane-rs` côté client et `renault-megane-r-s` côté serveur. Symptôme alors très déroutant : la fiche s'ouvre quand le cache est chaud (résolution locale) et renvoie 404 quand il est froid (appel API) — soit un bug qui dépend de l'ordre de navigation.
 
@@ -327,32 +327,32 @@ Le correctif du point 9 (slug en base) fait disparaître le problème : une seul
 
 ### 11. ✅ CORRIGÉ — Filtre « Année minimum » inopérant sur 24% du catalogue
 
-[client/src/components/Filters/Filters.jsx:91](client/src/components/Filters/Filters.jsx#L91) code en dur `[2024, 2023, 2022, 2021, 2020]`. Années réellement présentes en base :
+[client/src/components/Filters/Filters.jsx:91](../../client/src/components/Filters/Filters.jsx#L91) code en dur `[2024, 2023, 2022, 2021, 2020]`. Années réellement présentes en base :
 
 ```text
 {2026: 1, 2025: 4, 2024: 3, 2023: 1, 2022: 1, 2021: 3, 2020: 3, 2019: 3, 2018: 1, 2017: 1}
 → 5 véhicules sur 21 (2025 et 2026) ne peuvent pas être ciblés par le filtre
 ```
 
-C'est le même type de valeur codée en dur que le `700000` supprimé en juin. Le composant reçoit déjà `vehicles` en amont : la liste doit être dérivée des données, comme le sont déjà `brands`, `fuelTypes` et `transmissions` ([Catalogue.jsx:57-67](client/src/pages/Catalogue/Catalogue.jsx#L57-L67)).
+C'est le même type de valeur codée en dur que le `700000` supprimé en juin. Le composant reçoit déjà `vehicles` en amont : la liste doit être dérivée des données, comme le sont déjà `brands`, `fuelTypes` et `transmissions` ([Catalogue.jsx:57-67](../../client/src/pages/Catalogue/Catalogue.jsx#L57-L67)).
 
 **Appliqué** : `years` est calculé dans `Catalogue` avec un `useMemo` (tri décroissant, doublons supprimés) et passé en prop à `Filters`, exactement comme les trois autres listes. Plus aucune année codée en dur.
 
 ### 12. ✅ CORRIGÉ — `PATCH /api/reservations/:id/status` : 500 au lieu de 404, et constante ignorée
 
-Deux défauts dans [server/controllers/reservationController.js:76-108](server/controllers/reservationController.js#L76-L108) :
+Deux défauts dans [server/controllers/reservationController.js:76-108](../../server/controllers/reservationController.js#L76-L108) :
 
-- Aucun contrôle d'existence : sur un ID inconnu, le `.single()` du modèle échoue et la route renvoie **500** là où **404** est la réponse correcte. `cancel()` fait ce contrôle correctement ([reservationController.js:112-114](server/controllers/reservationController.js#L112-L114)) — il suffit de s'en inspirer.
+- Aucun contrôle d'existence : sur un ID inconnu, le `.single()` du modèle échoue et la route renvoie **500** là où **404** est la réponse correcte. `cancel()` fait ce contrôle correctement ([reservationController.js:112-114](../../server/controllers/reservationController.js#L112-L114)) — il suffit de s'en inspirer.
 - La ligne 79 code en dur `['pending', 'confirmed', 'cancelled']` alors que `RESERVATION_STATUSES` est **déjà importé** ligne 4 et utilisé ligne 33. Incohérence dans le même fichier.
 
-**Appliqué** : contrôle d'existence renvoyant 404 (ce qui permet aussi de simplifier la condition d'envoi d'email en aval, `resData` étant désormais garanti), et usage de `RESERVATION_STATUSES`. Test 404 ajouté dans [reservations.test.js](server/__tests__/integration/reservations.test.js).
+**Appliqué** : contrôle d'existence renvoyant 404 (ce qui permet aussi de simplifier la condition d'envoi d'email en aval, `resData` étant désormais garanti), et usage de `RESERVATION_STATUSES`. Test 404 ajouté dans [reservations.test.js](../../server/__tests__/integration/reservations.test.js).
 
 ### 13. ⏳ PARTIELLEMENT CORRIGÉ — La pagination serveur existe mais le client ne l'utilise pas
 
 Les contrôleurs implémentent proprement `limit`/`offset` avec plafond à 100 (`vehicleController.list`, `reservationController.listAll`, `adminController.listClients`). Côté client, les trois listes chargent **tout** puis paginent en mémoire :
 
-- [AdminVehicles.jsx:37-40](client/src/pages/admin/AdminVehicles/AdminVehicles.jsx#L37-L40) puis `.slice()` ligne 134
-- [AdminReservations.jsx:19-22](client/src/pages/admin/AdminReservations/AdminReservations.jsx#L19-L22) puis `.slice()` ligne 69
+- [AdminVehicles.jsx:37-40](../../client/src/pages/admin/AdminVehicles/AdminVehicles.jsx#L37-L40) puis `.slice()` ligne 134
+- [AdminReservations.jsx:19-22](../../client/src/pages/admin/AdminReservations/AdminReservations.jsx#L19-L22) puis `.slice()` ligne 69
 - `Catalogue` via `vehiclesCache` puis `.slice()` ligne 95
 
 Acceptable à 21 véhicules, et pour le catalogue c'est même un choix défendable (filtrage et tri instantanés côté client). Mais pour les deux pages admin c'est du travail fait puis jeté, et la question « et avec 5 000 véhicules ? » est très probable à l'oral. Le plafond de 100 rend d'ailleurs le comportement silencieusement incorrect au-delà de 100 lignes.
@@ -361,7 +361,7 @@ Acceptable à 21 véhicules, et pour le catalogue c'est même un choix défendab
 
 ### 14. ⏳ DOCUMENTÉ — Incohérence RBAC : `profiles.role` côté client, `app_metadata.role` côté serveur
 
-Le client décide de l'accès admin sur `profile?.role === 'admin'` ([ProtectedRoute.jsx:11](client/src/components/ProtectedRoute/ProtectedRoute.jsx#L11), [AuthContext.jsx:51](client/src/lib/AuthContext.jsx#L51)), le serveur sur `user.app_metadata?.role !== 'admin'` ([middleware/auth.js:34](server/middleware/auth.js#L34)). Ce sont **deux sources de vérité distinctes**.
+Le client décide de l'accès admin sur `profile?.role === 'admin'` ([ProtectedRoute.jsx:11](../../client/src/components/ProtectedRoute/ProtectedRoute.jsx#L11), [AuthContext.jsx:51](../../client/src/lib/AuthContext.jsx#L51)), le serveur sur `user.app_metadata?.role !== 'admin'` ([middleware/auth.js:34](../../server/middleware/auth.js#L34)). Ce sont **deux sources de vérité distinctes**.
 
 Ce n'est pas une faille — le serveur, seul décideur réel, utilise `app_metadata`, que le client ne peut pas modifier. Mais si les deux divergent, l'utilisateur obtient une interface admin dont chaque appel API répond 403 : symptôme incompréhensible côté utilisateur. À documenter, et à mentionner à l'oral comme un choix assumé (`profiles.role` pour l'affichage, `app_metadata.role` pour l'autorisation) plutôt que de se le faire pointer.
 
@@ -375,7 +375,7 @@ Tous corrigés sauf mention contraire :
 
 - ✅ **`escapeHtml` dupliqué** — la copie de `contactController` est supprimée, la fonction est importée depuis `lib/emailTemplates`.
 - ✅ **CI non reproductible** — `npm ci` remplace `npm install` sur les deux workspaces, et le cache npm couvre maintenant les deux `package-lock.json`.
-- ✅ **Pas de seuil de couverture** — `coverageThreshold` ajouté dans [jest.config.js](server/jest.config.js) : 90% statements / 78% branches / 95% functions / 95% lines, juste sous les valeurs actuelles. La CI échoue désormais en cas de régression.
+- ✅ **Pas de seuil de couverture** — `coverageThreshold` ajouté dans [jest.config.js](../../server/jest.config.js) : 90% statements / 78% branches / 95% functions / 95% lines, juste sous les valeurs actuelles. La CI échoue désormais en cas de régression.
 - ✅ **`AdminEquipements.fetchEquipements` ne testait pas `res.ok`** — contrôle ajouté, avec message d'erreur affiché au lieu d'un crash de la page.
 - ✅ **`Reservation.jsx` rechargeait tous les véhicules** — utilise désormais `getVehicleBySlug()` du cache partagé, comme `VehicleDetail`.
 - ✅ **`server/.env.example`** — URL réelle remplacée par un placeholder, et `TRUST_PROXY` documenté.
@@ -384,7 +384,7 @@ Tous corrigés sauf mention contraire :
 
 ### Améliorations non demandées, découvertes en route
 
-- **Découpage du bundle rétabli et amélioré.** La montée de Vite (8.0.1 → 8.1.5) a changé l'heuristique de *chunking* : les chunks `react`, `supabase` et `utils` fusionnaient dans l'entrée, qui passait de 240 kB à 434 kB. Un `manualChunks` explicite a été ajouté dans [vite.config.js](client/vite.config.js) — sous forme de **fonction**, car Vite 8 utilise rolldown, qui refuse la forme objet. Résultat meilleur qu'avant l'audit :
+- **Découpage du bundle rétabli et amélioré.** La montée de Vite (8.0.1 → 8.1.5) a changé l'heuristique de *chunking* : les chunks `react`, `supabase` et `utils` fusionnaient dans l'entrée, qui passait de 240 kB à 434 kB. Un `manualChunks` explicite a été ajouté dans [vite.config.js](../../client/vite.config.js) — sous forme de **fonction**, car Vite 8 utilise rolldown, qui refuse la forme objet. Résultat meilleur qu'avant l'audit :
 
 | Chunk | Avant l'audit | Après |
 | ----- | ------------- | ----- |
@@ -405,7 +405,7 @@ Au moment du constat, 94 tests passaient (**vérifié** : 57 serveur / 7 suites,
 | CSP casse la prod (1) | Les tests appellent l'API en HTTP direct ; aucun navigateur, donc aucune CSP appliquée. Aucun test ne tourne en `NODE_ENV=production`. |
 | Équipements invisibles (2) | La couverture porte sur le serveur, qui est correct. Les tests client ne couvrent ni `Dashboard` ni `AdminReservations` — les deux pages fautives. |
 | PUT partiel détruit des données (3) | Les tests d'intégration `vehicles` n'envoient que des corps complets. Aucun cas de `PUT` partiel. |
-| RLS (4) | Supabase est mocké ([__tests__/mocks/supabase.js](server/__tests__/mocks/supabase.js)) : un mock n'a pas de policies. Par construction, aucun test ne peut valider une RLS. |
+| RLS (4) | Supabase est mocké ([__tests__/mocks/supabase.js](../../server/__tests__/mocks/supabase.js)) : un mock n'a pas de policies. Par construction, aucun test ne peut valider une RLS. |
 | Rate limit contournable (5) | Le test de rate limiting utilise une IP constante ; aucun ne fait varier `X-Forwarded-For`. |
 | 404 API (7) | Aucun test ne demande une route inexistante. |
 
@@ -455,7 +455,7 @@ Rien de ce qui suit n'est remis en cause par cet audit — ces éléments ont é
 
 - **Architecture backend en trois couches** route → controller → model, appliquée avec rigueur : routes purement déclaratives (14 lignes pour tout le CRUD véhicules), aucun `require('../supabase')` hors des modèles, une fonction de modèle = une requête.
 - **102 tests qui passent réellement** (65 serveur + 37 client), exécutés lors de cet audit, plus lint propre et build vert. La suite était saine mais trop étroite ; sa portée couvre maintenant les régressions de déploiement et de contrat d'API.
-- **Écritures correctement centralisées** : `grep` sur `client/src` ne trouve plus aucun `insert`/`delete` Supabase direct. Seul subsiste un `update` sur son propre profil ([DashboardProfile.jsx:22-29](client/src/components/DashboardProfile/DashboardProfile.jsx#L22-L29)). Toutes les mutations sensibles passent par Express avec JWT Bearer, et `client_id` est forcé côté serveur depuis le token ([reservationController.js:58](server/controllers/reservationController.js#L58)) — la faille d'usurpation est bien fermée.
+- **Écritures correctement centralisées** : `grep` sur `client/src` ne trouve plus aucun `insert`/`delete` Supabase direct. Seul subsiste un `update` sur son propre profil ([DashboardProfile.jsx:22-29](../../client/src/components/DashboardProfile/DashboardProfile.jsx#L22-L29)). Toutes les mutations sensibles passent par Express avec JWT Bearer, et `client_id` est forcé côté serveur depuis le token ([reservationController.js:58](../../server/controllers/reservationController.js#L58)) — la faille d'usurpation est bien fermée.
 - **Rôle `anon` correctement cloisonné** en base (vérifié : 401 sur `reservations`, `equipements`, `reservation_equipements` ; `profiles` filtré par RLS).
 - **Toutes les lectures sensibles passent désormais par Express** : la clé anon publique ne donne plus accès qu'à `vehicles`, qui est public par nature.
 - **Échappement HTML systématique** avant toute injection dans les emails, validation d'email avec protection contre l'injection d'en-tête (`/[\r\n]/`).

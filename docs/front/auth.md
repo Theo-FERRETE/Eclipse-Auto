@@ -1,4 +1,4 @@
-← [Front](../README.md)
+← [Front](README.md)
 
 # Front — l'authentification
 
@@ -9,14 +9,6 @@ Trois fichiers, et c'est tout :
 | `lib/auth.js` | Les fonctions brutes : login, register, logout, session, profil |
 | `lib/AuthContext.jsx` | Le contexte React qui rend la session disponible partout |
 | `components/ProtectedRoute/ProtectedRoute.jsx` | Le garde-barrière des routes privées |
-
-| Page | Contenu |
-|---|---|
-| **Cette page** | `auth.js` et `AuthContext` : les fonctions et la session partagée |
-| [protected-route.md](protected-route.md) | Le garde-barrière, et pourquoi il ne sécurise rien |
-| [parcours.md](parcours.md) | La connexion de bout en bout, et le mot de passe oublié |
-
----
 
 ## `lib/auth.js` — les fonctions brutes
 
@@ -103,3 +95,86 @@ Au premier rendu, `user` vaut `null` : la session n'est pas encore lue. Sans `lo
 
 `loading` dit « je ne sais pas encore, attends ». C'est un des bugs les plus classiques de
 l'auth côté React, et une très bonne réponse si le jury demande une difficulté rencontrée.
+
+---
+
+## ProtectedRoute — le garde-barrière
+
+Quinze lignes, trois décisions dans l'ordre :
+
+```jsx
+if (loading) return null                                   // 1. on attend
+if (!user) return <Navigate to="/login" replace />         // 2. pas connecté
+if (requireAdmin && profile?.role !== 'admin')             // 3. pas admin
+  return <Navigate to="/dashboard" replace />
+return children                                            // 4. laissez passer
+```
+
+Usage dans `App.jsx` :
+
+```jsx
+<ProtectedRoute><Dashboard /></ProtectedRoute>                    // connecté
+<ProtectedRoute requireAdmin><AdminDashboard /></ProtectedRoute>  // admin
+```
+
+**Le `replace`** remplace l'entrée dans l'historique au lieu d'en ajouter une. Sans lui,
+le bouton Précédent renverrait sur la page protégée, qui redirigerait à nouveau vers
+`/login` — l'utilisateur serait piégé dans une boucle.
+
+**Un non-admin est renvoyé vers `/dashboard`, pas vers `/login`** : il est bien connecté,
+lui redemander de se connecter n'aurait aucun sens.
+
+### Le point à ne pas rater : ce composant ne sécurise RIEN
+
+`ProtectedRoute` est du **confort d'interface**, pas de la sécurité.
+
+Il empêche d'afficher une page. Il n'empêche pas d'appeler l'API. N'importe qui peut ouvrir
+la console de son navigateur, forcer `profile.role = 'admin'` et faire apparaître le menu
+admin. Mais chaque appel vers `/api/admin/*` partirait quand même avec **son** JWT, et le
+serveur le rejetterait en **403** — parce que le rôle qui fait foi est dans
+`app_metadata`, inscrit dans un token signé, impossible à falsifier depuis le navigateur.
+
+> **Le front décide ce qu'on voit. Le serveur décide ce qu'on peut faire.**
+
+Détail cohérent avec ça : le front lit le rôle dans `profiles.role` (une colonne de table,
+pratique pour l'affichage), le serveur le lit dans `app_metadata.role` (dans le JWT).
+Deux sources différentes pour deux usages différents — c'est expliqué en détail dans
+[../back/securite.md](../back/securite.md#attention--deux-notions-de--admin--cohabitent).
+
+---
+
+## Le parcours complet d'une connexion
+
+```text
+1. L'utilisateur saisit ses identifiants          pages/Login/Login.jsx
+2. login(email, password)                          lib/auth.js
+3. signInWithPassword() → Supabase Auth vérifie le mot de passe
+4. Retour d'un JWT + refresh token, stockés dans le localStorage par la librairie
+5. onAuthStateChange se déclenche                  lib/AuthContext.jsx
+6. setUser(session.user) + loadProfile(id) → profiles
+7. Tout l'arbre React se re-rend :
+      • la Navbar affiche le nom + le lien Admin si isAdmin
+      • ProtectedRoute laisse passer
+8. Chaque appel à l'API joint le token :
+      Authorization: Bearer <access_token>
+9. Le serveur le vérifie                           server/middleware/auth.js
+```
+
+Le détail du jeton — où il vit, ce qu'il contient, combien de temps — est dans
+[../JWT.md](../JWT.md).
+
+## Le mot de passe oublié
+
+Deux pages, un aller-retour par email — géré entièrement par Supabase Auth, sans code
+serveur :
+
+1. **`pages/ForgotPassword`** — `supabase.auth.resetPasswordForEmail(email)`.
+   Supabase envoie un email contenant un lien de retour vers le site.
+2. **`pages/ResetPassword`** — le lien ouvre cette page avec un token de récupération dans
+   l'URL. La page écoute `supabase.auth.onAuthStateChange()` pour attendre que la librairie
+   ait consommé ce token et ouvert une session temporaire ; puis
+   `supabase.auth.updateUser({ password })` enregistre le nouveau mot de passe.
+
+À noter : ce sont les deux seules pages, avec le Dashboard, à parler à Supabase Auth
+directement plutôt qu'à l'API — parce qu'il s'agit de la gestion de son propre compte,
+et que Supabase le fait déjà correctement.

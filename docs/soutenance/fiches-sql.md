@@ -1,6 +1,6 @@
 # Fiches de révision — SQL (Eclipse Auto)
 
-Retour vers [fiches-revision.md](fiches-revision.md) · [fiches-revision-react.md](fiches-revision-react.md)
+Retour vers [fiches-react.md](fiches-react.md) · [lexique.md](lexique.md)
 
 Toutes les requêtes ci-dessous utilisent le **vrai schéma du projet** (Postgres/Supabase) pour que tu puisses répondre avec des exemples concrets si le jury demande "écris-moi une requête".
 
@@ -227,7 +227,7 @@ COMMIT;
 - Garantit que plusieurs écritures liées réussissent **toutes ensemble ou pas du tout** (atomicité).
 - Pertinent à mentionner pour justifier pourquoi un trigger Postgres (plutôt qu'un appel Express en 2 temps) sécurise la synchro `reservations.status` ↔ `vehicles.status` : le trigger s'exécute **dans la même transaction** que l'`UPDATE` qui le déclenche.
 
-## 10. Trigger (rappel, lié à [fiches-revision.md](fiches-revision.md))
+## 10. Trigger (rappel, lié à [back/supabase.md — le trigger PostgreSQL](../back/supabase.md#le-trigger-postgresql))
 
 ```sql
 CREATE OR REPLACE FUNCTION sync_vehicle_status()
@@ -247,7 +247,7 @@ AFTER UPDATE OF status ON reservations
 FOR EACH ROW EXECUTE FUNCTION sync_vehicle_status();
 ```
 
-Ceci est une **reconstitution pédagogique** de ce que fait probablement le trigger réel du projet (pas versionné dans le repo — cf. limite déjà notée dans `fiches-revision.md`). Utile pour montrer au jury que tu sais écrire un trigger, même si tu ne peux pas afficher le code exact stocké dans Supabase.
+Ceci est une **reconstitution pédagogique** de ce que fait probablement le trigger réel du projet (pas versionné dans le repo — cf. [back/supabase.md — le trigger PostgreSQL](../back/supabase.md#le-trigger-postgresql)). Utile pour montrer au jury que tu sais écrire un trigger, même si tu ne peux pas afficher le code exact stocké dans Supabase.
 
 ---
 
@@ -266,4 +266,4 @@ Ceci est une **reconstitution pédagogique** de ce que fait probablement le trig
 4. **"Comment tu empêches une clé étrangère invalide ?"** → Contrainte `REFERENCES` au niveau de la table, Postgres refuse l'insertion sinon.
 5. **"WHERE vs HAVING ?"** → `WHERE` avant le `GROUP BY` (ligne par ligne), `HAVING` après (sur le résultat agrégé).
 6. **"Que fait `LIMIT`/`OFFSET` dans le projet ?"** → Pagination de l'API (`GET /api/vehicles?limit=20&offset=40`), plafonné à 100 côté serveur pour éviter qu'un client demande toute la table d'un coup.
-7. **"Pourquoi utiliser Supabase (client) directement pour la lecture mais pas l'écriture ?"** → cf. `fiches-revision.md` (sécurité) — pas une question SQL pure mais souvent enchaînée par le jury.
+7. **"Pourquoi utiliser Supabase (client) directement pour la lecture mais pas l'écriture ?"** → cf. [front/donnees.md](../front/donnees.md) — pas une question SQL pure mais souvent enchaînée par le jury.

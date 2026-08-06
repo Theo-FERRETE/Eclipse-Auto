@@ -7,11 +7,13 @@ React 19 · Vite 8 · React Router 7 · Chart.js · Vitest. En **modules ES** (`
 
 ## Sommaire
 
-| Dossier | Contenu |
+| Page | Contenu |
 |---|---|
-| [architecture/](architecture/README.md) | Conventions et structure · [routing](architecture/routing.md) · [performance et build](architecture/performance.md) |
-| [donnees/](donnees/README.md) | API vs Supabase direct · [cache](donnees/cache.md) · [Realtime](donnees/realtime.md) · [filtres URL](donnees/filtres-url.md) · [doublons](donnees/doublons.md) |
-| [auth/](auth/README.md) | `auth.js` et `AuthContext` · [ProtectedRoute](auth/protected-route.md) · [parcours de connexion](auth/parcours.md) |
+| [architecture.md](architecture.md) | Conventions et structure des dossiers, le routing et les 18 routes, le code splitting, le build, les variables d'environnement |
+| [donnees.md](donnees.md) | La règle « API Express vs Supabase direct », le motif d'appel, le cache véhicules, le Realtime, les filtres dans l'URL, les doublons connus |
+| [auth.md](auth.md) | `auth.js` et `AuthContext`, `ProtectedRoute`, le parcours complet d'une connexion |
+
+Le rôle détaillé de chaque fichier est listé dans `../documentation.html`.
 
 ## Arborescence commentée
 
@@ -53,6 +55,3 @@ client/
         ├── Reservation*   (Breadcrumb, VehiclePanel, Form, Success)
         └── Admin*         (Sidebar, PageHeader, VehicleCard, VehicleModal, Charts)
 ```
-
-Le rôle détaillé de chaque fichier est listé dans le
-[README à la racine du projet](../../README.md#rôle-de-chaque-fichier).

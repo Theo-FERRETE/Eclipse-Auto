@@ -6,17 +6,17 @@ Plateforme de gestion et réservation de véhicules haut de gamme, avec interfac
 
 La doc technique est dans [`docs/`](docs/README.md), séparée en deux :
 
-- **[docs/back/](docs/back/README.md)** — [architecture en 4 couches](docs/back/architecture/README.md) ·
-  [ce que fait Supabase](docs/back/supabase/README.md) ·
-  [authentification et sécurité](docs/back/securite/README.md) ·
-  [emails](docs/back/emails/README.md)
-- **[docs/front/](docs/front/README.md)** — [structure et routing](docs/front/architecture/README.md) ·
-  [d'où viennent les données](docs/front/donnees/README.md) ·
-  [authentification côté client](docs/front/auth/README.md)
+- **[docs/back/](docs/back/README.md)** — l'API Express : les 4 couches, démarrage et
+  configuration, ce que fait Supabase (requêtes, schéma, clés et RLS, Auth),
+  authentification et sécurité, validation, en-têtes HTTP, emails
+- **[docs/front/](docs/front/README.md)** — l'application React : conventions et structure,
+  routing, performance et build, d'où viennent les données, cache, Realtime,
+  authentification côté client
 - **[docs/JWT.md](docs/JWT.md)** — où est physiquement stocké le jeton, ce qu'il contient,
   par où il passe, et ce qu'un attaquant peut ou non en faire
 
 Référence complète de l'API : [docs/ENDPOINTS.md](docs/ENDPOINTS.md).
+Rôle détaillé de chaque fichier source : `docs/documentation.html`.
 
 ## Stack technique
 
@@ -77,162 +77,24 @@ VITE_SUPABASE_URL=...
 VITE_SUPABASE_ANON_KEY=...
 ```
 
-## API
+## Routes
 
-### Véhicules
+Les six familles de routes de l'API et leur niveau de protection sont résumées dans
+[docs/back/](docs/back/architecture.md#les-6-familles-de-routes). Le détail complet de chaque
+endpoint — query params, body attendu, réponses, codes d'erreur — est dans
+[docs/ENDPOINTS.md](docs/ENDPOINTS.md).
 
-| Route | Méthode | Auth | Description |
-|-------|---------|------|-------------|
-| `/api/vehicles` | GET | Public | Liste paginée des véhicules |
-| `/api/vehicles/by-slug/:slug` | GET | Public | Détail par slug (brand-model) |
-| `/api/vehicles/:id` | GET | Public | Détail par UUID |
-| `/api/vehicles` | POST | Admin | Créer un véhicule |
-| `/api/vehicles/:id` | PUT | Admin | Modifier un véhicule |
-| `/api/vehicles/:id` | DELETE | Admin | Supprimer un véhicule |
-
-### Réservations
-
-| Route | Méthode | Auth | Description |
-|-------|---------|------|-------------|
-| `/api/reservations` | GET | Auth | Mes réservations |
-| `/api/reservations/all` | GET | Admin | Toutes les réservations |
-| `/api/reservations` | POST | Auth | Créer une réservation |
-| `/api/reservations/:id/status` | PATCH | Admin | Changer le statut |
-| `/api/reservations/:id/cancel` | PATCH | Auth | Annuler (client) |
-
-### Équipements
-
-| Route | Méthode | Auth | Description |
-|-------|---------|------|-------------|
-| `/api/equipements` | GET | Public | Catalogue des équipements en option |
-| `/api/equipements` | POST | Admin | Créer un équipement |
-| `/api/equipements/:id` | PUT | Admin | Modifier un équipement |
-| `/api/equipements/:id` | DELETE | Admin | Supprimer un équipement |
-
-### Administration & autres
-
-| Route | Méthode | Auth | Description |
-|-------|---------|------|-------------|
-| `/api/admin/stats` | GET | Admin | Statistiques du tableau de bord |
-| `/api/admin/clients` | GET | Admin | Liste des clients |
-| `/api/contact` | POST | Public | Formulaire de contact |
-| `/api/health` | GET | Public | Statut du serveur |
-
-## Pages frontend
-
-| Route | Type | Description |
-|-------|------|-------------|
-| `/` | Public | Accueil |
-| `/catalogue` | Public | Catalogue des véhicules |
-| `/vehicles/:slug` | Public | Détails d'un véhicule |
-| `/login` | Public | Connexion |
-| `/register` | Public | Inscription |
-| `/contact` | Public | Formulaire de contact |
-| `/dashboard` | Privé | Espace client |
-| `/reserve/:slug` | Privé | Réserver un véhicule |
-| `/admin/*` | Admin | Panneau d'administration |
+Les 18 routes du front et leurs trois niveaux d'accès sont dans
+[docs/front/](docs/front/architecture.md#le-routing--srcappjsx).
 
 ## Rôle de chaque fichier
 
-Chaque fichier source porte aussi un commentaire d'en-tête qui reprend et détaille son rôle.
+Chaque fichier source porte un commentaire d'en-tête qui détaille son rôle. Le tableau
+complet fichier par fichier — serveur, pages, composants, `lib/` — est dans
+`docs/documentation.html` (sections « Fichiers du serveur », « Composants », « Utilitaires »).
 
-### Serveur — `server/`
-
-| Fichier | Rôle |
-|---|---|
-| `index.js` | Point d'entrée : vérifie les variables d'environnement obligatoires puis démarre l'écoute. Refuse de démarrer s'il en manque une |
-| `app.js` | Assemble l'application : Helmet + CSP, middlewares, routes `/api`, service du build React, gestionnaire d'erreurs. Exporté sans `listen()` pour les tests |
-| `supabase.js` | Client Supabase du serveur, clé `service_role` (contourne la RLS, jamais exposée au navigateur) |
-| `constants.js` | Valeurs autorisées (statuts véhicule et réservation, carburants, transmissions) |
-| `middleware/setup.js` | Middlewares communs : compression, CORS, logs morgan, parsing JSON |
-| `middleware/auth.js` | `requireAuth` (401 sinon) et `requireAdmin` (403 sinon). Vérifie le JWT, lit le rôle dans `app_metadata` |
-| `routes/api.js` | Hub : monte les six routeurs sous `/api` |
-| `routes/vehicles.js` | Routes véhicules — lecture publique, écritures admin |
-| `routes/reservations.js` | Routes réservations — tout protégé, `/all` et `/:id/status` en admin |
-| `routes/admin.js` | Statistiques et gestion des clients, tout en admin |
-| `routes/equipements.js` | Catalogue d'options — lecture publique, écritures admin |
-| `routes/contact.js` | Formulaire de contact — publique mais rate-limitée |
-| `routes/health.js` | Route de supervision, répond 200 si l'API est debout |
-| `controllers/vehicleController.js` | Validation des véhicules et construction du payload partiel (`VEHICLE_FIELDS`) |
-| `controllers/reservationController.js` | Le plus dense : `client_id` forcé depuis le JWT, contrôle du propriétaire à l'annulation, véhicule déjà pris → 409, déclenchement de l'email |
-| `controllers/adminController.js` | Agrégation des statistiques et gestion des comptes clients |
-| `controllers/equipementController.js` | CRUD du catalogue d'équipements |
-| `controllers/contactController.js` | Validation, rate limiting par IP, envoi Nodemailer |
-| `models/vehicleModel.js` | Requêtes Supabase des véhicules |
-| `models/reservationModel.js` | Requêtes des réservations, dont l'embed many-to-many des équipements |
-| `models/adminModel.js` | Les huit compteurs du dashboard + gestion des clients |
-| `models/equipementModel.js` | Requêtes du catalogue d'équipements |
-| `lib/emailTemplates.js` | `escapeHtml()` et le gabarit HTML de l'email de confirmation |
-
-### Client — `client/`
-
-| Fichier | Rôle |
-|---|---|
-| `vite.config.js` | Alias `@`, proxy `/api` en dev, découpage des chunks, config Vitest |
-| `jsconfig.json` | Fait comprendre l'alias `@` à l'éditeur (autocomplétion, ctrl+clic) |
-| `src/main.jsx` | Monte l'app dans `#root`, avec `AuthProvider` au-dessus |
-| `src/App.jsx` | Plan du site : toutes les routes et les trois niveaux d'accès |
-| `src/index.css` | Styles globaux : variables CSS, reset, classes utilitaires |
-
-**`src/lib/` — code partagé**
-
-| Fichier | Rôle |
-|---|---|
-| `supabase.js` | Client Supabase du navigateur, clé `anon` (publique par conception) |
-| `auth.js` | login / register / logout / getSession / getProfile |
-| `AuthContext.jsx` | Résout la session une fois et la diffuse via `useAuth()` |
-| `vehiclesCache.js` | Cache mémoire du catalogue (3 min), partagé entre les pages |
-| `utils.js` | `toSlug`, `formatPrice`, `optimizeImageUrl`, libellés des statuts |
-| `constants.js` | Listes de valeurs (doublon partiel avec `utils.js`) |
-
-**`src/pages/` — un dossier par écran**
-
-| Fichier | Rôle |
-|---|---|
-| `Home/Home.jsx` | Accueil : hero, chiffres clés, 3 véhicules mis en avant |
-| `Catalogue/Catalogue.jsx` | État, filtrage, tri, pagination, abonnement Realtime |
-| `Catalogue/catalogueFilters.js` | Traduction URL ↔ filtres (fonctions pures) |
-| `Catalogue/CatalogueToolbar.jsx` | Recherche et menu de tri |
-| `Catalogue/CatalogueGrid.jsx` | Grille de résultats et ses quatre états d'affichage |
-| `VehicleDetail/VehicleDetail.jsx` | Fiche véhicule par slug + choix des équipements |
-| `Reservation/Reservation.jsx` | Formulaire de demande, `POST /api/reservations` |
-| `Contact/Contact.jsx` | Formulaire de contact |
-| `Login/Login.jsx` | Connexion |
-| `Register/Register.jsx` | Inscription |
-| `ForgotPassword/ForgotPassword.jsx` | Demande de réinitialisation du mot de passe |
-| `ResetPassword/ResetPassword.jsx` | Saisie du nouveau mot de passe (événement `PASSWORD_RECOVERY`) |
-| `Dashboard/Dashboard.jsx` | Espace client : réservations et profil |
-| `MentionsLegales/MentionsLegales.jsx` | Mentions légales (page statique) |
-| `NotFound/NotFound.jsx` | Page 404 |
-| `admin/AdminDashboard/` | 4 KPIs + 2 graphiques, depuis `/api/admin/stats` |
-| `admin/AdminVehicles/` | CRUD véhicules |
-| `admin/AdminReservations/` | Filtre et changement de statut des réservations |
-| `admin/AdminUsers/` | Gestion des comptes clients |
-| `admin/AdminEquipements/` | CRUD du catalogue d'équipements |
-
-**`src/components/` — un dossier par composant**
-
-| Fichier | Rôle |
-|---|---|
-| `Navbar/` | Navigation principale, lien Admin conditionné à `isAdmin` |
-| `Footer/` | Pied de page global |
-| `ProtectedRoute/` | Garde-barrière des routes privées (confort d'interface, pas sécurité) |
-| `ErrorBoundary/` | Capture les erreurs de rendu et affiche un écran de repli |
-| `Pagination/` | Pagination réutilisable avec troncature en « … » |
-| `Filters/` | Panneau de filtres du catalogue |
-| `VehicleCard/` | Carte véhicule du catalogue |
-| `ConfirmModal/` | Confirmation avant action destructive |
-| `AdminSidebar/` · `AdminPageHeader/` | Navigation et en-tête des pages d'administration |
-| `AdminVehicleCard/` · `AdminVehicleModal/` | Ligne véhicule et formulaire du back-office |
-| `AdminCharts/VehicleStatusChart.jsx` | Anneau Chart.js — véhicules par statut |
-| `AdminCharts/ReservationStatusChart.jsx` | Barres Chart.js — réservations par statut |
-| `DashboardSidebar/` | Colonne gauche de l'espace client |
-| `DashboardReservations/` | Liste des réservations du client + annulation |
-| `DashboardProfile/` | Modification du profil et du mot de passe |
-| `ReservationBreadcrumb/` | Fil d'Ariane de la réservation |
-| `ReservationVehiclePanel/` | Rappel du véhicule choisi |
-| `ReservationForm/` | Formulaire de demande (message, date, équipements) |
-| `ReservationSuccess/` | Écran de confirmation après envoi |
+L'arborescence commentée de chaque côté est en tête de [docs/back/](docs/back/README.md#arborescence-commentée)
+et de [docs/front/](docs/front/README.md#arborescence-commentée).
 
 ## Tests
 

@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Aide révision - Authentification</title>
+<style>
+  :root {
+    --paper:#ffffff; --surface:#faf8f7; --ink:#131010; --muted:#6d6360; --rule:#e9e3e1;
+    --supa:#0b7f57; --supa-soft:#e8f5ef; --mine:#d1000b; --mine-soft:#fdecec;
+    --warn:#8a6100; --warn-soft:#fdf5e3;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:#131110; --surface:#1c1917; --ink:#f3efed; --muted:#a29995; --rule:#2e2825;
+      --supa:#3fd39a; --supa-soft:#10261e; --mine:#ff5f52; --mine-soft:#2b1413;
+      --warn:#e8b545; --warn-soft:#291f0d;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper); color: var(--ink);
+    font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    line-height: 1.6; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 40px 22px 90px; display: flex; flex-direction: column; gap: 54px; }
+
+  code {
+    font-family: Consolas, "SF Mono", Menlo, monospace; font-size: 0.88em;
+    background: var(--surface); border: 1px solid var(--rule); padding: 1px 5px; border-radius: 3px;
+  }
+  .s { color: var(--supa); font-weight: 700; }
+  .m { color: var(--mine); font-weight: 700; }
+
+  header { display: flex; flex-direction: column; gap: 14px; }
+  .eyebrow { font-size: 11px; letter-spacing: 3.5px; text-transform: uppercase; color: var(--mine); font-weight: 700; }
+  h1 { font-size: clamp(28px,6vw,42px); font-weight: 700; letter-spacing: -1.2px; line-height: 1.1; margin: 0; }
+  .thesis { font-size: clamp(17px,3.4vw,21px); line-height: 1.5; border-left: 4px solid var(--mine); padding: 4px 0 4px 18px; margin: 0; }
+  .legend { display: flex; flex-wrap: wrap; gap: 10px; font-size: 13px; color: var(--muted); }
+  .chip { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--rule); border-radius: 100px; padding: 4px 13px; background: var(--surface); }
+  .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .dot.s { background: var(--supa); } .dot.m { background: var(--mine); }
+
+  section { display: flex; flex-direction: column; gap: 18px; }
+  h2 {
+    font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted);
+    font-weight: 700; margin: 0; padding-bottom: 10px; border-bottom: 1px solid var(--rule);
+  }
+  h2.hot { color: var(--mine); border-bottom-color: var(--mine); font-size: 13px; }
+  .lead { margin: 0; font-size: 15.5px; }
+
+  .scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 14.5px; min-width: 440px; }
+  th, td { padding: 10px 12px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--rule); }
+  thead th { font-size: 11px; letter-spacing: 1.6px; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+  tbody th { font-weight: 600; color: var(--muted); font-size: 13.5px; width: 28%; }
+  th.col-s { color: var(--supa); } th.col-m { color: var(--mine); }
+  td.cell-s { background: var(--supa-soft); } td.cell-m { background: var(--mine-soft); }
+
+  .six { display: flex; flex-direction: column; gap: 22px; }
+  .main-card { border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; background: var(--surface); }
+  .main-card > .q {
+    display: flex; gap: 14px; align-items: baseline; padding: 15px 18px;
+    background: var(--paper); border-bottom: 1px solid var(--rule);
+  }
+  .main-card > .q .n { font-size: 22px; font-weight: 700; color: var(--mine); line-height: 1; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+  .main-card > .q .t { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+  .a { padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; }
+  .a > p { margin: 0; }
+  .say { font-size: 15.5px; line-height: 1.62; }
+  .say::before { content: "\00AB\00A0"; color: var(--muted); }
+  .say::after { content: "\00A0\00BB"; color: var(--muted); }
+  .then { font-size: 14px; color: var(--muted); border-left: 2px solid var(--rule); padding-left: 12px; }
+  .then b { color: var(--ink); }
+  .then .h { color: var(--mine); font-weight: 700; }
+
+  .qa { display: flex; flex-direction: column; gap: 12px; }
+  .card { border: 1px solid var(--rule); border-radius: 8px; background: var(--surface); overflow: hidden; }
+  .card .q { display: flex; gap: 11px; align-items: baseline; padding: 12px 15px; background: var(--paper); border-bottom: 1px solid var(--rule); }
+  .card .q .t { font-weight: 600; font-size: 15px; }
+  .card .q .n { font-size: 11px; font-weight: 700; color: var(--mine); letter-spacing: 1px; flex-shrink: 0; }
+
+  .snip { border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; background: var(--paper); }
+  .snip .file {
+    font-family: Consolas, "SF Mono", Menlo, monospace; font-size: 11.5px; color: var(--muted);
+    padding: 7px 12px; background: var(--surface); border-bottom: 1px solid var(--rule);
+    display: flex; justify-content: space-between; gap: 12px;
+  }
+  .snip .file .tag { color: var(--mine); font-weight: 700; letter-spacing: 1px; text-transform: uppercase; font-size: 10px; white-space: nowrap; }
+  .snip pre { margin: 0; padding: 12px 14px; overflow-x: auto; font-family: Consolas,"SF Mono",Menlo,monospace; font-size: 12.5px; line-height: 1.6; }
+  .snip .cm { color: var(--muted); }
+  .snip .key { color: var(--mine); font-weight: 700; }
+  .snip .ok { color: var(--supa); font-weight: 700; }
+
+  .box { border: 1px solid var(--rule); border-left: 4px solid var(--warn); background: var(--warn-soft); border-radius: 0 6px 6px 0; padding: 13px 16px; font-size: 14.5px; }
+  .box.hard { border-left-color: var(--mine); background: var(--mine-soft); }
+  .box p { margin: 0 0 8px; } .box p:last-child { margin: 0; }
+  .box .lab { display: block; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; color: var(--warn); margin-bottom: 5px; }
+  .box.hard .lab { color: var(--mine); }
+
+  .defs { display: grid; gap: 12px; }
+  @media (min-width: 660px) { .defs { grid-template-columns: 1fr 1fr; } }
+  .def { border: 1px solid var(--rule); border-radius: 8px; padding: 14px 16px; background: var(--surface); display: flex; flex-direction: column; gap: 7px; }
+  .def .w { font-size: 16px; font-weight: 700; }
+  .def .d { font-size: 14.5px; }
+  .def .x { font-size: 13.5px; color: var(--muted); }
+
+  pre.diagram {
+    margin: 0; padding: 16px; overflow-x: auto; background: var(--surface);
+    border: 1px solid var(--rule); border-radius: 8px; font-size: 12.5px; line-height: 1.65;
+    font-family: Consolas, "SF Mono", Menlo, monospace;
+  }
+
+  .chain { display: flex; flex-wrap: wrap; align-items: stretch; gap: 10px; }
+  .link { flex: 1 1 180px; border: 1px solid var(--rule); border-radius: 8px; background: var(--surface); padding: 13px 15px; display: flex; flex-direction: column; gap: 4px; }
+  .link .k { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--mine); font-weight: 700; }
+  .link .v { font-size: 15px; font-weight: 600; }
+  .link .n { font-size: 13.5px; color: var(--muted); }
+
+  ol.traps, ul.plain { margin: 0; padding-left: 21px; display: flex; flex-direction: column; gap: 11px; font-size: 15px; }
+  ol.traps b { color: var(--mine); }
+
+  footer { border-top: 1px solid var(--rule); padding-top: 18px; font-size: 13.5px; color: var(--muted); text-align: center; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Eclipse Auto / soutenance</div>
+    <h1>Aide révision : authentification</h1>
+    <p class="thesis"><span class="s">Supabase</span> me dit <b>qui</b> c'est.<br /><span class="m">Mon serveur</span> décide <b>ce qu'il a le droit de faire</b>.</p>
+    <div class="legend">
+      <span class="chip"><span class="dot s"></span> Supabase : l'identité</span>
+      <span class="chip"><span class="dot m"></span> Mon serveur Express : les droits</span>
+    </div>
+  </header>
+
+  <!-- LES 6 QUESTIONS -->
+  <section>
+    <h2 class="hot">Les 6 questions, celles qui tombent</h2>
+    <div class="six">
+
+      <div class="main-card">
+        <div class="q"><span class="n">1</span><span class="t">Où et quand le token est-il créé ?</span></div>
+        <div class="a">
+          <p class="say">Chez <span class="s">Supabase</span>, jamais chez moi. Au moment où <b>Supabase a vérifié le mot de passe</b>, donc à la connexion, et aussi à l'inscription. Il le <b>signe</b> avec une clé que lui seul détient, et il est valable <b>1 heure</b>.</p>
+          <div class="snip">
+            <div class="file"><span>client/src/lib/auth.js</span><span class="tag">mon code</span></div>
+<pre><span class="cm">// Le mot de passe part direct chez Supabase, l'app ne le voit jamais.</span>
+export async function login(email, password) {
+  const { data, error } = await <span class="ok">supabase.auth.signInWithPassword</span>({ email, password })
+  if (error) throw error
+  return data
+}</pre>
+          </div>
+          <p class="then"><span class="h">La phrase qui compte.</span> <b>« Mon serveur n'est pas dans la boucle. »</b> Il ne voit le token qu'à la requête suivante. Aucune ligne de mon code ne participe à sa création.</p>
+          <p class="then"><span class="h">Si on pousse.</span> Il est aussi <b>recréé automatiquement vers 55 min</b>, à partir du <code>refresh_token</code>, sans que l'utilisateur retape quoi que ce soit.</p>
+        </div>
+      </div>
+
+      <div class="main-card">
+        <div class="q"><span class="n">2</span><span class="t">Comment et où est-il stocké ?</span></div>
+        <div class="a">
+          <p class="say">Dans le <code>localStorage</code> du navigateur. C'est la librairie <code>supabase-js</code> qui l'y écrit, <b>ce n'est pas mon code</b>. Et <b>côté serveur, nulle part</b> : aucune table de sessions. Le token arrive, sert, et il est oublié.</p>
+          <p class="say">Il y a en fait <b>deux jetons</b>. L'<code>access_token</code>, valable 1 h, est celui que j'envoie à mon API. Le <code>refresh_token</code> reste dans le navigateur, <b>n'est jamais envoyé à mon serveur</b>, et sert uniquement à obtenir un nouvel access_token.</p>
+          <div class="snip">
+            <div class="file"><span>client, à chaque appel protégé</span><span class="tag">mon code</span></div>
+<pre><span class="cm">// getSession() est rappelé juste avant chaque fetch, jamais gardé dans un useState :</span>
+<span class="cm">// un token mis en mémoire serait périmé au bout d'une heure.</span>
+const { data: { session } } = await <span class="ok">supabase.auth.getSession()</span>
+const res = await fetch(`/api/reservations/${id}/cancel`, {
+  method: 'PATCH',
+  headers: { <span class="key">'Authorization': `Bearer ${session?.access_token}`</span> },
+})</pre>
+          </div>
+          <p class="then"><span class="h">Le détail qui fait sérieux.</span> Expliquer <b>pourquoi</b> <code>getSession()</code> est rappelé à chaque fois plutôt que stocké dans un état React : parce qu'un token gardé en mémoire serait périmé au bout d'une heure.</p>
+          <div class="box">
+            <span class="lab">Slide 17, à placer soi-même, une fois</span>
+            <p>Un point d'honnêteté : mon dossier écrit que le token vit en mémoire. En relisant mon code pour cet oral, j'ai vérifié, il est dans le <code>localStorage</code>, c'est le défaut de la librairie Supabase. Ça ne change rien à mon raisonnement CSRF, qui tient au fait qu'il n'est pas dans un cookie. Ça change l'exposition au XSS, d'où le cookie <code>httpOnly</code> en tête de mes améliorations.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="main-card">
+        <div class="q"><span class="n">3</span><span class="t">Comment est-il vérifié ?</span></div>
+        <div class="a">
+          <p class="say">Mon middleware extrait le token de l'en-tête <code>Authorization: Bearer</code>, puis appelle <code>supabase.auth.getUser()</code>. <b>C'est Supabase qui valide la signature et l'expiration.</b> Je n'ai pas la clé, donc je <b>délègue</b> la vérification. Si ça échoue : <b>401</b>. Et ce n'est qu'après cette réponse que je fais confiance à <code>req.user</code>.</p>
+          <div class="snip">
+            <div class="file"><span>server/middleware/auth.js</span><span class="tag">mon code</span></div>
+<pre><span class="cm">// Extrait le token de « Authorization: Bearer &lt;token&gt; ».</span>
+function getTokenFromHeader(req) {
+  const header = req.headers.authorization
+  if (!header || !header.startsWith('Bearer ')) return null
+  return header.split(' ')[1]
+}
+
+<span class="cm">// C'est Supabase qui vérifie la signature et l'expiration.</span>
+async function verifyToken(token) {
+  const { data: { user }, error } = await <span class="ok">supabase.auth.getUser(token)</span>
+  if (error || !user) return { error: 'Token invalide ou expiré.' }
+  return { user }
+}
+
+async function requireAuth(req, res, next) {
+  const { user, error } = await verifyToken(getTokenFromHeader(req))
+  if (error) return res.<span class="key">status(401)</span>.json({ error })
+  req.user = user
+  next()
+}</pre>
+          </div>
+          <p class="then"><span class="h">Ne surtout pas dire</span> « je vérifie la signature avec la clé publique ». <b>Ce serait faux</b> : je délègue à Supabase.</p>
+          <p class="then"><span class="h">Si on pousse (« ça fait un appel réseau à chaque requête ? »).</span> <b>« Oui. La contrepartie, c'est que je ne fais pas aveuglément confiance à un token non expiré. Vérifier la signature en local serait plus rapide, c'est une optimisation identifiée. »</b></p>
+        </div>
+      </div>
+
+      <div class="main-card">
+        <div class="q"><span class="n">4</span><span class="t">Où est-il vérifié ?</span></div>
+        <div class="a">
+          <p class="say"><b>Côté serveur</b>, dans un middleware placé <b>entre la route et le contrôleur</b>. Il est déclaré dans la définition même de la route : si la vérification échoue, <b>le contrôleur n'est jamais atteint</b>.</p>
+          <div class="snip">
+            <div class="file"><span>server/routes/reservations.js</span><span class="tag">mon code</span></div>
+<pre>router.get('/',             <span class="key">requireAuth</span>,  reservationController.listMine)
+router.post('/',            <span class="key">requireAuth</span>,  reservationController.create)
+router.patch('/:id/cancel', <span class="key">requireAuth</span>,  reservationController.cancel)
+
+router.get('/all',          <span class="key">requireAdmin</span>, reservationController.listAll)
+router.patch('/:id/status', <span class="key">requireAdmin</span>, reservationController.updateStatus)</pre>
+          </div>
+          <p class="then"><span class="h">Le point fort.</span> <b>« La protection n'est pas dans le contrôleur, elle est sur la route. »</b> On lit la sécurité d'une route sur une seule ligne, sans ouvrir le contrôleur.</p>
+          <p class="then"><span class="h">Et les routes sans middleware ?</span> <b>« Le catalogue est public, c'est volontaire : </b><code>router.get('/', vehicleController.list)</code><b>. Un visiteur doit pouvoir voir les véhicules sans compte. »</b></p>
+          <div class="box hard">
+            <span class="lab">Les deux moitiés de la réponse</span>
+            <p><b>1. Jamais côté front.</b> Le front cache les boutons, il ne protège rien : on peut appeler l'API directement avec Postman.</p>
+            <p><b>2. Et une deuxième couche dans la base : la RLS.</b> Même en contournant entièrement mon serveur, la base refuserait.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="main-card">
+        <div class="q"><span class="n">5</span><span class="t">Comment est gérée la déconnexion ?</span></div>
+        <div class="a">
+          <p class="say">J'appelle <code>supabase.auth.signOut()</code>. Ça <b>efface la session du <code>localStorage</code></b> et ça <b>coupe le renouvellement automatique</b> : sans <code>refresh_token</code>, plus aucun nouveau token ne sera émis.</p>
+          <p class="say"><b><span class="m">Mon serveur</span>, lui, n'a rien à faire.</b> Il n'a rien à effacer, puisqu'il ne stocke aucune session. C'est la conséquence directe du sans-état.</p>
+          <div class="snip">
+            <div class="file"><span>client/src/lib/auth.js</span><span class="tag">mon code</span></div>
+<pre>export async function logout() {
+  const { error } = await <span class="ok">supabase.auth.signOut()</span>
+  if (error) throw error
+}</pre>
+          </div>
+          <p class="then"><span class="h">L'aveu à assumer, il va venir.</span> <b>« Un access_token déjà émis reste valable jusqu'à son expiration, 1 h au maximum. Je ne peux pas le révoquer : c'est la contrepartie assumée du sans-état. Ce que la déconnexion coupe, c'est le renouvellement. »</b></p>
+          <div class="box">
+            <span class="lab">Ne pas s'aventurer plus loin</span>
+            <p>Ne pas prétendre que la révocation est immédiate côté serveur, <b>ce n'est pas testé</b>. La réponse ci-dessus est exacte et suffit. Si on insiste : <b>« pour une révocation immédiate, il faudrait une liste de tokens révoqués côté serveur, et je perdrais le sans-état. C'est l'arbitrage. »</b></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="main-card">
+        <div class="q"><span class="n">6</span><span class="t">Comment est géré le hash du mot de passe ?</span></div>
+        <div class="a">
+          <p class="say"><b>Pas par moi</b>, et c'est le point. Il n'y a <b>aucun mot de passe et aucun hash dans ma base</b> : ils sont dans <code>auth.users</code>, le schéma géré par <span class="s">Supabase</span>. Supabase les hashe avec <b>bcrypt</b>.</p>
+          <p class="say">Un hash, ce n'est pas un chiffrement : <b>on ne peut pas revenir en arrière</b>. À la connexion, Supabase hashe le mot de passe reçu et <b>compare les deux empreintes</b>, il ne déchiffre jamais rien. Et bcrypt est <b>lent et salé par conception</b> : le sel empêche les tables pré-calculées, la lenteur rend le test de millions de mots de passe trop coûteux.</p>
+          <p class="then"><span class="h">La chute.</span> <b>« Refaire ça soi-même, c'est le refaire mal. »</b></p>
+          <p class="then"><span class="h">Et la preuve, en 4 lignes.</span> Ma fonction <code>login()</code> passe <code>password</code> directement à Supabase. <b>Il ne traverse jamais mon code</b> : aucun mot de passe dans ma base, aucun dans mes logs. Pas parce que je fais attention, parce qu'il n'y en a jamais eu.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- LES DEUX SERVEURS -->
+  <section>
+    <h2>Le socle : les deux serveurs</h2>
+    <div class="scroll">
+      <table>
+        <thead><tr><th></th><th class="col-s">Supabase</th><th class="col-m">Mon serveur (Express)</th></tr></thead>
+        <tbody>
+          <tr><th>Sa question</th><td class="cell-s">« Qui es-tu ? »</td><td class="cell-m">« Qu'as-tu le droit de faire ? »</td></tr>
+          <tr><th>Le mot de passe</th><td class="cell-s">il le voit, <b>lui seul</b></td><td class="cell-m">il ne le voit <b>jamais</b></td></tr>
+          <tr><th>Le token</th><td class="cell-s">il le <b>SIGNE</b></td><td class="cell-m">il le fait <b>VÉRIFIER</b></td></tr>
+          <tr><th>La clé de signature</th><td class="cell-s">il l'a</td><td class="cell-m">il ne l'a pas, moi non plus</td></tr>
+          <tr><th>Il intervient</th><td class="cell-s">inscription (1) et connexion (2)</td><td class="cell-m">toutes les autres requêtes (3)</td></tr>
+          <tr><th>Ce qu'il stocke</th><td class="cell-s"><code>auth.users</code>, hash bcrypt, sessions</td><td class="cell-m"><b>rien</b>, stateless</td></tr>
+          <tr><th>Il refuse quand</th><td class="cell-s">mauvais mot de passe, aucun token émis</td><td class="cell-m">token invalide : <b>401</b><br />pas à toi : <b>403</b></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <pre class="diagram">(1)  INSCRIPTION  (une fois)
+
+     NAVIGATEUR --- email + mot de passe --&gt; SUPABASE ---&gt; auth.users
+                                                              |
+        mon serveur : ABSENT                             TRIGGER
+                                                              v
+                                                           profiles
+
+
+(2)  CONNEXION  (à chaque retour)
+
+     NAVIGATEUR --- mot de passe ---------&gt; SUPABASE   il vérifie, puis il SIGNE
+                &lt;-- preuve signée ---------           valable 1 h
+
+        mon serveur : ABSENT
+
+
+(3)  TOUT LE RESTE  (des centaines de fois)
+
+     NAVIGATEUR --- la preuve ---&gt; MON SERVEUR ---&gt; vehicles / reservations
+                                   (Express)        il vérifie, puis il décide</pre>
+    <div class="box">
+      <span class="lab">Le repère</span>
+      <p><span class="m">Mon serveur</span> et <b>le mot de passe</b> ne sont jamais dans la même colonne. Si les deux apparaissent dans la même phrase, il y a un mélange.</p>
+    </div>
+  </section>
+
+  <!-- LES 4 MOTS -->
+  <section>
+    <h2>Les 4 mots</h2>
+    <div class="defs">
+      <div class="def">
+        <span class="w">JWT</span>
+        <span class="d">Une preuve signée. Lisible par tous, infalsifiable par tous.</span>
+        <span class="x"><b>Signé n'est pas chiffré.</b> Un caractère modifié et la signature est morte. Donc jamais rien de confidentiel dedans.</span>
+      </div>
+      <div class="def">
+        <span class="w">Trigger</span>
+        <span class="d">Une consigne posée sur une table : « chaque fois qu'il se passe X ici, fais Y ». C'est la base qui l'exécute, seule.</span>
+        <span class="x">Se déclenche <b>quoi qu'il arrive</b>, peu importe par où la donnée entre.</span>
+      </div>
+      <div class="def">
+        <span class="w">RLS</span>
+        <span class="d">Des règles dans la base qui décident, ligne par ligne, qui lit ou écrit quoi.</span>
+        <span class="x">Ma <b>deuxième couche</b> : même en contournant <span class="m">mon serveur</span>, la base refuserait.</span>
+      </div>
+      <div class="def">
+        <span class="w">Stateless</span>
+        <span class="d"><span class="m">Mon serveur</span> ne garde aucune trace d'une requête à l'autre.</span>
+        <span class="x">Il en reçoit des centaines, c'est la <b>mémoire</b> qu'il ne garde pas. D'où le token à chaque fois.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- REST -->
+  <section>
+    <h2>REST et le sans-état, c'est la même chose</h2>
+    <p class="lead">Mes slides disent « API REST », ma fiche dit « stateless ». <b>Ce n'est pas une contradiction : le sans-état est l'une des contraintes fondatrices de REST.</b></p>
+    <div class="chain">
+      <div class="link"><span class="k">parce que</span><span class="v">Mon API est REST</span><span class="n">une architecture, pas juste des verbes HTTP</span></div>
+      <div class="link"><span class="k">donc</span><span class="v">Elle est sans état</span><span class="n">le serveur ne garde rien entre deux requêtes</span></div>
+      <div class="link"><span class="k">donc</span><span class="v">Chaque requête porte son token</span><span class="n">elle doit se re-présenter toute seule</span></div>
+    </div>
+    <div class="box hard">
+      <span class="lab">Ne pas fusionner ces deux questions</span>
+      <p><b>Pourquoi le navigateur parle directement à <span class="s">Supabase</span> ?</b> Pour que le mot de passe ne traverse jamais mon code. <i>Séparation des métiers.</i></p>
+      <p><b>Pourquoi chaque requête porte un token ?</b> Parce que mon API est stateless. <i>Contrainte REST.</i></p>
+      <p>Le test : je <b>pourrais</b> faire passer la connexion par Express, mon API resterait parfaitement stateless. Ce serait juste une mauvaise idée. Donc le sans-état <b>n'oblige pas</b> le navigateur à parler à Supabase.</p>
+    </div>
+  </section>
+
+  <!-- LA BASE -->
+  <section>
+    <h2>Une seule base, deux schémas</h2>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Schéma</th><th>Contient</th><th>Géré par</th></tr></thead>
+        <tbody>
+          <tr><td><code>auth</code></td><td><code>auth.users</code>, les comptes et les hash bcrypt</td><td class="cell-s"><span class="s">Supabase</span>, lecture seule au dashboard</td></tr>
+          <tr><td><code>public</code></td><td><code>profiles</code>, <code>vehicles</code>, <code>reservations</code>, <code>equipements</code></td><td class="cell-m"><span class="m">moi</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="box hard">
+      <span class="lab">Ne pas se tromper là-dessus</span>
+      <p>Ce ne sont <b>pas deux bases de données</b>, ce sont deux tiroirs du même meuble. La preuve : <code>profiles.id</code> pointe vers <code>auth.users.id</code>, et une clé étrangère ne peut pas relier deux bases séparées. C'est aussi ce qui rend le trigger possible : <b>un trigger ne traverse jamais deux bases.</b></p>
+    </div>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Trigger</th><th>Table</th><th>Événement</th><th>Fonction</th></tr></thead>
+        <tbody>
+          <tr><td><code>on_auth_user_created</code></td><td><code>auth.users</code></td><td>AFTER <b>INSERT</b></td><td><code>handle_new_user</code></td></tr>
+          <tr><td><code>on_reservation_status_change</code></td><td><code>reservations</code></td><td>AFTER <b>UPDATE</b></td><td><code>sync_vehicle_status</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="lead" style="color:var(--muted);font-size:14.5px">Le <b>trigger</b> dit <i>quand</i>, la <b>fonction</b> dit <i>quoi faire</i>, d'où les deux noms. Les deux sont <b>FOR EACH ROW</b>. L'un se déclenche quand quelque chose <b>naît</b>, l'autre quand quelque chose <b>change</b>.</p>
+  </section>
+
+  <!-- BONUS -->
+  <section>
+    <h2>Si on pousse plus loin</h2>
+    <div class="qa">
+
+      <div class="card">
+        <div class="q"><span class="n">+</span><span class="t">Je peux lire le contenu du token !</span></div>
+        <div class="a">
+          <p class="say">Oui, c'est <b>signé, pas chiffré</b>, et c'est volontaire. La signature ne sert pas à cacher, elle sert à garantir que personne n'a triché avec le contenu. Je n'y mets donc rien de confidentiel : un identifiant et un rôle.</p>
+          <p class="then">L'image : <b>une carte d'identité.</b> Tout le monde peut la lire. Personne ne peut en fabriquer une.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="q"><span class="n">+</span><span class="t">Je remplace <code>role: client</code> par <code>role: admin</code></span></div>
+        <div class="a">
+          <p class="say">La <b>signature ne colle plus</b>, Supabase rejette le token, c'est 401. Et en amont, le rôle est dans <code>app_metadata</code>, <b>que l'utilisateur ne peut pas modifier lui-même</b>, contrairement à <code>user_metadata</code> où je ne mets que le prénom et le nom.</p>
+          <div class="snip">
+            <div class="file"><span>server/middleware/auth.js</span><span class="tag">mon code</span></div>
+<pre>  <span class="cm">// 401 = je ne sais pas qui tu es.</span>
+  if (error) return res.<span class="key">status(401)</span>.json({ error })
+
+  <span class="cm">// 403 = je le sais, mais tu n'as pas le droit.</span>
+  if (<span class="ok">user.app_metadata?.role</span> !== 'admin') {
+    return res.<span class="key">status(403)</span>.json({ error: 'Accès réservé aux administrateurs.' })
+  }</pre>
+          </div>
+          <p class="then">Les deux codes sont <b>à trois lignes d'écart dans la même fonction</b>. Pour expliquer 401 contre 403, montrer ça.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="q"><span class="n">+</span><span class="t">J'annule la réservation d'un autre client ?</span></div>
+        <div class="a">
+          <p class="say">Non. Le <code>client_id</code> vient <b>toujours du token</b>, jamais du corps de la requête. Le client ne choisit jamais au nom de qui il agit.</p>
+          <div class="snip">
+            <div class="file"><span>server/controllers/reservationController.js</span><span class="tag">création et annulation</span></div>
+<pre><span class="cm">// A la création : client_id vient du token, jamais de req.body.</span>
+await reservationModel.create({ vehicle_id, <span class="ok">client_id: req.user.id</span>, status: 'pending' })
+
+<span class="cm">// A l'annulation : sans ce test, n'importe qui pourrait annuler</span>
+<span class="cm">// la réservation d'un autre. Etre connecté ne suffit pas.</span>
+if (<span class="ok">reservation.client_id !== req.user.id</span>) return res.<span class="key">status(403)</span>.json({ error: 'Accès refusé.' })</pre>
+          </div>
+          <p class="then">Deux protections différentes : à la <b>création</b> il ne peut pas <i>choisir</i> son identité, à l'<b>annulation</b> on vérifie qu'elle lui appartient. Le nom <b>à la fin</b> : « c'est la faille qu'on appelle IDOR, elle est couverte par un test. »</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="q"><span class="n">+</span><span class="t">Si on vole le token ?</span></div>
+        <div class="a">
+          <p class="say">Il agit comme la victime, <b>pendant 1 h maximum</b>. Mais il ne peut ni en déduire le mot de passe, ni en fabriquer un autre. Et il n'a que l'<code>access_token</code>, le <code>refresh_token</code> n'est jamais envoyé à mon API.</p>
+          <p class="then">Reprendre la main : <b>« d'où le cookie httpOnly en tête de mes améliorations. »</b></p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="q"><span class="n">+</span><span class="t">Votre clé Supabase est publique !</span></div>
+        <div class="a">
+          <p class="say">Oui, <b>par conception</b>. Elle ne dit pas « tu es admin », elle dit « tu es un client légitime de ce projet ». C'est une adresse, pas une autorisation. Et même en appelant Supabase directement avec, <b>la base refuserait</b> : les règles sont dans la base, ligne par ligne.</p>
+          <p class="then">Le nom à la fin : <b>« ça s'appelle la RLS, c'est ma deuxième couche. »</b></p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="q"><span class="n">+</span><span class="t">Qui crée le profil à l'inscription ?</span></div>
+        <div class="a">
+          <p class="say"><span class="m">Mon serveur</span> n'est pas là à l'inscription, <b>aucune ligne de mon code ne peut le créer</b>. La base le fait seule : <code>on_auth_user_created</code> appelle <code>handle_new_user</code>, dans la <b>même transaction</b>.</p>
+          <p class="then">Le trajet : j'envoie le prénom dans <code>user_metadata</code> à l'inscription, Supabase crée le compte, puis <b>le trigger le recopie dans <code>profiles</code></b>.</p>
+          <p class="then">Sur <code>SECURITY DEFINER</code> : <b>« l'utilisateur vient d'être créé, il n'est pas encore pleinement authentifié, il n'aurait pas le droit d'écrire dans <code>profiles</code>. La fonction s'exécute avec les droits du propriétaire. »</b></p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="q"><span class="n">+</span><span class="t">C'est quoi, une API REST ?</span></div>
+        <div class="a">
+          <p class="say">Une architecture, pas seulement des verbes HTTP.</p>
+          <ul class="plain">
+            <li><b>Client-serveur</b> : le front et l'API sont séparés</li>
+            <li><b>Sans état</b> : chaque requête est autonome, elle porte tout ce qu'il faut</li>
+            <li><b>Des ressources identifiées par des URL</b> : <code>/vehicles</code>, <code>/reservations</code></li>
+            <li><b>Des verbes qui disent l'intention</b> : GET, POST, PUT, DELETE</li>
+            <li><b>Des codes qui disent le résultat</b> : 200, 401, 403, 404</li>
+          </ul>
+          <p class="then">Ne pas réciter les cinq. Les <b>deux premiers</b> suffisent, et le deuxième explique toute mon authentification.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- PIEGES -->
+  <section>
+    <h2>Mes 3 pièges</h2>
+    <ol class="traps">
+      <li><b>Ne jamais dire « le serveur ».</b> Il y en a deux. Dire <span class="s">Supabase</span> ou <span class="m">mon serveur</span>. Et pas « mon serveur Supabase », ça recolle les deux.</li>
+      <li><b>Toujours ajouter la phrase d'après.</b> Mes conclusions sont bonnes, c'est le <i>donc</i> qui manque. « Il voit la preuve » appelle « <b>et jamais le mot de passe</b> ». C'est la deuxième moitié qui prouve que j'ai compris.</li>
+      <li><b>Le problème d'abord, le mot technique après.</b> Expliquer le mécanisme, puis lâcher le nom : IDOR, RLS, stateless. Le nom seul ressemble à une récitation.</li>
+    </ol>
+    <div class="box hard">
+      <span class="lab">Et surtout</span>
+      <p>Ne jamais dire <b>« je sais pas »</b> sec. Dire <b>« je réfléchis à voix haute »</b> et partir de ce que je sais. Un jury note le raisonnement, pas la récitation. Une réponse partielle construite à voix haute vaut dix fois un blanc.</p>
+    </div>
+  </section>
+
+  <footer>Eclipse Auto, soutenance du 6 août 2026</footer>
+
+</div>
+
+</body>
+</html>

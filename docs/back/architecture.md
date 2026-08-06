@@ -1,13 +1,6 @@
-← [Back](../README.md)
+← [Back](README.md)
 
 # Architecture — les 4 couches
-
-| Page | Contenu |
-|---|---|
-| **Cette page** | Les 4 couches, le trajet d'une requête, les familles de routes |
-| [demarrage.md](demarrage.md) | `app.js`, `index.js`, variables d'environnement, commandes |
-
----
 
 ## Le principe : 4 couches, toujours dans le même ordre
 
@@ -61,4 +54,51 @@ connecté pourrait annuler la réservation de quelqu'un d'autre en devinant un U
 | `/api/health` | `routes/health.js` | public — sert à vérifier que l'API répond |
 
 Le détail de chaque route (body attendu, réponses, codes d'erreur) est dans
-[../../ENDPOINTS.md](../../ENDPOINTS.md).
+[../ENDPOINTS.md](../ENDPOINTS.md).
+
+## Ce que fait `app.js`, dans l'ordre
+
+1. **Helmet + CSP personnalisée** — en-têtes de sécurité. La CSP est construite par
+   `buildCspDirectives()` pour autoriser explicitement l'origine Supabase en `connect-src`
+   et `img-src`. Sans ça, en production, **tous** les appels du navigateur vers Supabase
+   sont bloqués (voir [securite.md](securite.md#la-csp-content-security-policy--le-piège-de-production)).
+2. **`setupMiddleware(app)`** — compression gzip, CORS limité à `CLIENT_URL`, logs morgan,
+   parsing du JSON.
+3. **`app.use('/api', apiRouter)`** — les routes de l'API.
+4. **404 JSON pour `/api/*` inconnu** — sinon une URL d'API mal orthographiée renverrait
+   le HTML du site, très pénible à déboguer.
+5. **Fichiers statiques** — en production, Express sert le build React (`client/dist`)
+   avec un cache d'un an, et renvoie `index.html` pour toute autre URL (c'est ce qui fait
+   marcher les URLs du routeur React en accès direct).
+6. **Gestionnaire d'erreurs global** — en production, le message d'erreur réel est masqué
+   et remplacé par « Erreur interne du serveur. », pour ne pas fuiter d'infos techniques.
+
+`app.js` exporte l'application **sans appeler `listen()`** : c'est ce qui permet aux tests
+Supertest de l'utiliser directement, sans ouvrir de port.
+
+## Variables d'environnement
+
+`index.js` refuse de démarrer si l'une de ces variables manque (`process.exit(1)`) :
+
+| Variable | Rôle |
+|---|---|
+| `SUPABASE_URL` | URL du projet Supabase |
+| `SUPABASE_SERVICE_ROLE_KEY` | Clé admin — **jamais** exposée au navigateur |
+| `GMAIL_USER` | Compte Gmail émetteur des emails |
+| `GMAIL_APP_PASSWORD` | Mot de passe d'application Gmail (pas le mot de passe du compte) |
+
+Optionnelles : `PORT` (défaut 3001), `CLIENT_URL` (origine CORS autorisée),
+`NODE_ENV`, `TRUST_PROXY`.
+
+Échouer au démarrage plutôt qu'au premier appel est volontaire : une variable oubliée
+se voit immédiatement, pas trois écrans plus loin. Le code de sortie `1` permet en plus à
+un gestionnaire de processus de voir que le service n'a pas démarré.
+
+## Commandes
+
+```bash
+cd server
+npm run dev     # node --watch index.js
+npm start       # node index.js
+npm test        # jest --coverage
+```

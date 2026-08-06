@@ -7,14 +7,15 @@ Express 5, en **CommonJS** (`require` / `module.exports`, pas d'`import`).
 
 ## Sommaire
 
-| Dossier | Contenu |
+| Page | Contenu |
 |---|---|
-| [architecture/](architecture/README.md) | Les 4 couches, le trajet d'une requête, les routes · [démarrage et config](architecture/demarrage.md) |
-| [supabase/](supabase/README.md) | Ce qu'est Supabase · [requêtes](supabase/requetes.md) · [schéma](supabase/schema.md) · [clés et RLS](supabase/cles-et-rls.md) · [Auth](supabase/auth.md) |
-| [securite/](securite/README.md) | JWT et middlewares · [validation](securite/validation.md) · [en-têtes HTTP](securite/entetes-http.md) |
-| [emails/](emails/README.md) | Nodemailer et les 2 emails · [rate limiting](emails/rate-limiting.md) · [gabarit HTML](emails/gabarit-html.md) |
+| [architecture.md](architecture.md) | Les 4 couches, le trajet d'une requête, les 6 familles de routes, le démarrage et la configuration |
+| [supabase.md](supabase.md) | Ce qu'est Supabase, les requêtes et les jointures, le schéma des tables, les deux clés et la RLS, Supabase Auth |
+| [securite.md](securite.md) | Les middlewares, 401 vs 403, le rôle admin, la validation des entrées, la CSP et les en-têtes HTTP |
+| [emails.md](emails.md) | Nodemailer et les deux emails, le rate limiting, le gabarit HTML |
 
-Référence des routes : [../ENDPOINTS.md](../ENDPOINTS.md).
+Référence des routes (body attendu, réponses, codes d'erreur) : [../ENDPOINTS.md](../ENDPOINTS.md).
+Le jeton lui-même — où il vit, ce qu'il contient : [../JWT.md](../JWT.md).
 
 ## Arborescence commentée
 
