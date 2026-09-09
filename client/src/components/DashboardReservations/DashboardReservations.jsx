@@ -1,7 +1,8 @@
-// Liste des réservations du client. `cancelling` évite le double-clic.
+// Liste des essais du client. `cancelling` évite le double-clic. Un essai n'affiche ni prix
+// ni options (c'est le rôle de la vente) ; un essai terminé propose de concrétiser l'achat.
 
 import { Link } from 'react-router-dom'
-import { RESERVATION_STATUS, optimizeImageUrl, formatPrice } from '@/lib/utils'
+import { RESERVATION_STATUS, optimizeImageUrl, toSlug } from '@/lib/utils'
 
 export default function DashboardReservations({ reservations, loading, cancelling, onCancel }) {
   return (
@@ -9,7 +10,7 @@ export default function DashboardReservations({ reservations, loading, cancellin
       <div className="dashboard-section-title">
         <div className="tag">Historique</div>
         <h2 className="section-title" style={{ fontSize: '32px', marginTop: '8px' }}>
-          Mes réservations
+          Mes essais
         </h2>
       </div>
 
@@ -21,7 +22,7 @@ export default function DashboardReservations({ reservations, loading, cancellin
 
       {!loading && reservations.length === 0 && (
         <div className="dashboard-empty">
-          <p>Vous n'avez pas encore de réservation.</p>
+          <p>Vous n'avez pas encore d'essai.</p>
           <Link to="/catalogue" className="btn-primary">
             Découvrir le catalogue
           </Link>
@@ -52,17 +53,18 @@ export default function DashboardReservations({ reservations, loading, cancellin
                     {r.vehicles?.model}
                   </span>
                 </div>
-                <div className="reservation-price">{formatPrice(r.vehicles?.price)}</div>
-                {r.equipements?.length > 0 && (
-                  <div className="reservation-message">
-                    Équipements : {r.equipements.map(eq => eq.nom).join(', ')}
+                {r.rdv_date && (
+                  <div className="reservation-date">
+                    {r.rdv_date_fin && r.rdv_date_fin !== r.rdv_date
+                      ? `Du ${new Date(r.rdv_date).toLocaleString('fr-FR')} au ${new Date(r.rdv_date_fin).toLocaleString('fr-FR')}`
+                      : `Créneau : ${new Date(r.rdv_date).toLocaleString('fr-FR')}`}
                   </div>
                 )}
                 {r.message && (
                   <div className="reservation-message">"{r.message}"</div>
                 )}
                 <div className="reservation-date">
-                  Réservé le {new Date(r.created_at).toLocaleDateString('fr-FR')}
+                  Demandé le {new Date(r.created_at).toLocaleDateString('fr-FR')}
                 </div>
               </div>
               <div className="reservation-actions">
@@ -78,6 +80,16 @@ export default function DashboardReservations({ reservations, loading, cancellin
                   >
                     {cancelling.has(r.id) ? '...' : 'Annuler'}
                   </button>
+                )}
+                {r.status === 'completed' && r.vehicles && (
+                  <Link
+                    to={`/achat/${toSlug(r.vehicles.brand, r.vehicles.model)}`}
+                    state={{ reservation_id: r.id }}
+                    className="btn-primary"
+                    style={{ padding: '8px 16px', fontSize: '11px' }}
+                  >
+                    Concrétiser la vente
+                  </Link>
                 )}
               </div>
             </div>

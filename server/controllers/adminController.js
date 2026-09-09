@@ -20,11 +20,32 @@ async function stats(req, res) {
     { count: pending },
     { count: confirmed },
     { count: clients },
+    { data: confirmedVentes },
+    { count: totalVentes },
   ] = results
+
+  const chiffreAffaires = confirmedVentes.reduce((sum, v) => sum + Number(v.prix_final), 0)
+  const nombreVentes = confirmedVentes.length
+  const panierMoyen = nombreVentes > 0 ? chiffreAffaires / nombreVentes : 0
+
+  // Regroupe le CA confirmé par mois (clé "YYYY-MM"), pour le graphique ventes/mois du
+  // dashboard. Basé sur created_at (date d'enregistrement de la vente), pas date_vente.
+  const parMois = {}
+  for (const v of confirmedVentes) {
+    const key = v.created_at.slice(0, 7)
+    parMois[key] = (parMois[key] || 0) + Number(v.prix_final)
+  }
 
   res.json({
     vehicles: { total: totalVehicles, available, reserved, sold },
     reservations: { total: totalReservations, pending, confirmed },
+    ventes: {
+      total: totalVentes,
+      confirmees: nombreVentes,
+      chiffreAffaires,
+      panierMoyen,
+      parMois,
+    },
     clients,
   })
 }

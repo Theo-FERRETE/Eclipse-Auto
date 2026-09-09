@@ -30,7 +30,7 @@ export default function Navbar() {
           </NavLink>
           {user && (
             <NavLink to="/dashboard" className={({ isActive }) => isActive ? 'active' : ''}>
-              Réservations
+              Mon espace
             </NavLink>
           )}
           <NavLink to="/contact" className={({ isActive }) => isActive ? 'active' : ''}>

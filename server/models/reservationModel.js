@@ -1,4 +1,4 @@
-// Requêtes des réservations, avec les équipements liés.
+// Requêtes des réservations (essais).
 
 const supabase = require('../supabase')
 
@@ -7,7 +7,7 @@ const supabase = require('../supabase')
 function findByClient(clientId) {
   return supabase
     .from('reservations')
-    .select('*, vehicles(brand, model, images, price), reservation_equipements(equipements(id, nom, prix_supplement))')
+    .select('*, vehicles(brand, model, images, price)')
     .eq('client_id', clientId)
     .order('created_at', { ascending: false })
 }
@@ -15,7 +15,7 @@ function findByClient(clientId) {
 function findAll({ status, limit, offset }) {
   let query = supabase
     .from('reservations')
-    .select('*, vehicles(brand, model, images, price), reservation_equipements(equipements(id, nom, prix_supplement))', { count: 'exact' })
+    .select('*, vehicles(brand, model, images, price)', { count: 'exact' })
     .order('created_at', { ascending: false })
 
   if (status) query = query.eq('status', status)
@@ -37,21 +37,29 @@ function create(reservation) {
   return supabase.from('reservations').insert(reservation).select().single()
 }
 
-function linkEquipements(reservationId, equipementIds) {
-  const rows = equipementIds.map(eid => ({ reservation_id: reservationId, equipement_id: eid }))
-  return supabase.from('reservation_equipements').insert(rows)
-}
-
 function findWithVehicleForEmail(id) {
   return supabase
     .from('reservations')
-    .select('client_id, rdv_date, vehicles(brand, model, year, price)')
+    .select('client_id, rdv_date, rdv_date_fin, vehicles(brand, model, year, price)')
     .eq('id', id)
     .single()
 }
 
 function updateStatus(id, status) {
   return supabase.from('reservations').update({ status }).eq('id', id).select().single()
+}
+
+// Bascule en 'completed' tout essai confirmé dont la période est dépassée.
+// Le trigger sync_vehicle_status_on_reservation (migration 001) remet alors
+// le véhicule en 'available' — même mécanisme qu'une annulation manuelle,
+// juste déclenché par le temps plutôt que par un admin.
+function expireCompleted() {
+  return supabase
+    .from('reservations')
+    .update({ status: 'completed' })
+    .eq('status', 'confirmed')
+    .lt('rdv_date_fin', new Date().toISOString())
+    .select('id, vehicle_id')
 }
 
 function getAuthUserAndProfile(clientId) {
@@ -75,9 +83,9 @@ module.exports = {
   findProfilesByIds,
   findVehicleStatus,
   create,
-  linkEquipements,
   findWithVehicleForEmail,
   updateStatus,
+  expireCompleted,
   getAuthUserAndProfile,
   findClientAndStatus,
   cancel,

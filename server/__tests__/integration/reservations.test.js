@@ -9,6 +9,7 @@ jest.mock('nodemailer', () => ({
 
 const { supabaseMock, mockUser, mockAdmin } = require('../mocks/supabase')
 const app = require('../../app')
+const reservationModel = require('../../models/reservationModel')
 
 const mockReservation = {
   id: 'resa-uuid-001',
@@ -28,6 +29,7 @@ function makeQuery(data, count = null) {
     delete: jest.fn().mockReturnThis(),
     eq: jest.fn().mockReturnThis(),
     in: jest.fn().mockReturnThis(),
+    lt: jest.fn().mockReturnThis(),
     order: jest.fn().mockReturnThis(),
     range: jest.fn().mockResolvedValue(result),
     single: jest.fn().mockResolvedValue({ data, error: null }),
@@ -60,24 +62,6 @@ describe('GET /api/reservations', () => {
     expect(Array.isArray(res.body)).toBe(true)
   })
 
-  it('aplatit reservation_equipements en un tableau equipements', async () => {
-    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockUser }, error: null })
-    const withEquip = {
-      ...mockReservation,
-      reservation_equipements: [
-        { equipements: { id: 'equip-1', nom: 'GPS', prix_supplement: 500 } },
-      ],
-    }
-    supabaseMock.from.mockReturnValue(makeQuery([withEquip]))
-
-    const res = await request(app)
-      .get('/api/reservations')
-      .set('Authorization', 'Bearer user-token')
-
-    expect(res.status).toBe(200)
-    expect(res.body[0].equipements).toEqual([{ id: 'equip-1', nom: 'GPS', prix_supplement: 500 }])
-    expect(res.body[0]).not.toHaveProperty('reservation_equipements')
-  })
 })
 
 describe('GET /api/reservations/all (admin)', () => {
@@ -147,10 +131,42 @@ describe('POST /api/reservations', () => {
     const res = await request(app)
       .post('/api/reservations')
       .set('Authorization', 'Bearer user-token')
-      .send({ vehicle_id: 'vehicle-uuid-789' })
+      .send({
+        vehicle_id: 'vehicle-uuid-789',
+        rdv_date: '2026-06-15T10:00:00',
+        rdv_date_fin: '2026-06-18T10:00:00',
+      })
 
     expect(res.status).toBe(409)
     expect(res.body.error).toMatch(/disponible/)
+  })
+
+  it('rejette sans dates de début/fin (400)', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockUser }, error: null })
+
+    const res = await request(app)
+      .post('/api/reservations')
+      .set('Authorization', 'Bearer user-token')
+      .send({ vehicle_id: 'vehicle-uuid-789' })
+
+    expect(res.status).toBe(400)
+    expect(res.body.error).toMatch(/date/i)
+  })
+
+  it('rejette si la date de fin précède la date de début (400)', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockUser }, error: null })
+
+    const res = await request(app)
+      .post('/api/reservations')
+      .set('Authorization', 'Bearer user-token')
+      .send({
+        vehicle_id: 'vehicle-uuid-789',
+        rdv_date: '2026-06-15T10:00:00',
+        rdv_date_fin: '2026-06-14T10:00:00',
+      })
+
+    expect(res.status).toBe(400)
+    expect(res.body.error).toMatch(/postérieure/)
   })
 
   it('crée une réservation et retourne 201', async () => {
@@ -164,35 +180,37 @@ describe('POST /api/reservations', () => {
     const res = await request(app)
       .post('/api/reservations')
       .set('Authorization', 'Bearer user-token')
-      .send({ vehicle_id: 'vehicle-uuid-789' })
+      .send({
+        vehicle_id: 'vehicle-uuid-789',
+        rdv_date: '2026-06-15T10:00:00',
+        rdv_date_fin: '2026-06-18T10:00:00',
+      })
 
     expect(res.status).toBe(201)
     expect(res.body).toHaveProperty('id')
   })
 
-  it('lie les équipements demandés à la réservation créée', async () => {
+  it('retourne 409 si le créneau est déjà réservé (contrainte d\'exclusion)', async () => {
     supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockUser }, error: null })
     const vehicleQuery = makeQuery({ status: 'available' })
-    const insertQuery = makeQuery(mockReservation)
-    const equipInsertQuery = makeQuery(null)
-    const equipInsertSpy = jest.fn().mockReturnValue(equipInsertQuery)
-    equipInsertQuery.insert = equipInsertSpy
+    const insertQuery = makeQuery(null)
+    insertQuery.single = jest.fn().mockResolvedValue({ data: null, error: { message: 'conflict', code: '23P01' } })
 
     supabaseMock.from
       .mockReturnValueOnce(vehicleQuery)
       .mockReturnValueOnce(insertQuery)
-      .mockReturnValueOnce(equipInsertQuery)
 
     const res = await request(app)
       .post('/api/reservations')
       .set('Authorization', 'Bearer user-token')
-      .send({ vehicle_id: 'vehicle-uuid-789', equipement_ids: ['equip-1', 'equip-2'] })
+      .send({
+        vehicle_id: 'vehicle-uuid-789',
+        rdv_date: '2026-06-15T10:00:00',
+        rdv_date_fin: '2026-06-18T10:00:00',
+      })
 
-    expect(res.status).toBe(201)
-    expect(equipInsertSpy).toHaveBeenCalledWith([
-      { reservation_id: mockReservation.id, equipement_id: 'equip-1' },
-      { reservation_id: mockReservation.id, equipement_id: 'equip-2' },
-    ])
+    expect(res.status).toBe(409)
+    expect(res.body.error).toMatch(/créneau/)
   })
 })
 
@@ -224,6 +242,25 @@ describe('PATCH /api/reservations/:id/status (admin)', () => {
       .send({ status: 'confirmed' })
 
     expect(res.status).toBe(404)
+  })
+
+  it('retourne 409 si la confirmation viole la contrainte anti-double-créneau', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
+    supabaseMock.auth.admin.getUserById.mockResolvedValue({ data: { user: null } })
+    const selectQuery = makeQuery(mockReservation)
+    const updateQuery = makeQuery(null)
+    updateQuery.single = jest.fn().mockResolvedValue({ data: null, error: { message: 'conflict', code: '23P01' } })
+    supabaseMock.from
+      .mockReturnValueOnce(selectQuery)
+      .mockReturnValueOnce(updateQuery)
+
+    const res = await request(app)
+      .patch(`/api/reservations/${mockReservation.id}/status`)
+      .set('Authorization', 'Bearer admin-token')
+      .send({ status: 'confirmed' })
+
+    expect(res.status).toBe(409)
+    expect(res.body.error).toMatch(/créneau/)
   })
 
   it('met à jour le statut d\'une réservation (200)', async () => {
@@ -347,5 +384,24 @@ describe('PATCH /api/reservations/:id/cancel', () => {
 
     expect(res.status).toBe(200)
     expect(res.body.status).toBe('cancelled')
+  })
+})
+
+// Pas de route HTTP dédiée (appelé par server/jobs/expireReservations.js sur
+// un minuteur, pas sur requête) : testé directement au niveau du modèle.
+describe('reservationModel.expireCompleted', () => {
+  it('bascule en completed les essais confirmés dont rdv_date_fin est dépassée', async () => {
+    const expired = [{ id: 'resa-1', vehicle_id: 'vehicle-1' }]
+    const q = makeQuery(expired)
+    supabaseMock.from.mockReturnValue(q)
+
+    const { data, error } = await reservationModel.expireCompleted()
+
+    expect(supabaseMock.from).toHaveBeenCalledWith('reservations')
+    expect(q.update).toHaveBeenCalledWith({ status: 'completed' })
+    expect(q.eq).toHaveBeenCalledWith('status', 'confirmed')
+    expect(q.lt).toHaveBeenCalledWith('rdv_date_fin', expect.any(String))
+    expect(error).toBeNull()
+    expect(data).toEqual(expired)
   })
 })

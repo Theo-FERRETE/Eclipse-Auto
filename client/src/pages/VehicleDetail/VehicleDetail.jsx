@@ -1,4 +1,5 @@
-// Fiche véhicule (/vehicles/:slug). Charge aussi les équipements, transmis à la réservation.
+// Fiche véhicule (/vehicles/:slug). Deux parcours distincts : essai (gratuit, sans options)
+// et achat (avec options, sur la page /achat/:slug).
 
 import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
@@ -12,8 +13,6 @@ export default function VehicleDetail() {
   const [vehicle, setVehicle] = useState(null)
   const [loading, setLoading] = useState(true)
   const [activeImg, setActiveImg] = useState(0)
-  const [equipements, setEquipements] = useState([])
-  const [selectedEquipementIds, setSelectedEquipementIds] = useState([])
 
   useEffect(() => {
     async function fetchVehicle() {
@@ -27,25 +26,9 @@ export default function VehicleDetail() {
 
       setVehicle(data)
       setLoading(false)
-
-      const res = await fetch('/api/equipements')
-      if (res.ok) {
-        setEquipements(await res.json())
-      }
     }
     fetchVehicle()
   }, [slug, navigate])
-
-  function toggleEquipement(id) {
-    setSelectedEquipementIds(prev =>
-      prev.includes(id) ? prev.filter(e => e !== id) : [...prev, id]
-    )
-  }
-
-  function handleReserve() {
-    const selectedEquipements = equipements.filter(eq => selectedEquipementIds.includes(eq.id))
-    navigate(`/reserve/${slug}`, { state: { selectedEquipements } })
-  }
 
   if (loading) {
     return (
@@ -135,11 +118,7 @@ export default function VehicleDetail() {
           </div>
 
           <div className="detail-price-block">
-            <div className="detail-price">
-              {formatPrice(price + equipements
-                .filter(eq => selectedEquipementIds.includes(eq.id))
-                .reduce((sum, eq) => sum + Number(eq.prix_supplement), 0))}
-            </div>
+            <div className="detail-price">{formatPrice(price)}</div>
             <span className={statusInfo.badge}>{statusInfo.label}</span>
           </div>
 
@@ -159,32 +138,25 @@ export default function VehicleDetail() {
             </div>
           )}
 
-          {status === 'available' && equipements.length > 0 && (
-            <div className="detail-equipements">
-              <div className="desc-label">Équipements disponibles</div>
-              <div className="detail-equip-grid">
-                {equipements.map(eq => (
-                  <label key={eq.id} className="detail-equip-item">
-                    <input
-                      type="checkbox"
-                      checked={selectedEquipementIds.includes(eq.id)}
-                      onChange={() => toggleEquipement(eq.id)}
-                    />
-                    {eq.nom} (+{Number(eq.prix_supplement).toLocaleString('fr-FR')} €)
-                  </label>
-                ))}
-              </div>
-            </div>
-          )}
-
           <div className="detail-actions">
-            {status === 'available' ? (
+            {/* Un essai suppose le véhicule libre ; l'achat reste possible même s'il est en
+                cours d'essai ('reserved'), seul 'sold' le bloque (voir venteController.create). */}
+            {status === 'available' && (
               <button
-                onClick={handleReserve}
+                onClick={() => navigate(`/reserve/${slug}`)}
                 className="btn-primary"
                 style={{ display: 'block', width: '100%', textAlign: 'center' }}
               >
-                Réserver ce véhicule
+                Réserver un essai
+              </button>
+            )}
+            {status !== 'sold' ? (
+              <button
+                onClick={() => navigate(`/achat/${slug}`)}
+                className={status === 'available' ? 'btn-ghost' : 'btn-primary'}
+                style={{ display: 'block', width: '100%', textAlign: 'center' }}
+              >
+                Acheter
               </button>
             ) : (
               <button
@@ -192,7 +164,7 @@ export default function VehicleDetail() {
                 disabled
                 style={{ width: '100%', opacity: 0.5 }}
               >
-                {status === 'reserved' ? 'Véhicule réservé' : 'Véhicule vendu'}
+                Véhicule vendu
               </button>
             )}
             <Link

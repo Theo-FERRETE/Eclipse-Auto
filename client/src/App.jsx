@@ -16,11 +16,13 @@ const ForgotPassword = lazy(() => import('@/pages/ForgotPassword/ForgotPassword'
 const ResetPassword = lazy(() => import('@/pages/ResetPassword/ResetPassword'))
 const Dashboard = lazy(() => import('@/pages/Dashboard/Dashboard'))
 const Reservation = lazy(() => import('@/pages/Reservation/Reservation'))
+const Achat = lazy(() => import('@/pages/Achat/Achat'))
 const Contact = lazy(() => import('@/pages/Contact/Contact'))
 const MentionsLegales = lazy(() => import('@/pages/MentionsLegales/MentionsLegales'))
 const AdminDashboard = lazy(() => import('@/pages/admin/AdminDashboard/AdminDashboard'))
 const AdminVehicles = lazy(() => import('@/pages/admin/AdminVehicles/AdminVehicles'))
 const AdminReservations = lazy(() => import('@/pages/admin/AdminReservations/AdminReservations'))
+const AdminVentes = lazy(() => import('@/pages/admin/AdminVentes/AdminVentes'))
 const AdminUsers = lazy(() => import('@/pages/admin/AdminUsers/AdminUsers'))
 const AdminEquipements = lazy(() => import('@/pages/admin/AdminEquipements/AdminEquipements'))
 const NotFound = lazy(() => import('@/pages/NotFound/NotFound'))
@@ -46,6 +48,9 @@ function App() {
         <Route path="/reserve/:slug" element={
           <ProtectedRoute><Reservation /></ProtectedRoute>
         } />
+        <Route path="/achat/:slug" element={
+          <ProtectedRoute><Achat /></ProtectedRoute>
+        } />
         <Route path="/dashboard" element={
           <ProtectedRoute><Dashboard /></ProtectedRoute>
         } />
@@ -57,6 +62,9 @@ function App() {
         } />
         <Route path="/admin/reservations" element={
           <ProtectedRoute requireAdmin><AdminReservations /></ProtectedRoute>
+        } />
+        <Route path="/admin/ventes" element={
+          <ProtectedRoute requireAdmin><AdminVentes /></ProtectedRoute>
         } />
         <Route path="/admin/users" element={
           <ProtectedRoute requireAdmin><AdminUsers /></ProtectedRoute>

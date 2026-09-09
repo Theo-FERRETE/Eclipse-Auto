@@ -1,12 +1,14 @@
-// Back-office : 4 indicateurs et 2 graphiques, depuis /api/admin/stats.
+// Back-office : indicateurs essais/ventes et 3 graphiques, depuis /api/admin/stats.
 
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
+import { formatPrice } from '@/lib/utils'
 import AdminSidebar from '@/components/AdminSidebar/AdminSidebar'
 import AdminPageHeader from '@/components/AdminPageHeader/AdminPageHeader'
 import VehicleStatusChart from '@/components/AdminCharts/VehicleStatusChart'
 import ReservationStatusChart from '@/components/AdminCharts/ReservationStatusChart'
+import VentesParMoisChart from '@/components/AdminCharts/VentesParMoisChart'
 import './AdminDashboard.css'
 
 export default function AdminDashboard() {
@@ -27,6 +29,7 @@ export default function AdminDashboard() {
 
   const v = stats?.vehicles ?? {}
   const r = stats?.reservations ?? {}
+  const vt = stats?.ventes ?? {}
   const cancelled = Math.max(0, (r.total ?? 0) - (r.pending ?? 0) - (r.confirmed ?? 0))
 
   return (
@@ -76,6 +79,34 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
+              <div className="admin-section-label" style={{ marginTop: '8px' }}>Ventes</div>
+              <div className="kpi-row kpi-row--3">
+                <div className="kpi-card">
+                  <div className="kpi-icon kpi-icon--green">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                  </div>
+                  <div className="kpi-n confirmed">{formatPrice(vt.chiffreAffaires ?? 0)}</div>
+                  <div className="kpi-l">Chiffre d'affaires</div>
+                  <div className="kpi-sub">ventes confirmées</div>
+                </div>
+                <div className="kpi-card">
+                  <div className="kpi-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M16 16v2a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="14" height="14" rx="2"/></svg>
+                  </div>
+                  <div className="kpi-n">{vt.confirmees ?? 0}</div>
+                  <div className="kpi-l">Ventes confirmées</div>
+                  <div className="kpi-sub">{vt.total ?? 0} demandes au total</div>
+                </div>
+                <div className="kpi-card">
+                  <div className="kpi-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                  </div>
+                  <div className="kpi-n">{formatPrice(vt.panierMoyen ?? 0)}</div>
+                  <div className="kpi-l">Panier moyen</div>
+                  <div className="kpi-sub">par vente confirmée</div>
+                </div>
+              </div>
+
               <div className="charts-grid">
                 <VehicleStatusChart
                   available={v.available ?? 0}
@@ -87,6 +118,7 @@ export default function AdminDashboard() {
                   confirmed={r.confirmed ?? 0}
                   cancelled={cancelled}
                 />
+                <VentesParMoisChart parMois={vt.parMois ?? {}} />
               </div>
 
               <div className="quick-access">
@@ -100,12 +132,22 @@ export default function AdminDashboard() {
                 </Link>
                 <Link to="/admin/reservations" className="quick-card">
                   <div className="quick-card-header">
-                    <span className="quick-card-title">Réservations</span>
+                    <span className="quick-card-title">Essais</span>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6"/></svg>
                   </div>
                   <div className="quick-card-body">Suivre les demandes</div>
                   <div className="quick-card-meta quick-card-meta--alert">
                     {r.pending ?? 0} en attente de confirmation
+                  </div>
+                </Link>
+                <Link to="/admin/ventes" className="quick-card">
+                  <div className="quick-card-header">
+                    <span className="quick-card-title">Ventes</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6"/></svg>
+                  </div>
+                  <div className="quick-card-body">Suivre les achats</div>
+                  <div className="quick-card-meta">
+                    {vt.confirmees ?? 0} confirmées sur {vt.total ?? 0} demandes
                   </div>
                 </Link>
                 <Link to="/admin/users" className="quick-card">

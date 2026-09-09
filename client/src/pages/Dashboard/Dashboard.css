@@ -213,33 +213,6 @@
   gap: 12px;
 }
 
-.reservation-status {
-  font-family: var(--font-display);
-  font-size: 11px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  padding: 4px 10px;
-  font-weight: 700;
-}
-
-.status-pending {
-  background: rgba(239, 159, 39, 0.15);
-  color: #EF9F27;
-  border: 1px solid rgba(239, 159, 39, 0.3);
-}
-
-.status-confirmed {
-  background: rgba(34, 197, 94, 0.15);
-  color: #22c55e;
-  border: 1px solid rgba(34, 197, 94, 0.3);
-}
-
-.status-cancelled {
-  background: rgba(100, 100, 100, 0.15);
-  color: var(--gray);
-  border: 1px solid var(--border-light);
-}
-
 button.sidebar-link {
   background: var(--black-2);
   border: none;

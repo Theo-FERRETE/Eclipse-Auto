@@ -6,7 +6,8 @@ import './AdminSidebar.css'
 const LINKS = [
   { to: '/admin',               label: 'Dashboard' },
   { to: '/admin/vehicles',      label: 'Véhicules' },
-  { to: '/admin/reservations',  label: 'Réservations' },
+  { to: '/admin/reservations',  label: 'Essais' },
+  { to: '/admin/ventes',        label: 'Ventes' },
   { to: '/admin/users',         label: 'Clients' },
   { to: '/admin/equipements',   label: 'Équipements' },
   { to: '/dashboard',           label: 'Espace client' },
