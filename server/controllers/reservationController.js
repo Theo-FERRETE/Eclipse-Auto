@@ -1,6 +1,7 @@
-// Logique des réservations. Trois règles importantes : le client_id vient du JWT, on ne peut
-// annuler que la sienne, et un véhicule déjà pris est refusé. Envoie aussi l'email de
-// confirmation.
+// Logique des essais (réservations d'un créneau). Trois règles importantes : le client_id
+// vient du JWT, on ne peut annuler que le sien, et un véhicule déjà pris est refusé. Envoie
+// aussi l'email de confirmation. Aucune notion de prix ni d'équipements ici : c'est le rôle
+// de venteController.
 
 const nodemailer = require('nodemailer')
 const reservationModel = require('../models/reservationModel')
@@ -15,18 +16,12 @@ const transporter = nodemailer.createTransport({
   },
 })
 
-// Aplatit l'embed PostgREST : reservation_equipements: [{ equipements }] -> equipements: []
-function formatReservationEquipements(r) {
-  const { reservation_equipements, ...rest } = r
-  return { ...rest, equipements: (reservation_equipements || []).map(re => re.equipements) }
-}
-
 // GET /api/reservations — réservations de l'utilisateur connecté
 // Filtre sur req.user.id, issu du token : impossible de demander celles d'un autre client.
 async function listMine(req, res) {
   const { data, error } = await reservationModel.findByClient(req.user.id)
   if (error) return res.status(500).json({ error: error.message })
-  res.json(data.map(formatReservationEquipements))
+  res.json(data)
 }
 
 // GET /api/reservations/all — toutes les réservations (admin)
@@ -43,7 +38,7 @@ async function listAll(req, res) {
   const { data, error, count } = await reservationModel.findAll({ status, limit: limitNum, offset: offsetNum })
   if (error) return res.status(500).json({ error: error.message })
 
-  const formatted = await withClientNames(data.map(formatReservationEquipements))
+  const formatted = await withClientNames(data)
   res.json({ data: formatted, total: count, limit: limitNum, offset: offsetNum })
 }
 
@@ -63,9 +58,9 @@ async function withClientNames(reservations) {
   })
 }
 
-// POST /api/reservations — créer une réservation
+// POST /api/reservations — créer une réservation (essai)
 async function create(req, res) {
-  const { vehicle_id, message, rdv_date, equipement_ids } = req.body
+  const { vehicle_id, message, rdv_date } = req.body
 
   if (!vehicle_id) {
     return res.status(400).json({ error: 'vehicle_id obligatoire.' })
@@ -89,13 +84,13 @@ async function create(req, res) {
     rdv_date: rdv_date || null,
   })
 
-  if (error) return res.status(500).json({ error: error.message })
-
-  // Liés après coup, puisqu'il faut l'id de la réservation. Un échec est logué sans faire
-  // échouer la requête. Sans transaction, on peut donc avoir une réservation sans ses options.
-  if (Array.isArray(equipement_ids) && equipement_ids.length > 0) {
-    const { error: equipError } = await reservationModel.linkEquipements(data.id, equipement_ids)
-    if (equipError) console.error('[Reservations] Erreur liaison équipements :', equipError)
+  if (error) {
+    // 23P01 = exclusion_violation : la contrainte reservations_no_double_slot a refusé
+    // deux essais confirmés sur le même véhicule au même créneau (voir migration 001).
+    if (error.code === '23P01') {
+      return res.status(409).json({ error: 'Ce créneau est déjà réservé pour ce véhicule.' })
+    }
+    return res.status(500).json({ error: error.message })
   }
 
   res.status(201).json(data)
@@ -119,7 +114,16 @@ async function updateStatus(req, res) {
 
   const { data, error } = await reservationModel.updateStatus(req.params.id, status)
 
-  if (error) return res.status(500).json({ error: error.message })
+  if (error) {
+    // 23P01 = exclusion_violation : un autre essai est déjà confirmé sur ce véhicule à ce
+    // créneau (contrainte reservations_no_double_slot, voir migration 001). C'est ici, à la
+    // confirmation, que la contrainte peut réellement se déclencher (la création reste en
+    // 'pending', hors du périmètre de la contrainte).
+    if (error.code === '23P01') {
+      return res.status(409).json({ error: 'Ce créneau est déjà réservé pour ce véhicule.' })
+    }
+    return res.status(500).json({ error: error.message })
+  }
 
   // Email seulement à la confirmation.
   if (status === 'confirmed') {

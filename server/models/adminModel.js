@@ -3,7 +3,7 @@
 const supabase = require('../supabase')
 
 // head: true = on veut juste le COUNT, pas les lignes.
-// Promise.all pour lancer les huit comptages en parallèle plutôt qu'à la suite.
+// Promise.all pour lancer les comptages en parallèle plutôt qu'à la suite.
 function getStats() {
   return Promise.all([
     supabase.from('vehicles').select('*', { count: 'exact', head: true }),
@@ -14,6 +14,11 @@ function getStats() {
     supabase.from('reservations').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
     supabase.from('reservations').select('*', { count: 'exact', head: true }).eq('status', 'confirmed'),
     supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'client'),
+    // Pas d'agrégat SUM côté PostgREST sans fonction RPC : on ramène prix_final et
+    // created_at des ventes confirmées, CA/panier moyen/graphique se calculent en JS
+    // dans le contrôleur (volume attendu faible sur ce projet).
+    supabase.from('ventes').select('prix_final, created_at').eq('status', 'confirmed'),
+    supabase.from('ventes').select('*', { count: 'exact', head: true }),
   ])
 }
 

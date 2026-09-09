@@ -49,7 +49,9 @@ describe('GET /api/admin/stats', () => {
 
   it('retourne les statistiques du dashboard (200)', async () => {
     supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockAdmin }, error: null })
-    const statsQuery = makeQuery(null, 10)
+    // data: [] et pas null : la requête ventes confirmées du contrôleur fait un .reduce()
+    // dessus (pas de SUM côté PostgREST), un null casserait ce calcul.
+    const statsQuery = makeQuery([], 10)
     supabaseMock.from.mockReturnValue(statsQuery)
 
     const res = await request(app)
@@ -59,6 +61,8 @@ describe('GET /api/admin/stats', () => {
     expect(res.status).toBe(200)
     expect(res.body).toHaveProperty('vehicles')
     expect(res.body).toHaveProperty('reservations')
+    expect(res.body).toHaveProperty('ventes')
+    expect(res.body.ventes).toEqual({ total: 10, confirmees: 0, chiffreAffaires: 0, panierMoyen: 0, parMois: {} })
     expect(res.body).toHaveProperty('clients')
   })
 

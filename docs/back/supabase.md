@@ -134,7 +134,7 @@ Ce sont les tables et colonnes réellement manipulées dans `models/` et côté 
 
 | Colonne | Notes |
 |---|---|
-| `id` | UUID, clé primaire |
+| `id` | integer, clé primaire (auto-incrémenté — pas un UUID, contrairement aux autres tables du projet) |
 | `brand`, `model` | obligatoires, servent aussi à fabriquer le **slug** de l'URL |
 | `year`, `price`, `mileage` | validés côté serveur (année 1900 → année+1, prix ≥ 0, km ≥ 0) |
 | `fuel_type`, `transmission` | obligatoires à la création |

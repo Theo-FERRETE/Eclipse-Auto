@@ -1,9 +1,10 @@
-// Monte les six routeurs sous /api.
+// Monte les sept routeurs sous /api.
 
 const { Router } = require('express')
 
 const vehiclesRouter     = require('./vehicles')
 const reservationsRouter = require('./reservations')
+const ventesRouter       = require('./ventes')
 const adminRouter        = require('./admin')
 const contactRouter      = require('./contact')
 const healthRouter       = require('./health')
@@ -13,6 +14,7 @@ const router = Router()
 
 router.use('/vehicles',     vehiclesRouter)
 router.use('/reservations', reservationsRouter)
+router.use('/ventes',       ventesRouter)
 router.use('/admin',        adminRouter)
 router.use('/contact',      contactRouter)
 router.use('/equipements',  equipementsRouter)

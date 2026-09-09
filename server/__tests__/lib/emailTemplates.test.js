@@ -1,4 +1,4 @@
-const { buildConfirmationEmail, escapeHtml } = require('../../lib/emailTemplates')
+const { buildConfirmationEmail, buildVenteConfirmationEmail, escapeHtml } = require('../../lib/emailTemplates')
 
 const mockVehicle = {
   brand: 'Ferrari',
@@ -58,6 +58,46 @@ describe('buildConfirmationEmail', () => {
     const html = buildConfirmationEmail('<script>alert(1)</script>', { ...mockVehicle, brand: '<img onerror=alert(1)>' }, null)
     expect(html).not.toContain('<script>')
     expect(html).not.toContain('<img onerror=alert(1)>')
+    expect(html).toContain('&lt;script&gt;')
+  })
+})
+
+// ─── buildVenteConfirmationEmail ───────────────────────────────────────────────
+
+describe('buildVenteConfirmationEmail', () => {
+  const mockEquipements = [
+    { nom: 'GPS', prix_supplement: 500 },
+    { nom: 'Toit ouvrant', prix_supplement: 1200 },
+  ]
+
+  it('contient le prénom du client, le véhicule, les options et le prix final', () => {
+    const html = buildVenteConfirmationEmail('Théo', mockVehicle, mockEquipements, 249700, 'carte')
+    expect(html).toContain('Théo')
+    expect(html).toContain('Ferrari')
+    expect(html).toContain('Roma Spider')
+    expect(html).toContain('GPS')
+    expect(html).toContain('Toit ouvrant')
+    expect(html).toContain('249')
+    expect(html).toContain('Carte bancaire')
+  })
+
+  it('n\'affiche pas le bloc options quand la vente n\'en a aucune', () => {
+    const html = buildVenteConfirmationEmail('Théo', mockVehicle, [], 248000, 'especes')
+    expect(html).not.toContain('Options')
+    expect(html).toContain('Espèces')
+  })
+
+  it('échappe les données injectées (prénom, marque, nom d\'équipement) pour prévenir le XSS', () => {
+    const html = buildVenteConfirmationEmail(
+      '<script>alert(1)</script>',
+      { ...mockVehicle, brand: '<img onerror=alert(1)>' },
+      [{ nom: '<b>xss</b>', prix_supplement: 100 }],
+      248100,
+      'carte'
+    )
+    expect(html).not.toContain('<script>')
+    expect(html).not.toContain('<img onerror=alert(1)>')
+    expect(html).not.toContain('<b>xss</b>')
     expect(html).toContain('&lt;script&gt;')
   })
 })

@@ -1,4 +1,4 @@
-// Requêtes des réservations, avec les équipements liés.
+// Requêtes des réservations (essais).
 
 const supabase = require('../supabase')
 
@@ -7,7 +7,7 @@ const supabase = require('../supabase')
 function findByClient(clientId) {
   return supabase
     .from('reservations')
-    .select('*, vehicles(brand, model, images, price), reservation_equipements(equipements(id, nom, prix_supplement))')
+    .select('*, vehicles(brand, model, images, price)')
     .eq('client_id', clientId)
     .order('created_at', { ascending: false })
 }
@@ -15,7 +15,7 @@ function findByClient(clientId) {
 function findAll({ status, limit, offset }) {
   let query = supabase
     .from('reservations')
-    .select('*, vehicles(brand, model, images, price), reservation_equipements(equipements(id, nom, prix_supplement))', { count: 'exact' })
+    .select('*, vehicles(brand, model, images, price)', { count: 'exact' })
     .order('created_at', { ascending: false })
 
   if (status) query = query.eq('status', status)
@@ -35,11 +35,6 @@ function findVehicleStatus(vehicleId) {
 
 function create(reservation) {
   return supabase.from('reservations').insert(reservation).select().single()
-}
-
-function linkEquipements(reservationId, equipementIds) {
-  const rows = equipementIds.map(eid => ({ reservation_id: reservationId, equipement_id: eid }))
-  return supabase.from('reservation_equipements').insert(rows)
 }
 
 function findWithVehicleForEmail(id) {
@@ -75,7 +70,6 @@ module.exports = {
   findProfilesByIds,
   findVehicleStatus,
   create,
-  linkEquipements,
   findWithVehicleForEmail,
   updateStatus,
   getAuthUserAndProfile,
