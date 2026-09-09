@@ -36,6 +36,20 @@ export const RESERVATION_STATUS = {
   pending:   { label: 'En attente', class: 'status-pending' },
   confirmed: { label: 'Confirmée',  class: 'status-confirmed' },
   cancelled: { label: 'Annulée',    class: 'status-cancelled' },
+  completed: { label: 'Terminé',    class: 'status-completed' },
+}
+
+export const VENTE_STATUS = {
+  pending:   { label: 'En attente', class: 'status-pending' },
+  confirmed: { label: 'Confirmée',  class: 'status-confirmed' },
+  cancelled: { label: 'Annulée',    class: 'status-cancelled' },
+}
+
+export const PAYMENT_METHOD_LABELS = {
+  carte:        'Carte bancaire',
+  virement:     'Virement',
+  financement:  'Financement',
+  especes:      'Espèces',
 }
 
 export const VEHICLE_STATUS = {

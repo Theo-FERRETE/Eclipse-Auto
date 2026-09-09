@@ -25,7 +25,13 @@ export default function DashboardSidebar({ profile, user, view, onViewChange }) 
           className={`sidebar-link ${view === 'reservations' ? 'active' : ''}`}
           onClick={() => onViewChange('reservations')}
         >
-          Mes réservations
+          Mes essais
+        </button>
+        <button
+          className={`sidebar-link ${view === 'ventes' ? 'active' : ''}`}
+          onClick={() => onViewChange('ventes')}
+        >
+          Mes achats
         </button>
         <button
           className={`sidebar-link ${view === 'profile' ? 'active' : ''}`}

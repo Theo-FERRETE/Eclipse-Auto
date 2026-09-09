@@ -179,12 +179,6 @@
   line-height: 1.8;
 }
 
-.detail-equipements {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
 .detail-actions {
   display: flex;
   flex-direction: column;

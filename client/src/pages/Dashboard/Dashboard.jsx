@@ -1,11 +1,12 @@
-// Espace client : réservations et profil. Les réservations passent par l'API, qui filtre sur
-// le JWT et renvoie les équipements liés.
+// Espace client : essais, achats et profil. Les deux premiers passent par l'API, qui filtre
+// sur le JWT.
 
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/lib/AuthContext'
 import { supabase } from '@/lib/supabase'
 import DashboardSidebar from '@/components/DashboardSidebar/DashboardSidebar'
 import DashboardReservations from '@/components/DashboardReservations/DashboardReservations'
+import DashboardVentes from '@/components/DashboardVentes/DashboardVentes'
 import DashboardProfile from '@/components/DashboardProfile/DashboardProfile'
 import ConfirmModal from '@/components/ConfirmModal/ConfirmModal'
 import './Dashboard.css'
@@ -14,14 +15,15 @@ export default function Dashboard() {
   const { user, profile, refreshProfile } = useAuth()
   const [view, setView] = useState('reservations')
   const [reservations, setReservations] = useState([])
+  const [ventes, setVentes] = useState([])
   const [loading, setLoading] = useState(true)
+  const [ventesLoading, setVentesLoading] = useState(true)
   const [cancelling, setCancelling] = useState(new Set())
   const [cancelError, setCancelError] = useState(null)
   const [confirmCancelId, setConfirmCancelId] = useState(null)
 
   useEffect(() => {
-    // Passe par l'API : le client_id est extrait du JWT côté serveur, et la réponse
-    // inclut les équipements de la relation many-to-many (absents d'un select direct).
+    // Passe par l'API : le client_id est extrait du JWT côté serveur.
     async function fetchReservations() {
       if (!user) return
       const { data: { session } } = await supabase.auth.getSession()
@@ -33,6 +35,20 @@ export default function Dashboard() {
       setLoading(false)
     }
     fetchReservations()
+  }, [user])
+
+  useEffect(() => {
+    async function fetchVentes() {
+      if (!user) return
+      const { data: { session } } = await supabase.auth.getSession()
+      const res = await fetch('/api/ventes', {
+        headers: { Authorization: `Bearer ${session?.access_token}` },
+      })
+
+      if (res.ok) setVentes(await res.json())
+      setVentesLoading(false)
+    }
+    fetchVentes()
   }, [user])
 
   async function handleCancel(id) {
@@ -103,6 +119,9 @@ export default function Dashboard() {
                 onCancel={requestCancel}
               />
             </>
+          )}
+          {view === 'ventes' && (
+            <DashboardVentes ventes={ventes} loading={ventesLoading} />
           )}
           {view === 'profile' && (
             <DashboardProfile user={user} profile={profile} refreshProfile={refreshProfile} />

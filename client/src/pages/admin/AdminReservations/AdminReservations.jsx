@@ -1,8 +1,10 @@
-// Gestion des réservations. Confirmer envoie l'email et passe le véhicule en réservé.
+// Gestion des essais (RDV). Confirmer envoie l'email et passe le véhicule en réservé ; un
+// essai terminé libère le véhicule et propose de concrétiser la vente. Aucune notion de prix
+// ni d'options ici : c'est le rôle d'AdminVentes.
 
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
-import { RESERVATION_STATUS, optimizeImageUrl, formatPrice } from '@/lib/utils'
+import { RESERVATION_STATUS, optimizeImageUrl } from '@/lib/utils'
 import AdminSidebar from '@/components/AdminSidebar/AdminSidebar'
 import AdminPageHeader from '@/components/AdminPageHeader/AdminPageHeader'
 import Pagination from '@/components/Pagination/Pagination'
@@ -18,9 +20,8 @@ export default function AdminReservations() {
   const [page, setPage] = useState(1)
   const [filter, setFilter] = useState('all')
 
-  // Passe par l'API, qui renvoie déjà client_name et les équipements liés.
-  // Le select Supabase direct qu'on utilisait avant n'incluait pas la table de
-  // jointure : les équipements demandés n'étaient jamais affichés.
+  // Passe par l'API, qui renvoie déjà client_name (résolu côté serveur, pas de FK directe
+  // vers profiles).
   async function fetchReservations() {
     setLoading(true)
     const { data: { session } } = await supabase.auth.getSession()
@@ -63,7 +64,7 @@ export default function AdminReservations() {
 
   return (
     <main className="admin">
-      <AdminPageHeader title="Réservations" />
+      <AdminPageHeader title="Essais" />
 
       <div className="container admin-layout">
         <AdminSidebar />
@@ -73,7 +74,7 @@ export default function AdminReservations() {
             <div className="form-error" role="alert" style={{ marginBottom: '16px' }}>{error}</div>
           )}
           <div className="ar-toolbar">
-            {['all', 'pending', 'confirmed', 'cancelled'].map(f => (
+            {['all', 'pending', 'confirmed', 'completed', 'cancelled'].map(f => (
               <button
                 key={f}
                 className={`ar-filter-btn ${filter === f ? 'active' : ''}`}
@@ -112,26 +113,20 @@ export default function AdminReservations() {
                     <div className="ar-vehicle">
                       <div className="vcard-brand">{r.vehicles?.brand}</div>
                       <div className="avc-model">{r.vehicles?.model}</div>
-                      <div className="ar-price">{formatPrice(r.vehicles?.price)}</div>
                     </div>
 
                     <div className="ar-client">
                       <div className="ar-client-name">{r.client_name}</div>
                       <div className="ar-date">
-                        Réservé le {new Date(r.created_at).toLocaleDateString('fr-FR')}
+                        Demandé le {new Date(r.created_at).toLocaleDateString('fr-FR')}
                       </div>
                       {r.rdv_date && (
                         <div className="ar-rdv">
-                          RDV : {new Date(r.rdv_date).toLocaleDateString('fr-FR')}
+                          RDV : {new Date(r.rdv_date).toLocaleString('fr-FR')}
                         </div>
                       )}
                       {r.message && (
                         <div className="ar-message">"{r.message}"</div>
-                      )}
-                      {r.equipements?.length > 0 && (
-                        <div className="ar-equipements">
-                          Équipements demandés : {r.equipements.map(eq => eq.nom).join(', ')}
-                        </div>
                       )}
                     </div>
 
@@ -150,9 +145,19 @@ export default function AdminReservations() {
                         </>
                       )}
                       {r.status === 'confirmed' && (
-                        <button className="action-btn delete" onClick={() => handleStatus(r.id, 'cancelled')}>
-                          Annuler
-                        </button>
+                        <>
+                          <button className="action-btn edit" onClick={() => handleStatus(r.id, 'completed')}>
+                            Marquer terminé
+                          </button>
+                          <button className="action-btn delete" onClick={() => handleStatus(r.id, 'cancelled')}>
+                            Annuler
+                          </button>
+                        </>
+                      )}
+                      {r.status === 'completed' && (
+                        <span className="ar-message" style={{ fontStyle: 'normal' }}>
+                          Le client peut concrétiser l'achat depuis son espace.
+                        </span>
                       )}
                     </div>
                   </div>
@@ -160,7 +165,7 @@ export default function AdminReservations() {
 
                 {filtered.length === 0 && (
                   <div className="catalogue-empty">
-                    <p>Aucune réservation trouvée.</p>
+                    <p>Aucun essai trouvé.</p>
                   </div>
                 )}
               </div>

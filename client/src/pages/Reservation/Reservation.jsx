@@ -1,7 +1,8 @@
-// Formulaire de réservation. Poste vers l'API avec le JWT ; le client_id vient du token.
+// Formulaire d'essai (créneau, sans options). Poste vers l'API avec le JWT ; le client_id
+// vient du token.
 
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate, useLocation } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/lib/AuthContext'
 import { supabase } from '@/lib/supabase'
 import { getVehicleBySlug } from '@/lib/vehiclesCache'
@@ -14,7 +15,6 @@ import './Reservation.css'
 export default function Reservation() {
   const { slug } = useParams()
   const navigate = useNavigate()
-  const location = useLocation()
   const { user, profile } = useAuth()
   const [vehicle, setVehicle] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -22,12 +22,6 @@ export default function Reservation() {
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState(null)
   const [form, setForm] = useState({ message: '', rdv_date: '' })
-  const [equipements, setEquipements] = useState([])
-  // Les équipements cochés sur la fiche véhicule arrivent par location.state. C'est perdu
-  // au rechargement, mais ça évite une URL illisible.
-  const [selectedEquipementIds, setSelectedEquipementIds] = useState(
-    (location.state?.selectedEquipements || []).map(eq => eq.id)
-  )
 
   useEffect(() => {
     async function init() {
@@ -42,24 +36,12 @@ export default function Reservation() {
 
       setVehicle(found)
       setLoading(false)
-
-      const res = await fetch('/api/equipements')
-      if (res.ok) {
-        setEquipements(await res.json())
-      }
     }
     init()
   }, [slug, navigate])
 
   function handleChange(e) {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
-  }
-
-  // Toujours un nouveau tableau, jamais un push() : React compare les références.
-  function toggleEquipement(id) {
-    setSelectedEquipementIds(prev =>
-      prev.includes(id) ? prev.filter(e => e !== id) : [...prev, id]
-    )
   }
 
   async function handleSubmit(e) {
@@ -80,12 +62,11 @@ export default function Reservation() {
           vehicle_id: vehicle.id,
           message: form.message || null,
           rdv_date: form.rdv_date || null,
-          equipement_ids: selectedEquipementIds,
         }),
       })
 
       // fetch ne lève pas d'exception sur un 4xx : sans ce test, une réservation refusée
-      // passerait pour un succès.
+      // (409 créneau déjà pris, par exemple) passerait pour un succès.
       if (!res.ok) {
         const data = await res.json()
         throw new Error(data.error || 'Une erreur est survenue.')
@@ -124,9 +105,6 @@ export default function Reservation() {
           submitting={submitting}
           profile={profile}
           user={user}
-          equipements={equipements}
-          selectedEquipementIds={selectedEquipementIds}
-          onToggleEquipement={toggleEquipement}
           slug={slug}
         />
       </div>

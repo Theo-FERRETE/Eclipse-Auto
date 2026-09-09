@@ -1,10 +1,9 @@
-// Formulaire de demande. Composant contrôlé.
+// Formulaire de demande d'essai. Composant contrôlé.
 
 import { Link } from 'react-router-dom'
 
 export default function ReservationForm({
   form, onChange, onSubmit, error, submitting, profile, user, slug,
-  equipements = [], selectedEquipementIds = [], onToggleEquipement,
 }) {
   return (
     <div className="reservation-form-wrap">
@@ -24,24 +23,6 @@ export default function ReservationForm({
           <span className="client-info-val">{user?.email}</span>
         </div>
       </div>
-
-      {equipements.length > 0 && (
-        <div className="reservation-client-info">
-          <div className="client-info-label">Équipements souhaités</div>
-          <div className="detail-equip-grid">
-            {equipements.map(eq => (
-              <label key={eq.id} className="detail-equip-item">
-                <input
-                  type="checkbox"
-                  checked={selectedEquipementIds.includes(eq.id)}
-                  onChange={() => onToggleEquipement(eq.id)}
-                />
-                {eq.nom} (+{Number(eq.prix_supplement).toLocaleString('fr-FR')} €)
-              </label>
-            ))}
-          </div>
-        </div>
-      )}
 
       <form className="reservation-form" onSubmit={onSubmit}>
         <div className="form-group">
