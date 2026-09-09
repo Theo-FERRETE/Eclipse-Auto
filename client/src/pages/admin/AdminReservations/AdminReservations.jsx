@@ -122,7 +122,9 @@ export default function AdminReservations() {
                       </div>
                       {r.rdv_date && (
                         <div className="ar-rdv">
-                          RDV : {new Date(r.rdv_date).toLocaleString('fr-FR')}
+                          {r.rdv_date_fin && r.rdv_date_fin !== r.rdv_date
+                            ? `Du ${new Date(r.rdv_date).toLocaleString('fr-FR')} au ${new Date(r.rdv_date_fin).toLocaleString('fr-FR')}`
+                            : `RDV : ${new Date(r.rdv_date).toLocaleString('fr-FR')}`}
                         </div>
                       )}
                       {r.message && (

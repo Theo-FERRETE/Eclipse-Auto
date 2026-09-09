@@ -26,7 +26,7 @@ export default function ReservationForm({
 
       <form className="reservation-form" onSubmit={onSubmit}>
         <div className="form-group">
-          <label className="form-label" htmlFor="res-rdv-date">Date de rendez-vous souhaitée</label>
+          <label className="form-label" htmlFor="res-rdv-date">Début de l'essai souhaité</label>
           <input
             id="res-rdv-date"
             type="datetime-local"
@@ -35,6 +35,21 @@ export default function ReservationForm({
             value={form.rdv_date}
             onChange={onChange}
             min={new Date().toISOString().slice(0, 16)}
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <label className="form-label" htmlFor="res-rdv-date-fin">Fin de l'essai souhaitée</label>
+          <input
+            id="res-rdv-date-fin"
+            type="datetime-local"
+            name="rdv_date_fin"
+            className="form-input"
+            value={form.rdv_date_fin}
+            onChange={onChange}
+            min={form.rdv_date || new Date().toISOString().slice(0, 16)}
+            required
           />
         </div>
 

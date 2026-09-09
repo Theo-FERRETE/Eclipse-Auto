@@ -232,6 +232,21 @@ CREATE POLICY vente_equipements_select_own ON vente_equipements
 
 
 -- ============================================================================
+-- SECTION E — Droits GRANT (trouvé en testant en conditions réelles le 2026-09-09)
+-- ============================================================================
+-- Sans ça : "permission denied for table ventes", y compris pour service_role.
+-- La RLS (section D) ne remplace pas les droits SQL de base : ce sont deux
+-- portes séparées. Les tables créées via le SQL Editor n'héritent pas
+-- automatiquement des GRANT que Supabase pose pour les tables créées depuis
+-- son propre dashboard — contrairement à `reservations`/`vehicles`, qui les
+-- avaient déjà. RLS (section D) reste la vraie barrière pour anon/authenticated
+-- (aucune policy INSERT/UPDATE/DELETE pour eux) ; service_role, lui, contourne
+-- la RLS mais a quand même besoin de ce GRANT pour toucher la table.
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE ventes TO anon, authenticated, service_role;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE vente_equipements TO anon, authenticated, service_role;
+
+
+-- ============================================================================
 -- ROLLBACK (à exécuter manuellement en cas de problème, section C/D seulement
 -- — la section A modifie des données existantes et n'est pas trivialement
 -- réversible : restaurer depuis le backup dans ce cas)

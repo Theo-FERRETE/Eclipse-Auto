@@ -55,7 +55,9 @@ export default function DashboardReservations({ reservations, loading, cancellin
                 </div>
                 {r.rdv_date && (
                   <div className="reservation-date">
-                    Créneau : {new Date(r.rdv_date).toLocaleString('fr-FR')}
+                    {r.rdv_date_fin && r.rdv_date_fin !== r.rdv_date
+                      ? `Du ${new Date(r.rdv_date).toLocaleString('fr-FR')} au ${new Date(r.rdv_date_fin).toLocaleString('fr-FR')}`
+                      : `Créneau : ${new Date(r.rdv_date).toLocaleString('fr-FR')}`}
                   </div>
                 )}
                 {r.message && (

@@ -60,10 +60,20 @@ async function withClientNames(reservations) {
 
 // POST /api/reservations — créer une réservation (essai)
 async function create(req, res) {
-  const { vehicle_id, message, rdv_date } = req.body
+  const { vehicle_id, message, rdv_date, rdv_date_fin } = req.body
 
   if (!vehicle_id) {
     return res.status(400).json({ error: 'vehicle_id obligatoire.' })
+  }
+
+  // La période de l'essai (rdv_date -> rdv_date_fin) est ce qui permet la
+  // remise en disponible automatique du véhicule (voir server/jobs/
+  // expireReservations.js) : sans les deux bornes, rien à surveiller.
+  if (!rdv_date || !rdv_date_fin) {
+    return res.status(400).json({ error: 'Dates de début et de fin d\'essai obligatoires.' })
+  }
+  if (new Date(rdv_date_fin) < new Date(rdv_date)) {
+    return res.status(400).json({ error: 'La date de fin doit être postérieure à la date de début.' })
   }
 
   // Revérifié ici et pas seulement côté React : la page peut être ouverte depuis dix minutes.
@@ -81,7 +91,8 @@ async function create(req, res) {
     // Imposé par le serveur : personne ne crée une réservation déjà confirmée.
     status: 'pending',
     message: message || null,
-    rdv_date: rdv_date || null,
+    rdv_date,
+    rdv_date_fin,
   })
 
   if (error) {
@@ -137,7 +148,7 @@ async function updateStatus(req, res) {
           from: `"Eclipse Auto" <${process.env.GMAIL_USER}>`,
           to: clientUser.email,
           subject: `Votre réservation est confirmée — ${resData.vehicles.brand} ${resData.vehicles.model}`,
-          html: buildConfirmationEmail(firstName, resData.vehicles, resData.rdv_date),
+          html: buildConfirmationEmail(firstName, resData.vehicles, resData.rdv_date, resData.rdv_date_fin),
         })
       }
     } catch (emailErr) {

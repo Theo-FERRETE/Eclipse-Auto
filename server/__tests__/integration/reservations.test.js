@@ -9,6 +9,7 @@ jest.mock('nodemailer', () => ({
 
 const { supabaseMock, mockUser, mockAdmin } = require('../mocks/supabase')
 const app = require('../../app')
+const reservationModel = require('../../models/reservationModel')
 
 const mockReservation = {
   id: 'resa-uuid-001',
@@ -28,6 +29,7 @@ function makeQuery(data, count = null) {
     delete: jest.fn().mockReturnThis(),
     eq: jest.fn().mockReturnThis(),
     in: jest.fn().mockReturnThis(),
+    lt: jest.fn().mockReturnThis(),
     order: jest.fn().mockReturnThis(),
     range: jest.fn().mockResolvedValue(result),
     single: jest.fn().mockResolvedValue({ data, error: null }),
@@ -129,10 +131,42 @@ describe('POST /api/reservations', () => {
     const res = await request(app)
       .post('/api/reservations')
       .set('Authorization', 'Bearer user-token')
-      .send({ vehicle_id: 'vehicle-uuid-789' })
+      .send({
+        vehicle_id: 'vehicle-uuid-789',
+        rdv_date: '2026-06-15T10:00:00',
+        rdv_date_fin: '2026-06-18T10:00:00',
+      })
 
     expect(res.status).toBe(409)
     expect(res.body.error).toMatch(/disponible/)
+  })
+
+  it('rejette sans dates de début/fin (400)', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockUser }, error: null })
+
+    const res = await request(app)
+      .post('/api/reservations')
+      .set('Authorization', 'Bearer user-token')
+      .send({ vehicle_id: 'vehicle-uuid-789' })
+
+    expect(res.status).toBe(400)
+    expect(res.body.error).toMatch(/date/i)
+  })
+
+  it('rejette si la date de fin précède la date de début (400)', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockUser }, error: null })
+
+    const res = await request(app)
+      .post('/api/reservations')
+      .set('Authorization', 'Bearer user-token')
+      .send({
+        vehicle_id: 'vehicle-uuid-789',
+        rdv_date: '2026-06-15T10:00:00',
+        rdv_date_fin: '2026-06-14T10:00:00',
+      })
+
+    expect(res.status).toBe(400)
+    expect(res.body.error).toMatch(/postérieure/)
   })
 
   it('crée une réservation et retourne 201', async () => {
@@ -146,7 +180,11 @@ describe('POST /api/reservations', () => {
     const res = await request(app)
       .post('/api/reservations')
       .set('Authorization', 'Bearer user-token')
-      .send({ vehicle_id: 'vehicle-uuid-789' })
+      .send({
+        vehicle_id: 'vehicle-uuid-789',
+        rdv_date: '2026-06-15T10:00:00',
+        rdv_date_fin: '2026-06-18T10:00:00',
+      })
 
     expect(res.status).toBe(201)
     expect(res.body).toHaveProperty('id')
@@ -165,7 +203,11 @@ describe('POST /api/reservations', () => {
     const res = await request(app)
       .post('/api/reservations')
       .set('Authorization', 'Bearer user-token')
-      .send({ vehicle_id: 'vehicle-uuid-789', rdv_date: '2026-06-15T10:00:00' })
+      .send({
+        vehicle_id: 'vehicle-uuid-789',
+        rdv_date: '2026-06-15T10:00:00',
+        rdv_date_fin: '2026-06-18T10:00:00',
+      })
 
     expect(res.status).toBe(409)
     expect(res.body.error).toMatch(/créneau/)
@@ -342,5 +384,24 @@ describe('PATCH /api/reservations/:id/cancel', () => {
 
     expect(res.status).toBe(200)
     expect(res.body.status).toBe('cancelled')
+  })
+})
+
+// Pas de route HTTP dédiée (appelé par server/jobs/expireReservations.js sur
+// un minuteur, pas sur requête) : testé directement au niveau du modèle.
+describe('reservationModel.expireCompleted', () => {
+  it('bascule en completed les essais confirmés dont rdv_date_fin est dépassée', async () => {
+    const expired = [{ id: 'resa-1', vehicle_id: 'vehicle-1' }]
+    const q = makeQuery(expired)
+    supabaseMock.from.mockReturnValue(q)
+
+    const { data, error } = await reservationModel.expireCompleted()
+
+    expect(supabaseMock.from).toHaveBeenCalledWith('reservations')
+    expect(q.update).toHaveBeenCalledWith({ status: 'completed' })
+    expect(q.eq).toHaveBeenCalledWith('status', 'confirmed')
+    expect(q.lt).toHaveBeenCalledWith('rdv_date_fin', expect.any(String))
+    expect(error).toBeNull()
+    expect(data).toEqual(expired)
   })
 })

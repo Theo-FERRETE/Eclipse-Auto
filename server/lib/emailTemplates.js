@@ -5,9 +5,14 @@ function escapeHtml(text) {
   return String(text).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))
 }
 
-function buildConfirmationEmail(firstName, vehicle, rdvDate) {
+function buildConfirmationEmail(firstName, vehicle, rdvDate, rdvDateFin) {
   const rdvLine = rdvDate
     ? `<tr><td style="padding:8px 0;color:#888;font-size:12px;letter-spacing:2px;text-transform:uppercase;font-family:monospace;">Rendez-vous</td><td style="padding:8px 0;color:#fff;font-size:14px;font-family:monospace;">${new Date(rdvDate).toLocaleString('fr-FR', { dateStyle: 'long', timeStyle: 'short' })}</td></tr>`
+    : ''
+  // Affichée seulement si distincte du début : un essai d'un jour n'a pas
+  // besoin d'annoncer une "fin" identique au rendez-vous.
+  const finLine = (rdvDateFin && rdvDateFin !== rdvDate)
+    ? `<tr><td style="padding:8px 0;color:#888;font-size:12px;letter-spacing:2px;text-transform:uppercase;font-family:monospace;">Retour prévu</td><td style="padding:8px 0;color:#fff;font-size:14px;font-family:monospace;">${new Date(rdvDateFin).toLocaleString('fr-FR', { dateStyle: 'long', timeStyle: 'short' })}</td></tr>`
     : ''
   const price = vehicle.price
     ? `€ ${Number(vehicle.price).toLocaleString('fr-FR')}`
@@ -69,6 +74,7 @@ function buildConfirmationEmail(firstName, vehicle, rdvDate) {
                     </tr>
                     <tr><td colspan="2" style="height:1px;background:#1f1f1f;"></td></tr>
                     ${rdvLine}
+                    ${finLine}
                   </table>
                 </td>
               </tr>

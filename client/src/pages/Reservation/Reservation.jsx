@@ -21,7 +21,7 @@ export default function Reservation() {
   const [submitting, setSubmitting] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState(null)
-  const [form, setForm] = useState({ message: '', rdv_date: '' })
+  const [form, setForm] = useState({ message: '', rdv_date: '', rdv_date_fin: '' })
 
   useEffect(() => {
     async function init() {
@@ -47,6 +47,14 @@ export default function Reservation() {
   async function handleSubmit(e) {
     e.preventDefault()
     setError(null)
+
+    // Revérifié côté serveur de toute façon, mais évite un aller-retour
+    // réseau inutile pour une erreur de saisie évidente.
+    if (form.rdv_date && form.rdv_date_fin && form.rdv_date_fin < form.rdv_date) {
+      setError('La date de fin doit être postérieure à la date de début.')
+      return
+    }
+
     setSubmitting(true)
 
     try {
@@ -61,7 +69,8 @@ export default function Reservation() {
           // Pas de client_id : le serveur l'extrait du JWT.
           vehicle_id: vehicle.id,
           message: form.message || null,
-          rdv_date: form.rdv_date || null,
+          rdv_date: form.rdv_date,
+          rdv_date_fin: form.rdv_date_fin,
         }),
       })
 

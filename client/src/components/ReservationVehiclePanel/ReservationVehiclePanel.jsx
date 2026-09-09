@@ -1,9 +1,10 @@
-// Rappel du véhicule choisi.
+// Rappel du véhicule choisi pour l'essai. Pas de prix ici : un essai est gratuit et sans
+// options, le prix n'a de sens que côté achat (voir AchatVehiclePanel).
 
-import { optimizeImageUrl, formatPrice } from '@/lib/utils'
+import { optimizeImageUrl } from '@/lib/utils'
 
 export default function ReservationVehiclePanel({ vehicle }) {
-  const { brand, model, year, fuel_type, transmission, mileage, power, price, images } = vehicle
+  const { brand, model, year, fuel_type, transmission, mileage, power, images } = vehicle
 
   return (
     <div className="reservation-vehicle">
@@ -38,11 +39,6 @@ export default function ReservationVehiclePanel({ vehicle }) {
             <span className="spec-value">{spec.value}</span>
           </div>
         ))}
-      </div>
-
-      <div className="reservation-price-block">
-        <span className="reservation-price-label">Prix</span>
-        <span className="reservation-price">{formatPrice(price)}</span>
       </div>
     </div>
   )

@@ -40,13 +40,26 @@ function create(reservation) {
 function findWithVehicleForEmail(id) {
   return supabase
     .from('reservations')
-    .select('client_id, rdv_date, vehicles(brand, model, year, price)')
+    .select('client_id, rdv_date, rdv_date_fin, vehicles(brand, model, year, price)')
     .eq('id', id)
     .single()
 }
 
 function updateStatus(id, status) {
   return supabase.from('reservations').update({ status }).eq('id', id).select().single()
+}
+
+// Bascule en 'completed' tout essai confirmé dont la période est dépassée.
+// Le trigger sync_vehicle_status_on_reservation (migration 001) remet alors
+// le véhicule en 'available' — même mécanisme qu'une annulation manuelle,
+// juste déclenché par le temps plutôt que par un admin.
+function expireCompleted() {
+  return supabase
+    .from('reservations')
+    .update({ status: 'completed' })
+    .eq('status', 'confirmed')
+    .lt('rdv_date_fin', new Date().toISOString())
+    .select('id, vehicle_id')
 }
 
 function getAuthUserAndProfile(clientId) {
@@ -72,6 +85,7 @@ module.exports = {
   create,
   findWithVehicleForEmail,
   updateStatus,
+  expireCompleted,
   getAuthUserAndProfile,
   findClientAndStatus,
   cancel,

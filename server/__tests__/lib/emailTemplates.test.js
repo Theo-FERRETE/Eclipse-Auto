@@ -54,6 +54,13 @@ describe('buildConfirmationEmail', () => {
     expect(sansRdv).not.toContain('Rendez-vous')
   })
 
+  it('inclut la ligne "Retour prévu" seulement si rdv_date_fin diffère de rdv_date', () => {
+    const surPlusieursJours = buildConfirmationEmail('Client', mockVehicle, '2026-06-15T10:00:00', '2026-06-18T10:00:00')
+    const unSeulJour = buildConfirmationEmail('Client', mockVehicle, '2026-06-15T10:00:00', '2026-06-15T10:00:00')
+    expect(surPlusieursJours).toContain('Retour prévu')
+    expect(unSeulJour).not.toContain('Retour prévu')
+  })
+
   it('échappe les données injectées (prénom, marque, modèle) pour prévenir le XSS', () => {
     const html = buildConfirmationEmail('<script>alert(1)</script>', { ...mockVehicle, brand: '<img onerror=alert(1)>' }, null)
     expect(html).not.toContain('<script>')
