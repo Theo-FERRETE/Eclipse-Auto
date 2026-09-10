@@ -66,7 +66,7 @@ export default function AdminReservations() {
     <main className="admin">
       <AdminPageHeader title="Essais" />
 
-      <div className="container admin-layout">
+      <div className="page-section admin-layout">
         <AdminSidebar />
 
         <div className="admin-content">

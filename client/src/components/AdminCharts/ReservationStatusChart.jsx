@@ -30,7 +30,7 @@ const OPTIONS = {
       grid: { display: false },
       ticks: {
         color: '#999',
-        font: { family: 'Barlow Condensed, sans-serif', size: 12 },
+        font: { family: 'Inter, sans-serif', size: 12 },
       },
       border: { color: '#1e1e1e' },
     },
@@ -38,7 +38,7 @@ const OPTIONS = {
       grid: { color: '#1a1a1a' },
       ticks: {
         color: '#999',
-        font: { family: 'Barlow Condensed, sans-serif', size: 12 },
+        font: { family: 'Inter, sans-serif', size: 12 },
         stepSize: 1,
         precision: 0,
       },

@@ -1,33 +1,35 @@
 .admin-main {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 40px;
 }
 
 .admin-section-title {
   margin-bottom: 4px;
 }
 
-.kpi-row {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 2px;
-  background: var(--border);
-}
-
-.kpi-row--3 { grid-template-columns: repeat(3, 1fr); }
-
 .admin-section-label {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 12px;
-  letter-spacing: 2px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--gray-dark);
 }
 
+/* Tuiles de stats : bordure fine + espace entre elles plutôt que la grille bord-à-bord
+   (fond partagé + gap de 2px) utilisée avant, qui faisait "boîtes soudées". */
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.kpi-row--3 { grid-template-columns: repeat(3, 1fr); }
+
 .kpi-card {
-  background: var(--black-2);
-  padding: 20px 24px;
+  border: 1px solid var(--border);
+  padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -42,8 +44,8 @@
 
 .kpi-n {
   font-family: var(--font-display);
+  font-weight: 400;
   font-size: 36px;
-  font-weight: 900;
   color: var(--white);
   line-height: 1;
 }
@@ -51,14 +53,16 @@
 .kpi-n.confirmed { color: #22c55e; }
 
 .kpi-l {
-  font-family: var(--font-display);
-  font-size: 11px;
-  letter-spacing: 2px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--gray-dark);
 }
 
 .kpi-sub {
+  font-family: var(--font-body);
   font-size: 12px;
   color: var(--gray-dark);
   margin-top: 4px;
@@ -67,12 +71,11 @@
 .charts-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 2px;
-  background: var(--border);
+  gap: 24px;
 }
 
 .chart-card {
-  background: var(--black-2);
+  border: 1px solid var(--border);
   padding: 28px 24px 24px;
 }
 
@@ -84,18 +87,17 @@
 }
 
 .chart-title {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 12px;
-  letter-spacing: 2px;
+  font-weight: 600;
+  letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--gray-dark);
 }
 
 .chart-total {
-  font-family: var(--font-display);
-  font-size: 11px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+  font-family: var(--font-body);
+  font-size: 12px;
   color: var(--gray-dark);
 }
 
@@ -114,21 +116,20 @@
 .quick-access {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 2px;
-  background: var(--border);
+  gap: 24px;
 }
 
 .quick-card {
-  background: var(--black-2);
-  padding: 20px 24px;
+  border: 1px solid var(--border);
+  padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 4px;
   text-decoration: none;
-  transition: background 0.15s;
+  transition: border-color 0.2s;
 }
 
-.quick-card:hover { background: var(--black-3, #1a1a1a); }
+.quick-card:hover { border-color: var(--border-light); }
 
 .quick-card-header {
   display: flex;
@@ -139,20 +140,22 @@
 }
 
 .quick-card-title {
-  font-family: var(--font-display);
-  font-size: 11px;
-  letter-spacing: 2px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--white);
 }
 
 .quick-card-body {
-  font-size: 14px;
+  font-family: var(--font-display);
+  font-size: 20px;
   color: var(--white);
-  font-weight: 500;
 }
 
 .quick-card-meta {
+  font-family: var(--font-body);
   font-size: 12px;
   color: var(--gray-dark);
   margin-top: 4px;
@@ -169,14 +172,14 @@
 }
 
 @media (max-width: 768px) {
-  .kpi-card { padding: 16px 18px; }
+  .kpi-card { padding: 18px 20px; }
   .kpi-n { font-size: 28px; }
   .chart-body { height: 220px; }
   .quick-access { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 480px) {
-  .kpi-row { grid-template-columns: 1fr 1fr; }
+  .kpi-row { grid-template-columns: 1fr 1fr; gap: 16px; }
   .kpi-card { padding: 14px 16px; }
   .kpi-n { font-size: 22px; }
   .chart-body { height: 180px; }

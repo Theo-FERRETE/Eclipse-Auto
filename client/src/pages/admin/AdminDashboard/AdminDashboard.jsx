@@ -35,7 +35,7 @@ export default function AdminDashboard() {
   return (
     <main className="admin">
       <AdminPageHeader title="Dashboard" />
-      <div className="container admin-layout">
+      <div className="page-section admin-layout">
         <AdminSidebar />
         <div className="admin-main">
           {loading ? (
@@ -73,7 +73,7 @@ export default function AdminDashboard() {
                   <div className="kpi-icon">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                   </div>
-                  <div className="kpi-n">{stats.clients ?? 0}</div>
+                  <div className="kpi-n">{stats?.clients ?? 0}</div>
                   <div className="kpi-l">Clients</div>
                   <div className="kpi-sub">comptes enregistrés</div>
                 </div>
@@ -156,7 +156,7 @@ export default function AdminDashboard() {
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6"/></svg>
                   </div>
                   <div className="quick-card-body">Gérer les comptes</div>
-                  <div className="quick-card-meta">{stats.clients ?? 0} clients enregistrés</div>
+                  <div className="quick-card-meta">{stats?.clients ?? 0} clients enregistrés</div>
                 </Link>
               </div>
             </>

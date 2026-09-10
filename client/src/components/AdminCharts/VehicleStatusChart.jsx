@@ -17,7 +17,7 @@ const OPTIONS = {
       position: 'bottom',
       labels: {
         color: '#999',
-        font: { family: 'Barlow Condensed, sans-serif', size: 12 },
+        font: { family: 'Inter, sans-serif', size: 12 },
         padding: 16,
         boxWidth: 10,
       },

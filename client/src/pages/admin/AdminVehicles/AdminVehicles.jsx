@@ -138,7 +138,7 @@ export default function AdminVehicles() {
   return (
     <main className="admin">
       <AdminPageHeader title="Véhicules" />
-      <div className="container admin-layout">
+      <div className="page-section admin-layout">
         <AdminSidebar />
         <div className="admin-content">
           <div className="admin-vehicles-wrap">

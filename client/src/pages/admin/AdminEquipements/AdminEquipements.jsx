@@ -85,7 +85,7 @@ export default function AdminEquipements() {
   return (
     <main className="admin">
       <AdminPageHeader title="Équipements" />
-      <div className="container admin-layout">
+      <div className="page-section admin-layout">
         <AdminSidebar />
         <div className="admin-content">
           <div className="admin-equip-wrap">
