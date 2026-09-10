@@ -13,8 +13,8 @@
 
 .notfound-code {
   font-family: var(--font-display);
+  font-weight: 400;
   font-size: clamp(120px, 20vw, 200px);
-  font-weight: 900;
   line-height: 1;
   color: var(--red);
   letter-spacing: -4px;
@@ -28,10 +28,9 @@
 
 .notfound-title {
   font-family: var(--font-display);
+  font-weight: 400;
   font-size: clamp(36px, 6vw, 56px);
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: -0.5px;
   margin-bottom: 16px;
 }
 

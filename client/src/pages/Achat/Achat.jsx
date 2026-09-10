@@ -111,7 +111,7 @@ export default function Achat() {
   return (
     <main className="reservation">
       <ReservationBreadcrumb slug={slug} brand={vehicle.brand} model={vehicle.model} label="Achat" />
-      <div className="container reservation-layout">
+      <div className="page-section reservation-layout">
         <AchatVehiclePanel vehicle={vehicle} selectedEquipements={selectedEquipements} />
         <AchatForm
           modePaiement={modePaiement}

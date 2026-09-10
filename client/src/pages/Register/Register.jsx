@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { register } from '@/lib/auth'
+import '../Login/Login.css'
 
 export default function Register() {
   const navigate = useNavigate()

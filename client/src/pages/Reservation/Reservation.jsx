@@ -104,7 +104,7 @@ export default function Reservation() {
   return (
     <main className="reservation">
       <ReservationBreadcrumb slug={slug} brand={vehicle.brand} model={vehicle.model} />
-      <div className="container reservation-layout">
+      <div className="page-section reservation-layout">
         <ReservationVehiclePanel vehicle={vehicle} />
         <ReservationForm
           form={form}

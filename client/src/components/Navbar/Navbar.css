@@ -8,9 +8,6 @@
 }
 
 .navbar-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 32px;
   height: 64px;
   display: flex;
   align-items: center;
@@ -35,9 +32,9 @@
 }
 
 .navbar-links a {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 13px;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.75);
   font-weight: 600;
@@ -66,9 +63,10 @@
 }
 
 .navbar-username {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 13px;
-  letter-spacing: 2px;
+  font-weight: 600;
+  letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--cyan);
   transition: color 0.2s;

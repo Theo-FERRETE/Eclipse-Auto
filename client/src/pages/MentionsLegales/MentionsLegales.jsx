@@ -6,7 +6,7 @@ export default function MentionsLegales() {
   return (
     <main className="mentions">
       <div className="mentions-hero">
-        <div className="container">
+        <div className="page-section">
           <div className="tag">Légal</div>
           <h1 className="mentions-title">Mentions légales</h1>
         </div>
@@ -14,7 +14,7 @@ export default function MentionsLegales() {
 
       <div className="divider"></div>
 
-      <div className="container mentions-content">
+      <div className="page-section mentions-content">
 
         <div className="mentions-block">
           <h2 className="mentions-section">1. Présentation du site</h2>

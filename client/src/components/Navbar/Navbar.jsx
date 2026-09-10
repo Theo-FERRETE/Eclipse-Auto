@@ -18,7 +18,7 @@ export default function Navbar() {
 
   return (
     <header className="navbar">
-      <div className="navbar-inner">
+      <div className="navbar-inner page-section">
 
         <Link to="/" className="navbar-logo">
           <img src="/eclipse-auto.svg" alt="Eclipse Auto" className="navbar-logo-img" />

@@ -9,7 +9,7 @@ export default function Footer() {
   return (
     <footer className="footer">
       <div className="footer-top">
-        <div className="container footer-grid">
+        <div className="page-section footer-grid">
           <div className="footer-brand">
             <img src="/eclipse-auto.svg" alt="Eclipse Auto" className="footer-logo" />
             <p className="footer-desc">
@@ -41,7 +41,7 @@ export default function Footer() {
       <div className="divider"></div>
 
       <div className="footer-bottom">
-        <div className="container footer-bottom-inner">
+        <div className="page-section footer-bottom-inner">
           <div className="footer-copy">
             © {year} Eclipse Auto — Projet DWWM. Tous droits réservés.
           </div>

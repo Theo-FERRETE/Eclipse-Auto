@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 export default function AchatSuccess({ vehicle }) {
   return (
     <main className="reservation-success-page">
-      <div className="container">
+      <div className="page-section">
         <div className="success-card">
           <div className="success-icon">✓</div>
           <div className="tag">Confirmation</div>

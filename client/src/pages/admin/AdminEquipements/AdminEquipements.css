@@ -1,13 +1,12 @@
 .admin-equip-wrap {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 32px;
 }
 
 .equip-form {
-  background: linear-gradient(165deg, var(--black-3), var(--black-2));
-  border: 1px solid var(--border);
-  padding: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -22,20 +21,19 @@
 .equip-list {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  background: var(--border);
+  gap: 12px;
 }
 
 .equip-card {
-  background: var(--black-2);
+  border: 1px solid var(--border);
   display: grid;
   grid-template-columns: 1fr auto auto;
   gap: 20px;
   align-items: center;
   padding: 16px 20px;
-  transition: background 0.2s;
+  transition: border-color 0.2s;
 }
-.equip-card:hover { background: var(--black-3); }
+.equip-card:hover { border-color: var(--border-light); }
 
 .equip-info {
   display: flex;
@@ -45,25 +43,24 @@
 
 .equip-name {
   font-family: var(--font-display);
-  font-size: 16px;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  font-size: 18px;
+  font-weight: 400;
   color: var(--white);
 }
 
 .equip-categorie {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 11px;
-  letter-spacing: 2px;
+  font-weight: 600;
+  letter-spacing: 1px;
   text-transform: uppercase;
-  color: var(--gray);
+  color: var(--gray-dark);
 }
 
 .equip-price {
   font-family: var(--font-display);
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 400;
   color: var(--cyan);
 }
 

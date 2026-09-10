@@ -38,24 +38,12 @@
   z-index: 2;
   width: 100%;
   max-width: 440px;
-  background: linear-gradient(165deg, var(--black-3), var(--black-2));
-  border: 1px solid var(--border);
-  clip-path: var(--clip-card);
+  background: var(--black-3);
+  border: 1px solid var(--border-light);
   padding: 48px 40px;
   display: flex;
   flex-direction: column;
   gap: 32px;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
-}
-
-.auth-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 12px;
-  height: 1px;
-  background: linear-gradient(90deg, var(--red), transparent);
 }
 
 .auth-header {
@@ -74,10 +62,9 @@
 
 .auth-title {
   font-family: var(--font-display);
-  font-size: 36px;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: -1px;
+  font-weight: 400;
+  font-size: 32px;
+  line-height: 1.1;
   color: var(--white);
   margin-top: 4px;
 }

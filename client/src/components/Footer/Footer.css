@@ -1,5 +1,5 @@
 .footer {
-  background: var(--black-2);
+  background: var(--black);
   border-top: 1px solid var(--border);
   margin-top: auto;
 }
@@ -34,12 +34,12 @@
 }
 
 .footer-nav-title {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 11px;
-  letter-spacing: 4px;
+  font-weight: 600;
+  letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--white);
-  font-weight: 700;
   margin-bottom: 4px;
 }
 
@@ -63,10 +63,8 @@
 }
 
 .footer-copy {
-  font-family: var(--font-display);
-  font-size: 11px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
+  font-family: var(--font-body);
+  font-size: 12px;
   color: var(--gray-dark);
 }
 
