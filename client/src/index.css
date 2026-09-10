@@ -75,21 +75,6 @@ img { max-width: 100%; display: block; }
 }
 .btn-ghost:hover { border-color: var(--cyan); color: var(--cyan); }
 
-.btn-cyan {
-  background: var(--cyan);
-  color: var(--black);
-  border: none;
-  padding: 12px 28px;
-  font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  clip-path: var(--clip-btn);
-  transition: opacity 0.2s;
-}
-.btn-cyan:hover { opacity: 0.85; }
-
 .tag {
   display: inline-flex;
   align-items: center;
@@ -103,7 +88,6 @@ img { max-width: 100%; display: block; }
 }
 
 .section { padding: 80px 0; }
-.container { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
 
 /* Pleine largeur avec un padding fixe (pas de conteneur centré) : pages
    refaites sur la nouvelle direction (Home, Catalogue...), qui collent au
@@ -123,7 +107,6 @@ img { max-width: 100%; display: block; }
 }
 
 @media (max-width: 480px) {
-  .container { padding: 0 20px; }
   .section { padding: 60px 0; }
   .admin-hero { padding: 32px 0 20px; }
 }
@@ -568,8 +551,7 @@ img { max-width: 100%; display: block; }
 .featured-card-img:not(:has(img)),
 .avc-img-placeholder,
 .ar-img .avc-img-placeholder,
-.reservation-img-placeholder,
-.gallery-placeholder {
+.reservation-img-placeholder {
   background: linear-gradient(
     90deg,
     var(--black-2) 25%,
