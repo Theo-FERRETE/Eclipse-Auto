@@ -30,10 +30,10 @@ export default function DashboardReservations({ reservations, loading, cancellin
       )}
 
       {!loading && reservations.length > 0 && (
-        <div className="reservations-list">
+        <div className="card-grid">
           {reservations.map(r => (
-            <div className="reservation-card" key={r.id}>
-              <div className="reservation-img">
+            <div className="vcard dashboard-card" key={r.id}>
+              <div className="vcard-img">
                 {r.vehicles?.images?.[0]
                   ? <img
                       src={optimizeImageUrl(r.vehicles.images[0], 400)}
@@ -43,53 +43,46 @@ export default function DashboardReservations({ reservations, loading, cancellin
                       style={{ opacity: 0, transition: 'opacity 0.4s ease' }}
                       onLoad={e => { e.currentTarget.style.opacity = '1' }}
                     />
-                  : <div className="reservation-img-placeholder"></div>
+                  : <div className="vcard-img-placeholder"></div>
                 }
+                <span className={`reservation-status vcard-badge ${RESERVATION_STATUS[r.status]?.class}`}>
+                  {RESERVATION_STATUS[r.status]?.label}
+                </span>
               </div>
-              <div className="reservation-info">
-                <div className="reservation-vehicle-info">
-                  <span className="vcard-brand">{r.vehicles?.brand}</span>
-                  <span className="vcard-model" style={{ fontSize: '22px' }}>
-                    {r.vehicles?.model}
-                  </span>
-                </div>
+
+              <div className="vcard-body">
+                <div className="vcard-brand">{r.vehicles?.brand}</div>
+                <div className="vcard-model">{r.vehicles?.model}</div>
                 {r.rdv_date && (
-                  <div className="reservation-date">
+                  <div className="dashboard-card-meta">
                     {r.rdv_date_fin && r.rdv_date_fin !== r.rdv_date
-                      ? `Du ${new Date(r.rdv_date).toLocaleString('fr-FR')} au ${new Date(r.rdv_date_fin).toLocaleString('fr-FR')}`
+                      ? `Du ${new Date(r.rdv_date).toLocaleDateString('fr-FR')} au ${new Date(r.rdv_date_fin).toLocaleDateString('fr-FR')}`
                       : `Créneau : ${new Date(r.rdv_date).toLocaleString('fr-FR')}`}
                   </div>
                 )}
-                {r.message && (
-                  <div className="reservation-message">"{r.message}"</div>
-                )}
-                <div className="reservation-date">
-                  Demandé le {new Date(r.created_at).toLocaleDateString('fr-FR')}
-                </div>
-              </div>
-              <div className="reservation-actions">
-                <span className={`reservation-status ${RESERVATION_STATUS[r.status]?.class}`}>
-                  {RESERVATION_STATUS[r.status]?.label}
-                </span>
-                {(r.status === 'pending' || r.status === 'confirmed') && (
-                  <button
-                    className="btn-ghost"
-                    style={{ padding: '8px 16px', fontSize: '11px' }}
-                    onClick={() => onCancel(r.id, r.status)}
-                    disabled={cancelling.has(r.id)}
-                  >
-                    {cancelling.has(r.id) ? '...' : 'Annuler'}
-                  </button>
-                )}
-                {r.status === 'completed' && r.vehicles && (
-                  <Link
-                    to={`/achat/${toSlug(r.vehicles.brand, r.vehicles.model)}`}
-                    state={{ reservation_id: r.id }}
-                    className="btn-primary"
-                    style={{ padding: '8px 16px', fontSize: '11px' }}
-                  >
-                    Concrétiser la vente
-                  </Link>
+                {r.message && <div className="dashboard-card-meta dashboard-card-message">"{r.message}"</div>}
+
+                {(r.status === 'pending' || r.status === 'confirmed' || (r.status === 'completed' && r.vehicles)) && (
+                  <div className="vcard-footer">
+                    {(r.status === 'pending' || r.status === 'confirmed') && (
+                      <button
+                        className="btn-text"
+                        onClick={() => onCancel(r.id, r.status)}
+                        disabled={cancelling.has(r.id)}
+                      >
+                        {cancelling.has(r.id) ? '...' : 'Annuler'}
+                      </button>
+                    )}
+                    {r.status === 'completed' && r.vehicles && (
+                      <Link
+                        to={`/achat/${toSlug(r.vehicles.brand, r.vehicles.model)}`}
+                        state={{ reservation_id: r.id }}
+                        className="btn-primary dashboard-card-cta"
+                      >
+                        Concrétiser la vente
+                      </Link>
+                    )}
+                  </div>
                 )}
               </div>
             </div>

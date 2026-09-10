@@ -52,8 +52,11 @@ export default function Catalogue() {
     }
   }, [])
 
-  function handleFilterChange(key, value) {
-    setSearchParams(buildParams({ ...filters, [key]: value }, sort, search))
+  // `patch` peut changer plusieurs filtres à la fois (ex: une pastille carburant remet
+  // aussi le statut par défaut) : un seul setSearchParams, jamais deux à la suite qui
+  // s'écraseraient l'un l'autre sur le `filters` de ce render.
+  function handleFilterChange(patch) {
+    setSearchParams(buildParams({ ...filters, ...patch }, sort, search))
     setPage(1)
   }
 
@@ -112,18 +115,14 @@ export default function Catalogue() {
   return (
     <main className="catalogue">
       <div className="catalogue-hero">
-        <div className="container">
-          <div className="tag">Notre sélection</div>
-          <h1 className="catalogue-title">Catalogue</h1>
-          <p className="catalogue-sub">
-            {loading ? 'Chargement...' : `${filtered.length} véhicule${filtered.length > 1 ? 's' : ''} trouvé${filtered.length > 1 ? 's' : ''}`}
-          </p>
+        <div className="page-section">
+          <h1 className="catalogue-title">Le catalogue</h1>
         </div>
       </div>
 
       <div className="divider"></div>
 
-      <div className="container catalogue-layout">
+      <div className="page-section catalogue-layout">
         <Filters
           filters={filters}
           onChange={handleFilterChange}
@@ -134,24 +133,22 @@ export default function Catalogue() {
           years={years}
           priceMax={priceMax}
         />
-        <div className="catalogue-main">
-          <CatalogueToolbar
-            search={search}
-            sort={sort}
-            onSearchChange={value => { setSearchParams(buildParams(filters, sort, value)); setPage(1) }}
-            onSortChange={value => { setSearchParams(buildParams(filters, value, search)); setPage(1) }}
-          />
-          <CatalogueGrid
-            loading={loading}
-            error={error}
-            paginated={paginated}
-            page={page}
-            itemsPerPage={ITEMS_PER_PAGE}
-            totalPages={totalPages}
-            onPageChange={setPage}
-            onReset={handleReset}
-          />
-        </div>
+        <CatalogueToolbar
+          search={search}
+          sort={sort}
+          onSearchChange={value => { setSearchParams(buildParams(filters, sort, value)); setPage(1) }}
+          onSortChange={value => { setSearchParams(buildParams(filters, value, search)); setPage(1) }}
+        />
+        <CatalogueGrid
+          loading={loading}
+          error={error}
+          paginated={paginated}
+          page={page}
+          itemsPerPage={ITEMS_PER_PAGE}
+          totalPages={totalPages}
+          onPageChange={setPage}
+          onReset={handleReset}
+        />
       </div>
     </main>
   )

@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/lib/AuthContext'
 import { supabase } from '@/lib/supabase'
-import DashboardSidebar from '@/components/DashboardSidebar/DashboardSidebar'
+import DashboardTabs from '@/components/DashboardTabs/DashboardTabs'
 import DashboardReservations from '@/components/DashboardReservations/DashboardReservations'
 import DashboardVentes from '@/components/DashboardVentes/DashboardVentes'
 import DashboardProfile from '@/components/DashboardProfile/DashboardProfile'
@@ -94,39 +94,35 @@ export default function Dashboard() {
   return (
     <main className="dashboard">
       <div className="dashboard-hero">
-        <div className="container">
-          <div className="tag">Espace personnel</div>
-          <h1 className="dashboard-title">
-            Bonjour, <em>{profile?.first_name || 'Client'}</em>
-          </h1>
+        <div className="page-section">
+          <div className="tag">{profile?.first_name || 'Client'} {profile?.last_name}</div>
+          <h1 className="dashboard-title">Mon espace</h1>
+          <DashboardTabs view={view} onViewChange={setView} />
         </div>
       </div>
 
       <div className="divider"></div>
 
-      <div className="container dashboard-layout">
-        <DashboardSidebar profile={profile} user={user} view={view} onViewChange={setView} />
-        <div className="dashboard-main">
-          {view === 'reservations' && (
-            <>
-              {cancelError && (
-                <div className="form-error" role="alert" style={{ marginBottom: '16px' }}>{cancelError}</div>
-              )}
-              <DashboardReservations
-                reservations={reservations}
-                loading={loading}
-                cancelling={cancelling}
-                onCancel={requestCancel}
-              />
-            </>
-          )}
-          {view === 'ventes' && (
-            <DashboardVentes ventes={ventes} loading={ventesLoading} />
-          )}
-          {view === 'profile' && (
-            <DashboardProfile user={user} profile={profile} refreshProfile={refreshProfile} />
-          )}
-        </div>
+      <div className="page-section dashboard-main">
+        {view === 'reservations' && (
+          <>
+            {cancelError && (
+              <div className="form-error" role="alert" style={{ marginBottom: '16px' }}>{cancelError}</div>
+            )}
+            <DashboardReservations
+              reservations={reservations}
+              loading={loading}
+              cancelling={cancelling}
+              onCancel={requestCancel}
+            />
+          </>
+        )}
+        {view === 'ventes' && (
+          <DashboardVentes ventes={ventes} loading={ventesLoading} />
+        )}
+        {view === 'profile' && (
+          <DashboardProfile user={user} profile={profile} refreshProfile={refreshProfile} />
+        )}
       </div>
 
       {confirmCancelId && (

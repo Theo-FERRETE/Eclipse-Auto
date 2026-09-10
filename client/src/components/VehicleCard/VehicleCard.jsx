@@ -1,7 +1,7 @@
 // Carte véhicule du catalogue.
 
 import { Link } from 'react-router-dom'
-import { toSlug, optimizeImageUrl, formatPrice, VEHICLE_STATUS } from '@/lib/utils'
+import { toSlug, optimizeImageUrl, formatPrice, capitalize, VEHICLE_STATUS } from '@/lib/utils'
 import './VehicleCard.css'
 
 export default function VehicleCard({ vehicle, index }) {
@@ -11,13 +11,11 @@ export default function VehicleCard({ vehicle, index }) {
   const isPriority = index < 3
   const statusInfo = VEHICLE_STATUS[status] || VEHICLE_STATUS.available
 
+  const mileageLabel = mileage === 0 ? 'Neuf' : mileage ? `${mileage.toLocaleString('fr-FR')} km` : null
+  const specs = [year, capitalize(fuel_type), power, mileageLabel].filter(Boolean).join(' · ')
+
   return (
     <Link to={`/vehicles/${slug}`} className="vcard">
-      <div className="vcard-top">
-        <span className="vcard-num">{String(index + 1).padStart(2, '0')}</span>
-        <span className={statusInfo.badge}>{statusInfo.label}</span>
-      </div>
-
       <div className="vcard-img">
         {images && images[0]
           ? <img
@@ -31,34 +29,13 @@ export default function VehicleCard({ vehicle, index }) {
             />
           : <div className="vcard-img-placeholder"></div>
         }
-        <div className="vcard-img-bar"></div>
+        <span className={`${statusInfo.badge} vcard-badge`}>{statusInfo.label}</span>
       </div>
 
       <div className="vcard-body">
         <div className="vcard-brand">{brand}</div>
         <div className="vcard-model">{model}</div>
-
-        <div className="vcard-specs">
-          <span>{year}</span>
-          {fuel_type && (
-            <>
-              <span className="spec-dot"></span>
-              <span>{fuel_type}</span>
-            </>
-          )}
-          {power && (
-            <>
-              <span className="spec-dot"></span>
-              <span>{power}</span>
-            </>
-          )}
-        </div>
-
-        {mileage !== undefined && mileage !== null && (
-          <div className="vcard-mileage">
-            {mileage === 0 ? 'Neuf' : `${mileage.toLocaleString('fr-FR')} km`}
-          </div>
-        )}
+        <div className="vcard-specs">{specs}</div>
 
         <div className="vcard-footer">
           <div className="vcard-price">

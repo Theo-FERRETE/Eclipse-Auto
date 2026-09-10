@@ -1,39 +1,23 @@
 .catalogue-hero {
-  padding: 60px 0 40px;
+  padding: 72px 0 48px;
   position: relative;
 }
 
 .catalogue-title {
   font-family: var(--font-display);
-  font-size: clamp(48px, 8vw, 96px);
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: -2px;
-  line-height: 0.9;
-  margin: 12px 0 8px;
-}
-
-.catalogue-sub {
-  font-family: var(--font-display);
-  font-size: 12px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--gray);
-  margin-top: 8px;
+  font-weight: 400;
+  font-size: clamp(40px, 6vw, 56px);
+  letter-spacing: -0.5px;
+  line-height: 1.05;
+  margin: 0;
 }
 
 .catalogue-layout {
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 32px;
-  padding-top: 48px;
-  padding-bottom: 80px;
-}
-
-.catalogue-main {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  padding-top: 40px;
+  padding-bottom: 80px;
 }
 
 .catalogue-toolbar {
@@ -62,13 +46,6 @@
   border-color: var(--red);
 }
 
-.catalogue-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2px;
-  background: var(--border);
-}
-
 .catalogue-loading {
   display: flex;
   flex-direction: column;
@@ -77,8 +54,9 @@
   gap: 20px;
   padding: 80px 0;
   color: var(--gray-dark);
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 12px;
+  font-weight: 600;
   letter-spacing: 2px;
   text-transform: uppercase;
 }
@@ -86,8 +64,9 @@
 .catalogue-error {
   padding: 40px 0;
   color: #ff4444;
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 13px;
+  font-weight: 600;
   letter-spacing: 2px;
   text-transform: uppercase;
   text-align: center;
@@ -107,9 +86,9 @@
   color: var(--white);
   width: 40px;
   height: 40px;
-  font-family: var(--font-display);
-  font-size: 14px;
-  font-weight: 700;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
   transition: background 0.2s, border-color 0.2s, color 0.2s;
   display: flex;
@@ -130,22 +109,7 @@
   cursor: not-allowed;
 }
 
-@media (max-width: 1024px) {
-  .catalogue-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
 @media (max-width: 768px) {
-  .catalogue-layout {
-    grid-template-columns: 1fr;
-  }
-  .catalogue-grid {
-    grid-template-columns: 1fr;
-  }
-  .filters {
-    position: static;
-  }
   .catalogue-toolbar {
     flex-direction: column;
   }

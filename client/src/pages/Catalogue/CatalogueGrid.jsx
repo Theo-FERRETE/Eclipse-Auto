@@ -25,7 +25,7 @@ export default function CatalogueGrid({ loading, error, paginated, page, itemsPe
           <button className="btn-ghost" onClick={onReset}>Réinitialiser les filtres</button>
         </div>
       ) : (
-        <div className="catalogue-grid">
+        <div className="card-grid">
           {paginated.map((vehicle, i) => (
             <VehicleCard
               key={vehicle.id}

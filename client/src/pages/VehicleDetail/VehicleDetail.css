@@ -5,204 +5,172 @@
   justify-content: center;
 }
 
-.detail-breadcrumb {
-  padding: 20px 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.detail-breadcrumb .container {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.breadcrumb-back {
-  font-family: var(--font-display);
-  font-size: 11px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--cyan);
-  transition: color 0.2s;
-}
-.breadcrumb-back:hover { color: var(--white); }
-
-.breadcrumb-sep { color: var(--gray-dark); }
-
-.breadcrumb-current {
-  font-family: var(--font-display);
-  font-size: 11px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--white);
-}
-
-.detail-layout {
-  display: grid;
-  grid-template-columns: 1fr 420px;
-  gap: 64px;
-  padding-top: 48px;
-  padding-bottom: 80px;
-}
-
-.detail-gallery {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.gallery-main {
+/* Image plein cadre, une seule photo (source internet, pas de galerie) : la fiche
+   véhicule n'a normalement qu'une image. Les vignettes ne s'affichent que si un
+   véhicule en a plusieurs (voir VehicleDetail.jsx). */
+.detail-hero {
   position: relative;
-  height: 480px;
-  background: linear-gradient(135deg, #1a0000, var(--black-2));
-  clip-path: var(--clip-card);
+  height: 640px;
   overflow: hidden;
+  background: linear-gradient(135deg, #1a0000, var(--black-2));
 }
 
-.gallery-main img {
+.detail-hero-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center 45%;
 }
 
-.gallery-placeholder {
+.detail-hero-placeholder {
   width: 100%;
   height: 100%;
   background: linear-gradient(135deg, #140000, #0a0a12);
 }
 
-.gallery-bar {
+.detail-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(10,10,10,0.95) 0%, rgba(10,10,10,0.15) 45%, transparent 70%);
+}
+
+.detail-hero-back {
+  position: absolute;
+  top: 24px;
+  left: 64px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cyan);
+  transition: color 0.2s;
+}
+.detail-hero-back:hover { color: var(--white); }
+
+.detail-hero-content {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--red), var(--cyan));
-}
-
-.gallery-thumbs {
+  padding: 0 64px 40px;
   display: flex;
-  gap: 8px;
-}
-
-.gallery-thumb {
-  width: 80px;
-  height: 60px;
-  border: 1px solid var(--border);
-  background: none;
-  padding: 0;
-  cursor: pointer;
-  overflow: hidden;
-  transition: border-color 0.2s;
-  flex-shrink: 0;
-}
-
-.gallery-thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s;
-}
-
-.gallery-thumb:hover img { transform: scale(1.05); }
-.gallery-thumb.active { border-color: var(--red); }
-
-.detail-info {
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-}
-
-.detail-header {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
 }
 
 .detail-title {
   font-family: var(--font-display);
-  font-size: clamp(48px, 6vw, 72px);
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: -2px;
-  line-height: 0.9;
-  color: var(--white);
+  font-weight: 400;
+  font-size: clamp(40px, 6vw, 72px);
+  line-height: 1;
+  margin-top: 8px;
 }
 
-.detail-year {
-  font-family: var(--font-display);
-  font-size: 13px;
-  letter-spacing: 4px;
-  color: var(--gray);
-  text-transform: uppercase;
-}
-
-.detail-price-block {
+.detail-hero-meta {
+  text-align: right;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 0;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
 }
 
 .detail-price {
   font-family: var(--font-display);
-  font-size: 42px;
-  font-weight: 900;
-  color: var(--white);
-  line-height: 1;
+  font-weight: 400;
+  font-size: clamp(28px, 3vw, 44px);
 }
 
-.detail-specs {
+.detail-hero-thumbs {
+  position: absolute;
+  bottom: 40px;
+  right: 64px;
   display: flex;
-  flex-direction: column;
-  gap: 0;
+  gap: 8px;
+}
+
+.detail-hero-thumb {
+  width: 64px;
+  height: 48px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  overflow: hidden;
+  opacity: 0.6;
+  transition: opacity 0.2s, border-color 0.2s;
+  flex-shrink: 0;
+}
+.detail-hero-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.detail-hero-thumb:hover { opacity: 0.85; }
+.detail-hero-thumb.active { opacity: 1; border-color: var(--white); }
+
+.detail-body {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 80px;
+  padding-top: 56px;
+  padding-bottom: 88px;
+}
+
+.detail-main .tag { margin-bottom: 20px; }
+
+.detail-spec-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+}
+
+.detail-spec-value {
+  font-family: var(--font-display);
+  font-size: 26px;
+  margin-bottom: 6px;
+}
+
+.detail-spec-label {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--gray-dark);
 }
 
 .detail-description {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.desc-label {
-  font-family: var(--font-display);
-  font-size: 11px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--gray);
-}
-
-.detail-description p {
   font-size: 14px;
   color: var(--gray);
   line-height: 1.8;
+  margin-top: 32px;
+  max-width: 640px;
 }
 
 .detail-actions {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-top: auto;
+  justify-content: center;
 }
 
 .detail-actions .btn-primary,
 .detail-actions .btn-ghost {
   width: 100%;
   text-align: center;
-  padding: 16px 28px;
-  font-size: 12px;
+  padding: 17px 28px;
+  font-size: 13px;
 }
 
 @media (max-width: 1024px) {
-  .detail-layout {
+  .detail-hero { height: 460px; }
+  .detail-hero-content { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .detail-hero-meta { align-items: flex-start; text-align: left; }
+  .detail-body {
     grid-template-columns: 1fr;
     gap: 40px;
   }
-  .gallery-main { height: 320px; }
+  .detail-spec-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 768px) {
-  .detail-title { font-size: 48px; }
-  .detail-price { font-size: 32px; }
+  .detail-hero-back { left: 24px; }
+  .detail-hero-content { padding: 0 24px 32px; }
+  .detail-hero-thumbs { right: 24px; }
 }

@@ -72,94 +72,96 @@ export default function DashboardProfile({ user, profile, refreshProfile }) {
         </h2>
       </div>
 
-      <form className="profile-form" onSubmit={handleProfileSave}>
-        <div className="profile-form-title">Informations personnelles</div>
-        <div className="form-row">
+      <div className="profile-forms-row">
+        <form className="profile-form" onSubmit={handleProfileSave}>
+          <div className="profile-form-title">Informations personnelles</div>
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label" htmlFor="profile-firstname">Prénom</label>
+              <input
+                id="profile-firstname"
+                className="form-input"
+                value={profileForm.first_name}
+                onChange={e => setProfileForm(p => ({ ...p, first_name: e.target.value }))}
+                placeholder="Prénom"
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label" htmlFor="profile-lastname">Nom</label>
+              <input
+                id="profile-lastname"
+                className="form-input"
+                value={profileForm.last_name}
+                onChange={e => setProfileForm(p => ({ ...p, last_name: e.target.value }))}
+                placeholder="Nom"
+              />
+            </div>
+          </div>
           <div className="form-group">
-            <label className="form-label" htmlFor="profile-firstname">Prénom</label>
+            <label className="form-label" htmlFor="profile-phone">Téléphone</label>
             <input
-              id="profile-firstname"
+              id="profile-phone"
               className="form-input"
-              value={profileForm.first_name}
-              onChange={e => setProfileForm(p => ({ ...p, first_name: e.target.value }))}
-              placeholder="Prénom"
+              value={profileForm.phone}
+              onChange={e => setProfileForm(p => ({ ...p, phone: e.target.value }))}
+              placeholder="+33 6 00 00 00 00"
+              type="tel"
             />
           </div>
           <div className="form-group">
-            <label className="form-label" htmlFor="profile-lastname">Nom</label>
+            <label className="form-label" htmlFor="profile-email">Email</label>
             <input
-              id="profile-lastname"
+              id="profile-email"
               className="form-input"
-              value={profileForm.last_name}
-              onChange={e => setProfileForm(p => ({ ...p, last_name: e.target.value }))}
-              placeholder="Nom"
+              value={user?.email || ''}
+              disabled
+              style={{ opacity: 0.5, cursor: 'not-allowed' }}
             />
           </div>
-        </div>
-        <div className="form-group">
-          <label className="form-label" htmlFor="profile-phone">Téléphone</label>
-          <input
-            id="profile-phone"
-            className="form-input"
-            value={profileForm.phone}
-            onChange={e => setProfileForm(p => ({ ...p, phone: e.target.value }))}
-            placeholder="+33 6 00 00 00 00"
-            type="tel"
-          />
-        </div>
-        <div className="form-group">
-          <label className="form-label" htmlFor="profile-email">Email</label>
-          <input
-            id="profile-email"
-            className="form-input"
-            value={user?.email || ''}
-            disabled
-            style={{ opacity: 0.5, cursor: 'not-allowed' }}
-          />
-        </div>
-        {profileMsg && (
-          <div className={profileMsg.type === 'error' ? 'form-error' : 'form-success'} role={profileMsg.type === 'error' ? 'alert' : 'status'}>
-            {profileMsg.text}
-          </div>
-        )}
-        <button type="submit" className="btn-primary" disabled={profileSaving}>
-          {profileSaving ? 'Enregistrement...' : 'Sauvegarder'}
-        </button>
-      </form>
+          {profileMsg && (
+            <div className={profileMsg.type === 'error' ? 'form-error' : 'form-success'} role={profileMsg.type === 'error' ? 'alert' : 'status'}>
+              {profileMsg.text}
+            </div>
+          )}
+          <button type="submit" className="btn-primary" disabled={profileSaving}>
+            {profileSaving ? 'Enregistrement...' : 'Sauvegarder'}
+          </button>
+        </form>
 
-      <form className="profile-form" onSubmit={handlePasswordSave}>
-        <div className="profile-form-title">Changer le mot de passe</div>
-        <div className="form-group">
-          <label className="form-label" htmlFor="profile-new-password">Nouveau mot de passe</label>
-          <input
-            id="profile-new-password"
-            className="form-input"
-            type="password"
-            value={pwForm.password}
-            onChange={e => setPwForm(p => ({ ...p, password: e.target.value }))}
-            placeholder="6 caractères minimum"
-          />
-        </div>
-        <div className="form-group">
-          <label className="form-label" htmlFor="profile-confirm-password">Confirmer le mot de passe</label>
-          <input
-            id="profile-confirm-password"
-            className="form-input"
-            type="password"
-            value={pwForm.confirm}
-            onChange={e => setPwForm(p => ({ ...p, confirm: e.target.value }))}
-            placeholder="Répéter le mot de passe"
-          />
-        </div>
-        {pwMsg && (
-          <div className={pwMsg.type === 'error' ? 'form-error' : 'form-success'} role={pwMsg.type === 'error' ? 'alert' : 'status'}>
-            {pwMsg.text}
+        <form className="profile-form" onSubmit={handlePasswordSave}>
+          <div className="profile-form-title">Changer le mot de passe</div>
+          <div className="form-group">
+            <label className="form-label" htmlFor="profile-new-password">Nouveau mot de passe</label>
+            <input
+              id="profile-new-password"
+              className="form-input"
+              type="password"
+              value={pwForm.password}
+              onChange={e => setPwForm(p => ({ ...p, password: e.target.value }))}
+              placeholder="6 caractères minimum"
+            />
           </div>
-        )}
-        <button type="submit" className="btn-primary" disabled={pwSaving}>
-          {pwSaving ? 'Mise à jour...' : 'Changer le mot de passe'}
-        </button>
-      </form>
+          <div className="form-group">
+            <label className="form-label" htmlFor="profile-confirm-password">Confirmer le mot de passe</label>
+            <input
+              id="profile-confirm-password"
+              className="form-input"
+              type="password"
+              value={pwForm.confirm}
+              onChange={e => setPwForm(p => ({ ...p, confirm: e.target.value }))}
+              placeholder="Répéter le mot de passe"
+            />
+          </div>
+          {pwMsg && (
+            <div className={pwMsg.type === 'error' ? 'form-error' : 'form-success'} role={pwMsg.type === 'error' ? 'alert' : 'status'}>
+              {pwMsg.text}
+            </div>
+          )}
+          <button type="submit" className="btn-primary" disabled={pwSaving}>
+            {pwSaving ? 'Mise à jour...' : 'Changer le mot de passe'}
+          </button>
+        </form>
+      </div>
     </>
   )
 }

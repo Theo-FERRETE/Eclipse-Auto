@@ -65,3 +65,10 @@ export function formatPrice(price) {
   if (price == null) return 'Prix sur demande'
   return `€ ${Number(price).toLocaleString('fr-FR')}`
 }
+
+// Normalise la casse d'un champ texte pour l'affichage (la donnée en base n'est pas
+// toujours cohérente, ex. fuel_type stocké en 'ESSENCE').
+export function capitalize(str) {
+  if (!str) return str
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
+}

@@ -36,7 +36,7 @@ export default function Contact() {
   return (
     <main className="contact">
       <div className="contact-hero">
-        <div className="container">
+        <div className="page-section">
           <div className="tag">Nous contacter</div>
           <h1 className="contact-title">Contact</h1>
           <p className="contact-sub">Une question ? Prenez rendez-vous ou envoyez-nous un message.</p>
@@ -45,27 +45,27 @@ export default function Contact() {
 
       <div className="divider"></div>
 
-      <div className="container contact-layout">
+      <div className="page-section contact-layout">
         <div className="contact-info">
           <div className="info-block">
-            <div className="info-label">Adresse</div>
             <div className="info-value">12 Avenue de la Promenade<br />06000 Nice, France</div>
+            <div className="info-label">Adresse</div>
           </div>
           <div className="info-block">
-            <div className="info-label">Téléphone</div>
             <div className="info-value">+33 4 93 47 82 10</div>
+            <div className="info-label">Téléphone</div>
           </div>
           <div className="info-block">
-            <div className="info-label">Email</div>
             <div className="info-value">theo.ferrete@gmail.com</div>
+            <div className="info-label">Email</div>
           </div>
           <div className="info-block">
-            <div className="info-label">Horaires</div>
             <div className="info-value">
               Lundi — Vendredi : 9h — 19h<br />
               Samedi : 10h — 17h<br />
               Dimanche : Fermé
             </div>
+            <div className="info-label">Horaires</div>
           </div>
           <div className="contact-note">
             Réponse sous 24h en jours ouvrés.
@@ -75,7 +75,6 @@ export default function Contact() {
         <div className="contact-form-wrap">
           {success ? (
             <div className="contact-success">
-              <div className="success-icon">✓</div>
               <div className="tag">Confirmation</div>
               <h2 className="success-title">Message envoyé !</h2>
               <p>Notre équipe vous répondra dans les plus brefs délais.</p>

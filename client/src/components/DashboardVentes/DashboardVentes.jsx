@@ -30,10 +30,10 @@ export default function DashboardVentes({ ventes, loading }) {
       )}
 
       {!loading && ventes.length > 0 && (
-        <div className="reservations-list">
+        <div className="card-grid">
           {ventes.map(v => (
-            <div className="reservation-card" key={v.id}>
-              <div className="reservation-img">
+            <div className="vcard dashboard-card" key={v.id}>
+              <div className="vcard-img">
                 {v.vehicles?.images?.[0]
                   ? <img
                       src={optimizeImageUrl(v.vehicles.images[0], 400)}
@@ -43,33 +43,28 @@ export default function DashboardVentes({ ventes, loading }) {
                       style={{ opacity: 0, transition: 'opacity 0.4s ease' }}
                       onLoad={e => { e.currentTarget.style.opacity = '1' }}
                     />
-                  : <div className="reservation-img-placeholder"></div>
+                  : <div className="vcard-img-placeholder"></div>
                 }
+                <span className={`reservation-status vcard-badge ${VENTE_STATUS[v.status]?.class}`}>
+                  {VENTE_STATUS[v.status]?.label}
+                </span>
               </div>
-              <div className="reservation-info">
-                <div className="reservation-vehicle-info">
-                  <span className="vcard-brand">{v.vehicles?.brand}</span>
-                  <span className="vcard-model" style={{ fontSize: '22px' }}>
-                    {v.vehicles?.model}
-                  </span>
-                </div>
-                <div className="reservation-price">{formatPrice(v.prix_final)}</div>
+
+              <div className="vcard-body">
+                <div className="vcard-brand">{v.vehicles?.brand}</div>
+                <div className="vcard-model">{v.vehicles?.model}</div>
                 {v.equipements?.length > 0 && (
-                  <div className="reservation-message">
+                  <div className="dashboard-card-meta">
                     Options : {v.equipements.map(eq => eq.nom).join(', ')}
                   </div>
                 )}
-                <div className="reservation-message">
+                <div className="dashboard-card-meta">
                   Paiement : {PAYMENT_METHOD_LABELS[v.mode_paiement] || v.mode_paiement}
                 </div>
-                <div className="reservation-date">
-                  Demandé le {new Date(v.created_at).toLocaleDateString('fr-FR')}
+
+                <div className="vcard-footer">
+                  <span className="dashboard-card-price">{formatPrice(v.prix_final)}</span>
                 </div>
-              </div>
-              <div className="reservation-actions">
-                <span className={`reservation-status ${VENTE_STATUS[v.status]?.class}`}>
-                  {VENTE_STATUS[v.status]?.label}
-                </span>
               </div>
             </div>
           ))}

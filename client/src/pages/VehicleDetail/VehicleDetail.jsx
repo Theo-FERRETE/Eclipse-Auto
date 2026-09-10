@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { optimizeImageUrl, formatPrice, VEHICLE_STATUS } from '@/lib/utils'
+import { optimizeImageUrl, formatPrice, capitalize, VEHICLE_STATUS } from '@/lib/utils'
 import { getVehicleBySlug } from '@/lib/vehiclesCache'
 import './VehicleDetail.css'
 
@@ -48,133 +48,107 @@ export default function VehicleDetail() {
 
   const statusInfo = VEHICLE_STATUS[status] || VEHICLE_STATUS.available
 
-  const specs = [
-    { label: 'Année', value: year },
-    { label: 'Carburant', value: fuel_type },
-    { label: 'Transmission', value: transmission },
+  const mainSpecs = [
+    { label: 'Carburant', value: capitalize(fuel_type) || 'N/A' },
+    { label: 'Transmission', value: capitalize(transmission) || 'N/A' },
     { label: 'Kilométrage', value: mileage === 0 ? 'Neuf' : mileage ? `${mileage.toLocaleString('fr-FR')} km` : 'N/A' },
-    { label: 'Puissance', value: power || 'N/A' },
-    { label: 'Statut', value: <span className={statusInfo.badge}>{statusInfo.label}</span> },
+    { label: 'Puissance', value: power ? `${power} ch` : 'N/A' },
   ]
 
   return (
     <main className="detail">
-      <div className="detail-breadcrumb">
-        <div className="container">
-          <Link to="/catalogue" className="breadcrumb-back">
-            ← Retour au catalogue
-          </Link>
-          <span className="breadcrumb-sep">/</span>
-          <span className="breadcrumb-current">{brand} {model}</span>
-        </div>
-      </div>
+      <div className="detail-hero">
+        {images && images[activeImg]
+          ? <img
+              className="detail-hero-img"
+              src={optimizeImageUrl(images[activeImg], 1600)}
+              alt={`${year} ${brand} ${model}`}
+              loading="eager"
+              fetchPriority="high"
+              decoding="sync"
+              onError={e => { e.currentTarget.style.display = 'none' }}
+            />
+          : <div className="detail-hero-placeholder"></div>
+        }
+        <div className="detail-hero-overlay"></div>
 
-      <div className="container detail-layout">
-        <div className="detail-gallery">
-          <div className="gallery-main">
-            {images && images[activeImg]
-              ? <img
-                  src={optimizeImageUrl(images[activeImg], 1200)}
-                  alt={`${year} ${brand} ${model}`}
-                  loading="eager"
-                  fetchPriority="high"
-                  decoding="sync"
-                  onError={e => { e.currentTarget.style.display = 'none'; e.currentTarget.nextSibling.style.display = 'flex' }}
-                />
-              : null
-            }
-            <div className="gallery-placeholder" style={images && images[activeImg] ? { display: 'none' } : {}}></div>
-            <div className="gallery-bar"></div>
-          </div>
+        <Link to="/catalogue" className="detail-hero-back">
+          ← Retour au catalogue
+        </Link>
 
-          {images && images.length > 1 && (
-            <div className="gallery-thumbs">
-              {images.map((img, i) => (
-                <button
-                  key={i}
-                  className={`gallery-thumb ${i === activeImg ? 'active' : ''}`}
-                  onClick={() => setActiveImg(i)}
-                >
-                  <img
-                    src={optimizeImageUrl(img, 200)}
-                    alt={`${brand} ${model}, image ${i + 1}`}
-                    loading="lazy"
-                    decoding="async"
-                    style={{ opacity: 0, transition: 'opacity 0.3s ease' }}
-                    onLoad={e => { e.currentTarget.style.opacity = '1' }}
-                    onError={e => { e.currentTarget.parentElement.style.opacity = '0.3' }}
-                  />
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <div className="detail-info">
-          <div className="detail-header">
-            <div className="tag">{brand}</div>
+        <div className="detail-hero-content">
+          <div>
+            <div className="tag" style={{ color: 'var(--cyan)' }}>{brand}</div>
             <h1 className="detail-title">{model}</h1>
-            <div className="detail-year">{year}</div>
           </div>
-
-          <div className="detail-price-block">
+          <div className="detail-hero-meta">
+            <div className="tag">{year}</div>
             <div className="detail-price">{formatPrice(price)}</div>
             <span className={statusInfo.badge}>{statusInfo.label}</span>
           </div>
+        </div>
 
-          <div className="detail-specs">
-            {specs.map((spec, i) => (
-              <div className="spec-row" key={i}>
-                <span className="spec-label">{spec.label}</span>
-                <span className="spec-value">{spec.value}</span>
+        {images && images.length > 1 && (
+          <div className="detail-hero-thumbs">
+            {images.map((img, i) => (
+              <button
+                key={i}
+                className={`detail-hero-thumb ${i === activeImg ? 'active' : ''}`}
+                onClick={() => setActiveImg(i)}
+                aria-label={`Voir l'image ${i + 1}`}
+              >
+                <img
+                  src={optimizeImageUrl(img, 160)}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="page-section detail-body">
+        <div className="detail-main">
+          <div className="tag">Caractéristiques</div>
+          <div className="detail-spec-grid">
+            {mainSpecs.map((spec, i) => (
+              <div className="detail-spec-item" key={i}>
+                <div className="detail-spec-value">{spec.value}</div>
+                <div className="detail-spec-label">{spec.label}</div>
               </div>
             ))}
           </div>
 
           {description && (
-            <div className="detail-description">
-              <div className="desc-label">Description</div>
-              <p>{description}</p>
-            </div>
+            <p className="detail-description">{description}</p>
           )}
+        </div>
 
-          <div className="detail-actions">
-            {/* Un essai suppose le véhicule libre ; l'achat reste possible même s'il est en
-                cours d'essai ('reserved'), seul 'sold' le bloque (voir venteController.create). */}
-            {status === 'available' && (
-              <button
-                onClick={() => navigate(`/reserve/${slug}`)}
-                className="btn-primary"
-                style={{ display: 'block', width: '100%', textAlign: 'center' }}
-              >
-                Réserver un essai
-              </button>
-            )}
-            {status !== 'sold' ? (
-              <button
-                onClick={() => navigate(`/achat/${slug}`)}
-                className={status === 'available' ? 'btn-ghost' : 'btn-primary'}
-                style={{ display: 'block', width: '100%', textAlign: 'center' }}
-              >
-                Acheter
-              </button>
-            ) : (
-              <button
-                className="btn-ghost"
-                disabled
-                style={{ width: '100%', opacity: 0.5 }}
-              >
-                Véhicule vendu
-              </button>
-            )}
-            <Link
-              to="/contact"
-              className="btn-ghost"
-              style={{ display: 'block', textAlign: 'center' }}
+        <div className="detail-actions">
+          {/* Un essai suppose le véhicule libre ; l'achat reste possible même s'il est en
+              cours d'essai ('reserved'), seul 'sold' le bloque (voir venteController.create). */}
+          {status === 'available' && (
+            <button onClick={() => navigate(`/reserve/${slug}`)} className="btn-primary">
+              Réserver un essai
+            </button>
+          )}
+          {status !== 'sold' ? (
+            <button
+              onClick={() => navigate(`/achat/${slug}`)}
+              className={status === 'available' ? 'btn-ghost' : 'btn-primary'}
             >
-              Nous contacter
-            </Link>
-          </div>
+              Acheter
+            </button>
+          ) : (
+            <button className="btn-ghost" disabled style={{ opacity: 0.5 }}>
+              Véhicule vendu
+            </button>
+          )}
+          <Link to="/contact" className="btn-ghost">
+            Nous contacter
+          </Link>
         </div>
       </div>
     </main>

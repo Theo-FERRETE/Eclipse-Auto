@@ -16,10 +16,12 @@
   --white: #ffffff;
   --gray: #c0c0c0;
   --gray-dark: #999999;
-  --font-display: 'Rajdhani', Arial Narrow, sans-serif;
+  --font-display: 'Instrument Serif', Georgia, serif;
   --font-body: 'Inter', Arial, sans-serif;
-  --clip-btn: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
-  --clip-card: polygon(0 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
+  /* Cartes/boutons rectangulaires, sans découpe angulaire (ancienne DA) : les
+     deux tokens restent définis (repris par de nombreux fichiers) mais neutres. */
+  --clip-btn: none;
+  --clip-card: none;
 }
 
 html { scroll-behavior: smooth; }
@@ -48,10 +50,10 @@ img { max-width: 100%; display: block; }
   color: var(--white);
   border: none;
   padding: 12px 28px;
-  font-family: var(--font-display);
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 3px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
   clip-path: var(--clip-btn);
   transition: background 0.2s, transform 0.1s;
@@ -63,10 +65,10 @@ img { max-width: 100%; display: block; }
   color: var(--white);
   border: 1px solid var(--border-light);
   padding: 12px 28px;
-  font-family: var(--font-display);
-  font-size: 14px;
+  font-family: var(--font-body);
+  font-size: 13px;
   font-weight: 600;
-  letter-spacing: 3px;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
   clip-path: var(--clip-btn);
   transition: border-color 0.2s, color 0.2s;
@@ -78,10 +80,10 @@ img { max-width: 100%; display: block; }
   color: var(--black);
   border: none;
   padding: 12px 28px;
-  font-family: var(--font-display);
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 3px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
   clip-path: var(--clip-btn);
   transition: opacity 0.2s;
@@ -92,22 +94,29 @@ img { max-width: 100%; display: block; }
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-family: var(--font-display);
-  font-size: 13px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
   letter-spacing: 3px;
   text-transform: uppercase;
-  color: var(--cyan);
-}
-.tag::before {
-  content: '';
-  width: 6px;
-  height: 6px;
-  background: var(--cyan);
-  border-radius: 50%;
+  color: var(--gray-dark);
 }
 
 .section { padding: 80px 0; }
 .container { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+
+/* Pleine largeur avec un padding fixe (pas de conteneur centré) : pages
+   refaites sur la nouvelle direction (Home, Catalogue...), qui collent au
+   bord à toutes les largeurs plutôt que de se centrer dans un conteneur. */
+/* Pas de max-width plus haut : sur un écran large (1920px+), le contenu s'étalait
+   bord à bord et les rangées "titre à gauche / actions à droite" (dashboard, catalogue)
+   finissaient avec un grand vide au milieu. Plafonné et centré au-delà de 1800px, en
+   gardant l'effet "colle au bord" en dessous. */
+.page-section { max-width: 1800px; margin: 0 auto; padding-left: 64px; padding-right: 64px; }
+
+@media (max-width: 768px) {
+  .page-section { padding-left: 24px; padding-right: 24px; }
+}
 
 @media (max-width: 768px) {
   .admin-hero { padding: 40px 0 24px; }
@@ -128,11 +137,10 @@ img { max-width: 100%; display: block; }
 
 .admin-title {
   font-family: var(--font-display);
-  font-size: clamp(28px, 7vw, 96px);
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: -1px;
-  line-height: 0.9;
+  font-size: clamp(28px, 6vw, 72px);
+  font-weight: 400;
+  letter-spacing: -0.5px;
+  line-height: 1;
   margin-top: 12px;
 }
 
@@ -153,14 +161,13 @@ img { max-width: 100%; display: block; }
    ============================================ */
 .search-input {
   width: 100%;
-  background: linear-gradient(180deg, var(--black-2), var(--black));
+  background: var(--black-2);
   border: 1px solid var(--border-light);
   color: var(--white);
   padding: 12px 16px;
   font-family: var(--font-body);
   font-size: 14px;
   transition: border-color 0.25s ease, box-shadow 0.25s ease;
-  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
 }
 .search-input::placeholder { color: var(--gray-dark); }
 .search-input:focus {
@@ -194,28 +201,27 @@ img { max-width: 100%; display: block; }
 .catalogue-empty {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 24px;
-  padding: 80px 0;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 40px 0 24px;
   color: var(--gray);
-  font-family: var(--font-display);
-  font-size: 14px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
   letter-spacing: 2px;
   text-transform: uppercase;
 }
 
 .action-btn {
-  font-family: var(--font-display);
-  font-size: 12px;
+  font-family: var(--font-body);
+  font-size: 11px;
   letter-spacing: 1px;
   text-transform: uppercase;
   padding: 6px 12px;
   border: none;
   cursor: pointer;
-  font-weight: 700;
+  font-weight: 600;
   transition: opacity 0.2s;
-  clip-path: polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 5px 100%, 0 calc(100% - 5px));
 }
 .action-btn:hover { opacity: 0.8; }
 .action-btn.edit { background: var(--border-light); color: var(--white); }
@@ -229,20 +235,19 @@ img { max-width: 100%; display: block; }
 
 .avc-model {
   font-family: var(--font-display);
-  font-size: 18px;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  font-size: 22px;
+  font-weight: 400;
   color: var(--white);
-  line-height: 1;
+  line-height: 1.1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .vcard-brand {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 12px;
+  font-weight: 600;
   letter-spacing: 3px;
   text-transform: uppercase;
   color: var(--cyan);
@@ -250,22 +255,94 @@ img { max-width: 100%; display: block; }
 
 .vcard-model {
   font-family: var(--font-display);
-  font-size: 24px;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  font-size: 26px;
+  font-weight: 400;
   color: var(--white);
-  line-height: 1;
+  line-height: 1.1;
+}
+
+/* Système de carte partagé par plusieurs pages (Catalogue, Dashboard...) : posé ici plutôt
+   que dans le CSS d'un composant précis, sinon il ne se charge pas sur une page qui
+   n'importe pas ce composant (routes lazy-loadées, chaque CSS n'arrive qu'avec son chunk). */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px 32px;
+}
+
+@media (max-width: 1024px) {
+  .card-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .card-grid { grid-template-columns: 1fr; }
+}
+
+.vcard {
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.vcard:hover {
+  transform: translateY(-4px);
+}
+
+.vcard-img {
+  position: relative;
+  height: 220px;
+  margin-bottom: 20px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1a0000, var(--black-2));
+}
+
+.vcard-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s;
+}
+
+.vcard:hover .vcard-img img {
+  transform: scale(1.05);
+}
+
+.vcard-img-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #140000, #0a0a12);
+}
+
+.vcard-badge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+}
+
+.vcard-body {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.vcard-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
 }
 
 .vcard-specs {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 13px;
   color: var(--gray);
-  letter-spacing: 1px;
   margin-top: 4px;
 }
 
@@ -286,20 +363,19 @@ img { max-width: 100%; display: block; }
 }
 
 .spec-label {
-  font-family: var(--font-display);
-  font-size: 11px;
-  letter-spacing: 3px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 2px;
   text-transform: uppercase;
-  color: var(--gray);
+  color: var(--gray-dark);
 }
 
 .spec-value {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 500;
   color: var(--white);
-  text-transform: uppercase;
-  letter-spacing: 1px;
 }
 
 .detail-equip-grid {
@@ -334,24 +410,26 @@ img { max-width: 100%; display: block; }
 }
 
 .badge-available {
-  background: var(--red);
+  background: rgba(10,10,10,0.75);
   color: var(--white);
-  font-family: var(--font-display);
+  border: 1px solid rgba(255,255,255,0.15);
+  font-family: var(--font-body);
   font-size: 11px;
-  letter-spacing: 2px;
-  padding: 4px 10px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  padding: 5px 12px;
   text-transform: uppercase;
-  font-weight: 700;
   display: inline-block;
 }
 .badge-reserved {
   background: rgba(0, 212, 255, 0.12);
   color: var(--cyan);
   border: 1px solid rgba(0, 212, 255, 0.3);
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 11px;
-  letter-spacing: 2px;
-  padding: 4px 10px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  padding: 5px 12px;
   text-transform: uppercase;
   display: inline-block;
 }
@@ -359,21 +437,22 @@ img { max-width: 100%; display: block; }
   background: rgba(160, 160, 160, 0.1);
   color: #cccccc;
   border: 1px solid rgba(160, 160, 160, 0.3);
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 11px;
-  letter-spacing: 2px;
-  padding: 4px 10px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  padding: 5px 12px;
   text-transform: uppercase;
   display: inline-block;
 }
 
 .reservation-status {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 11px;
-  letter-spacing: 2px;
+  font-weight: 600;
+  letter-spacing: 1px;
   text-transform: uppercase;
-  padding: 4px 10px;
-  font-weight: 700;
+  padding: 5px 12px;
   display: inline-block;
 }
 
@@ -423,22 +502,22 @@ img { max-width: 100%; display: block; }
 }
 
 .form-label {
-  font-family: var(--font-display);
-  font-size: 11px;
-  letter-spacing: 3px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: var(--gray);
+  color: var(--gray-dark);
 }
 
 .form-input {
-  background: linear-gradient(180deg, var(--black-2), var(--black));
+  background: var(--black-2);
   border: 1px solid var(--border-light);
   color: var(--white);
-  padding: 14px 18px;
+  padding: 14px 16px;
   font-family: var(--font-body);
   font-size: 14px;
   width: 100%;
-  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
   transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
 }
 

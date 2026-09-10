@@ -1,117 +1,56 @@
-.dashboard-hero {
-  padding: 60px 0 40px;
+.dashboard-hero .page-section {
+  padding-top: 72px;
+  padding-bottom: 48px;
 }
 
 .dashboard-title {
   font-family: var(--font-display);
-  font-size: clamp(40px, 6vw, 72px);
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: -2px;
-  line-height: 0.9;
+  font-weight: 400;
+  font-size: clamp(40px, 6vw, 56px);
+  letter-spacing: -0.5px;
+  line-height: 1.05;
   margin-top: 12px;
+  margin-bottom: 32px;
 }
 
-.dashboard-title em {
-  font-style: normal;
-  color: var(--red);
-}
-
-.dashboard-layout {
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 48px;
-  padding-top: 48px;
-  padding-bottom: 80px;
-}
-
-.dashboard-sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.sidebar-profile {
-  background: var(--black-2);
-  border: 1px solid var(--border);
-  padding: 24px;
-  clip-path: var(--clip-card);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-  text-align: center;
-}
-
-.profile-avatar {
-  width: 64px;
-  height: 64px;
-  background: var(--red);
+.dashboard-tabs {
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-family: var(--font-display);
-  font-size: 22px;
-  font-weight: 900;
-  color: var(--white);
-  text-transform: uppercase;
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-.profile-info {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.profile-name {
-  font-family: var(--font-display);
-  font-size: 18px;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--white);
-}
-
-.profile-email {
-  font-size: 14px;
-  color: var(--gray);
-}
-
-.profile-role {
-  margin-top: 4px;
-}
-
-.sidebar-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  background: var(--border);
-}
-
-.sidebar-link {
-  background: var(--black-2);
-  padding: 14px 20px;
-  font-family: var(--font-display);
+.tab-pill {
+  padding: 10px 20px;
+  font-family: var(--font-body);
   font-size: 13px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
+  font-weight: 500;
   color: var(--gray);
-  transition: color 0.2s, background 0.2s;
+  background: transparent;
+  border: 1px solid var(--border-light);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+.tab-pill:hover { border-color: #3a3a3a; color: var(--white); }
+.tab-pill.active {
+  background: var(--white);
+  color: var(--black);
+  border-color: var(--white);
 }
 
-.sidebar-link:hover {
-  color: var(--white);
-  background: var(--black-3);
+.dashboard-tabs-catalogue {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cyan);
+  margin-left: auto;
+  transition: color 0.2s;
 }
-
-.sidebar-link.active {
-  color: var(--white);
-  border-left: 2px solid var(--red);
-  background: var(--black-3);
-}
+.dashboard-tabs-catalogue:hover { color: var(--white); }
 
 .dashboard-main {
+  padding-top: 48px;
+  padding-bottom: 80px;
   display: flex;
   flex-direction: column;
   gap: 32px;
@@ -124,153 +63,107 @@
 .dashboard-empty {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 24px;
-  padding: 80px 0;
-  text-align: center;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 40px 0 24px;
   color: var(--gray);
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 14px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
 }
 
-.reservations-list {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  background: var(--border);
+/* Cartes du dashboard : mêmes classes visuelles que le catalogue (.vcard, .vcard-img,
+   .vcard-badge, .vcard-body...), avec juste ce qui diffère (méta, prix, actions). */
+.dashboard-card {
+  cursor: default;
 }
+.dashboard-card:hover { transform: none; }
 
-.reservation-card {
-  background: var(--black-2);
-  display: grid;
-  grid-template-columns: 160px 1fr auto;
-  gap: 24px;
-  align-items: center;
-  padding: 20px;
-  transition: background 0.2s;
-}
-
-.reservation-card:hover { background: var(--black-3); }
-
-.reservation-img {
-  height: 100px;
-  background: linear-gradient(135deg, #1a0000, var(--black-2));
-  overflow: hidden;
-  clip-path: var(--clip-card);
-}
-
-.reservation-img img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.reservation-img-placeholder {
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, #140000, #0a0a12);
-}
-
-.reservation-info {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.reservation-vehicle-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.reservation-price {
-  font-family: var(--font-display);
-  font-size: 20px;
-  font-weight: 900;
-  color: var(--white);
-}
-
-.reservation-message {
+.dashboard-card-meta {
+  font-family: var(--font-body);
   font-size: 13px;
-  color: var(--gray);
+  color: var(--gray-dark);
+  margin-bottom: 4px;
+}
+
+.dashboard-card-message {
   font-style: italic;
 }
 
-.reservation-date {
+.dashboard-card-price {
   font-family: var(--font-display);
+  font-size: 22px;
+  color: var(--white);
+}
+
+.dashboard-card-cta {
+  width: 100%;
+  text-align: center;
+  padding: 12px 16px;
+  font-size: 11px;
+}
+
+.btn-text {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--font-body);
   font-size: 12px;
-  letter-spacing: 2px;
+  font-weight: 600;
+  letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--gray-dark);
-}
-
-.reservation-actions {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 12px;
-}
-
-button.sidebar-link {
-  background: var(--black-2);
-  border: none;
-  width: 100%;
-  text-align: left;
-  font-family: inherit;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 2px;
   cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+.btn-text:hover { color: var(--white); border-color: var(--gray); }
+.btn-text:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Pas de boîte (fond + bordure pleine) : juste l'espace et une ligne fine entre les deux
+   formulaires. Pas de max-width fixe non plus : les deux colonnes se partagent toute la
+   largeur de page disponible (les champs s'étirent avec, ce qui est voulu — sinon il reste
+   un vide à droite sur un grand écran, quelle que soit la valeur qu'on choisit à la place). */
+/* align-items par défaut (stretch), volontairement : les deux formulaires n'ont pas la
+   même hauteur de contenu, et avec `start` la ligne verticale entre les deux (border-left)
+   s'arrêtait en plein milieu au lieu de courir jusqu'en bas de la colonne la plus haute. */
+.profile-forms-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
 }
 
 .profile-form {
-  position: relative;
-  background: linear-gradient(165deg, var(--black-3), var(--black-2));
-  border: 1px solid var(--border);
-  padding: 32px;
-  clip-path: var(--clip-card);
   display: flex;
   flex-direction: column;
   gap: 20px;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+  padding-left: 32px;
+  border-left: 1px solid var(--border);
 }
 
-.profile-form::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 12px;
-  height: 1px;
-  background: linear-gradient(90deg, var(--red), transparent);
+.profile-form:first-child {
+  padding-left: 0;
+  border-left: none;
+}
+
+@media (max-width: 900px) {
+  .profile-forms-row { grid-template-columns: 1fr; gap: 40px; }
+  .profile-form { padding-left: 0; border-left: none; padding-top: 32px; border-top: 1px solid var(--border); }
+  .profile-form:first-child { padding-top: 0; border-top: none; }
 }
 
 .profile-form-title {
-  font-family: var(--font-display);
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 3px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--gray);
   padding-bottom: 16px;
   border-bottom: 1px solid var(--border);
 }
 
-@media (max-width: 1024px) {
-  .dashboard-layout {
-    grid-template-columns: 1fr;
-  }
-}
-
 @media (max-width: 768px) {
-  .reservation-card {
-    grid-template-columns: 1fr;
-  }
-  .reservation-img {
-    height: 160px;
-  }
-  .reservation-actions {
-    align-items: flex-start;
-  }
   .form-row {
     grid-template-columns: 1fr;
   }
