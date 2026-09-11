@@ -319,6 +319,13 @@ img { max-width: 100%; display: block; }
   border-top: 1px solid var(--border);
 }
 
+.vcard-price {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 22px;
+  color: var(--white);
+}
+
 .vcard-specs {
   display: flex;
   align-items: center;

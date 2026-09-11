@@ -1,14 +1,8 @@
-.admin-vehicles-wrap {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 24px;
-}
-
 .admin-list {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
 }
 
 .admin-toolbar {
@@ -17,61 +11,18 @@
   align-items: center;
 }
 
-.admin-vehicles-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+/* Le grid partagé (.card-grid) part de 3 colonnes : trop serré une fois amputé de la
+   largeur de la sidebar admin (280px). Deux colonnes laissent la place au prix + aux
+   deux boutons dans le pied de carte sans que ça retombe à la ligne. */
+.admin-vehicles-grid {
+  grid-template-columns: repeat(2, 1fr);
 }
 
-.admin-vehicle-card {
-  border: 1px solid var(--border);
-  display: grid;
-  grid-template-columns: 90px 1fr auto;
-  gap: 16px;
-  align-items: center;
-  padding: 12px 16px;
-  transition: border-color 0.2s;
-  border-left: 2px solid transparent;
-}
-.admin-vehicle-card:hover { border-color: var(--border-light); }
-.admin-vehicle-card.active { border-left-color: var(--red); }
-
-.avc-img {
-  position: relative;
-  height: 60px;
-  overflow: hidden;
-  background: linear-gradient(135deg, #1a0000, var(--black-2));
-  flex-shrink: 0;
+@media (max-width: 900px) {
+  .admin-vehicles-grid { grid-template-columns: 1fr; }
 }
 
-.avc-img img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.avc-info {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  min-width: 0;
-}
-
-
-.avc-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-shrink: 0;
-}
-
-.avc-price {
-  font-family: var(--font-display);
-  font-size: 16px;
-  font-weight: 400;
-  color: var(--white);
-  white-space: nowrap;
-}
+.admin-vcard:hover { transform: none; }
 
 .status-select {
   background: var(--black);
@@ -88,112 +39,11 @@
 }
 .status-select:focus { border-color: var(--red); }
 
-.avc-actions {
+.admin-vcard-actions {
   display: flex;
   gap: 6px;
 }
 
-/* ── MODAL VÉHICULE ── */
-.vehicle-modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.75);
-  z-index: 200;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-}
-
-.vehicle-modal {
-  background: var(--black-3);
-  border: 1px solid var(--border-light);
-  width: 100%;
-  max-width: 600px;
-  max-height: 90vh;
-  overflow-y: auto;
-  padding: 32px;
-}
-
-.vehicle-modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 28px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid var(--border);
-}
-
-.vehicle-modal-close {
-  background: none;
-  border: 1px solid var(--border-light);
-  color: var(--gray);
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
-  flex-shrink: 0;
-}
-.vehicle-modal-close:hover { border-color: var(--red); color: var(--white); }
-
-.vehicle-modal-form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.vmf-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-  padding-top: 8px;
-  border-top: 1px solid var(--border);
-  margin-top: 4px;
-}
-
-@media (max-width: 1200px) {
-  .avc-price { display: none; }
-}
-
-@media (max-width: 768px) {
-  .admin-toolbar { flex-direction: column; align-items: stretch; }
-  .admin-toolbar .btn-primary { align-self: flex-start; }
-
-  .admin-vehicle-card {
-    grid-template-columns: 80px 1fr;
-    grid-template-rows: auto auto;
-    gap: 12px;
-  }
-
-  .avc-img { height: 56px; }
-
-  .avc-right {
-    grid-column: 1 / -1;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding-top: 8px;
-    border-top: 1px solid var(--border);
-  }
-
-  .status-select { flex: 1; min-width: 120px; }
-  .avc-actions { flex: 1; justify-content: flex-end; }
-
-  .vehicle-modal { padding: 20px; }
-  .vmf-actions { flex-direction: column-reverse; }
-  .vmf-actions .btn-primary,
-  .vmf-actions .btn-ghost { width: 100%; text-align: center; }
-}
-
 @media (max-width: 480px) {
-  .admin-vehicle-card { padding: 10px 12px; gap: 10px; }
-  .avc-img { height: 48px; width: 72px; }
-  .avc-model { font-size: 15px; }
-  .status-select { font-size: 11px; padding: 5px 8px; }
   .action-btn { font-size: 10px; padding: 5px 10px; }
-  .vehicle-modal { padding: 16px; max-height: 95vh; }
-  .vehicle-modal-header { margin-bottom: 20px; padding-bottom: 14px; }
 }

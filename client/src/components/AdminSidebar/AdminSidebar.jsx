@@ -19,15 +19,23 @@ export default function AdminSidebar() {
   return (
     <aside className="admin-sidebar">
       <nav className="sidebar-nav">
-        {LINKS.map(({ to, label }) => (
-          <Link
-            key={to}
-            to={to}
-            className={`sidebar-link${pathname === to ? ' active' : ''}`}
-          >
-            {label}
-          </Link>
-        ))}
+        {LINKS.map(({ to, label }) => {
+          // /admin (Dashboard) doit rester exact, sinon il serait actif sur toutes les
+          // sous-routes admin ; les autres liens couvrent aussi leurs sous-pages
+          // (ex. /admin/vehicles/new, /admin/vehicles/:id/edit).
+          const isActive = to === '/admin'
+            ? pathname === to
+            : pathname === to || pathname.startsWith(`${to}/`)
+          return (
+            <Link
+              key={to}
+              to={to}
+              className={`sidebar-link${isActive ? ' active' : ''}`}
+            >
+              {label}
+            </Link>
+          )
+        })}
       </nav>
     </aside>
   )

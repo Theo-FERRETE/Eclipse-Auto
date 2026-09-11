@@ -21,6 +21,7 @@ const Contact = lazy(() => import('@/pages/Contact/Contact'))
 const MentionsLegales = lazy(() => import('@/pages/MentionsLegales/MentionsLegales'))
 const AdminDashboard = lazy(() => import('@/pages/admin/AdminDashboard/AdminDashboard'))
 const AdminVehicles = lazy(() => import('@/pages/admin/AdminVehicles/AdminVehicles'))
+const AdminVehicleForm = lazy(() => import('@/pages/admin/AdminVehicleForm/AdminVehicleForm'))
 const AdminReservations = lazy(() => import('@/pages/admin/AdminReservations/AdminReservations'))
 const AdminVentes = lazy(() => import('@/pages/admin/AdminVentes/AdminVentes'))
 const AdminUsers = lazy(() => import('@/pages/admin/AdminUsers/AdminUsers'))
@@ -59,6 +60,12 @@ function App() {
         } />
         <Route path="/admin/vehicles" element={
           <ProtectedRoute requireAdmin><AdminVehicles /></ProtectedRoute>
+        } />
+        <Route path="/admin/vehicles/new" element={
+          <ProtectedRoute requireAdmin><AdminVehicleForm /></ProtectedRoute>
+        } />
+        <Route path="/admin/vehicles/:id/edit" element={
+          <ProtectedRoute requireAdmin><AdminVehicleForm /></ProtectedRoute>
         } />
         <Route path="/admin/reservations" element={
           <ProtectedRoute requireAdmin><AdminReservations /></ProtectedRoute>
