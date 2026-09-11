@@ -187,4 +187,4 @@ function buildVenteConfirmationEmail(firstName, vehicle, equipements, prixFinal,
 </html>`
 }
 
-module.exports = { buildConfirmationEmail, buildVenteConfirmationEmail, escapeHtml }
+module.exports = { buildConfirmationEmail, buildVenteConfirmationEmail, escapeHtml, PAYMENT_METHOD_LABELS }

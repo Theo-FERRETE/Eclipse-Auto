@@ -1,11 +1,13 @@
 // Logique des ventes. Règles importantes : le client_id vient du JWT, le prix final est
 // toujours recalculé côté serveur (jamais confié au client), et un véhicule déjà vendu est
-// refusé. La confirmation envoie l'email d'achat ; le passage du véhicule en 'sold' est fait
-// par le trigger PostgreSQL mark_vehicle_sold (migration 001), pas ici.
+// refusé. La confirmation envoie l'email d'achat avec la facture PDF en pièce jointe ; le
+// passage du véhicule en 'sold' est fait par le trigger PostgreSQL mark_vehicle_sold
+// (migration 001), pas ici.
 
 const nodemailer = require('nodemailer')
 const venteModel = require('../models/venteModel')
 const { buildVenteConfirmationEmail } = require('../lib/emailTemplates')
+const { buildInvoicePdf } = require('../lib/pdf')
 const { PAYMENT_METHODS } = require('../constants')
 
 const VENTE_UPDATABLE_STATUSES = ['confirmed', 'cancelled']
@@ -153,11 +155,21 @@ async function updateStatus(req, res) {
       if (clientUser?.email) {
         const firstName = profile?.first_name || 'Client'
         const equipements = (venteData.vente_equipements || []).map(ve => ve.equipements)
+        const invoice = await buildInvoicePdf({
+          id: req.params.id,
+          date: new Date(),
+          clientName: firstName,
+          vehicle: venteData.vehicles,
+          equipements,
+          prixFinal: venteData.prix_final,
+          modePaiement: venteData.mode_paiement,
+        })
         await transporter.sendMail({
           from: `"Eclipse Auto" <${process.env.GMAIL_USER}>`,
           to: clientUser.email,
           subject: `Votre achat est confirmé — ${venteData.vehicles.brand} ${venteData.vehicles.model}`,
           html: buildVenteConfirmationEmail(firstName, venteData.vehicles, equipements, venteData.prix_final, venteData.mode_paiement),
+          attachments: [{ filename: `facture-${req.params.id.slice(0, 8)}.pdf`, content: invoice }],
         })
       }
     } catch (emailErr) {

@@ -277,8 +277,16 @@ describe('PATCH /api/ventes/:id/status (admin)', () => {
         to: 'client@test.com',
         subject: expect.stringContaining('Toyota Corolla'),
         html: expect.stringContaining('Théo'),
+        attachments: [
+          expect.objectContaining({
+            filename: expect.stringMatching(/^facture-.+\.pdf$/),
+            content: expect.any(Buffer),
+          }),
+        ],
       })
     )
+    const pdf = mockSendMail.mock.calls[0][0].attachments[0].content
+    expect(pdf.subarray(0, 5).toString()).toBe('%PDF-')
   })
 
   it('n\'envoie pas d\'email pour une annulation', async () => {

@@ -315,8 +315,16 @@ describe('PATCH /api/reservations/:id/status — email de confirmation', () => {
         to: 'client@test.com',
         subject: expect.stringContaining('Ferrari Roma'),
         html: expect.stringContaining('Théo'),
+        attachments: [
+          expect.objectContaining({
+            filename: expect.stringMatching(/^confirmation-essai-.+\.pdf$/),
+            content: expect.any(Buffer),
+          }),
+        ],
       })
     )
+    const pdf = mockSendMail.mock.calls[0][0].attachments[0].content
+    expect(pdf.subarray(0, 5).toString()).toBe('%PDF-')
 
     mockSendMail.mockClear()
     supabaseMock.from.mockReturnValue(makeQuery({ ...mockReservationWithVehicle, status: 'cancelled' }))

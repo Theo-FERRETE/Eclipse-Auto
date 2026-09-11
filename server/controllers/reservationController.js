@@ -1,11 +1,12 @@
 // Logique des essais (réservations d'un créneau). Trois règles importantes : le client_id
 // vient du JWT, on ne peut annuler que le sien, et un véhicule déjà pris est refusé. Envoie
-// aussi l'email de confirmation. Aucune notion de prix ni d'équipements ici : c'est le rôle
-// de venteController.
+// aussi l'email de confirmation, avec un PDF récapitulatif en pièce jointe. Aucune notion de
+// prix ni d'équipements ici : c'est le rôle de venteController.
 
 const nodemailer = require('nodemailer')
 const reservationModel = require('../models/reservationModel')
 const { buildConfirmationEmail } = require('../lib/emailTemplates')
+const { buildReservationPdf } = require('../lib/pdf')
 const { RESERVATION_STATUSES } = require('../constants')
 
 const transporter = nodemailer.createTransport({
@@ -144,11 +145,20 @@ async function updateStatus(req, res) {
 
       if (clientUser?.email) {
         const firstName = profile?.first_name || 'Client'
+        const confirmation = await buildReservationPdf({
+          id: req.params.id,
+          date: new Date(),
+          clientName: firstName,
+          vehicle: resData.vehicles,
+          rdvDate: resData.rdv_date,
+          rdvDateFin: resData.rdv_date_fin,
+        })
         await transporter.sendMail({
           from: `"Eclipse Auto" <${process.env.GMAIL_USER}>`,
           to: clientUser.email,
           subject: `Votre réservation est confirmée — ${resData.vehicles.brand} ${resData.vehicles.model}`,
           html: buildConfirmationEmail(firstName, resData.vehicles, resData.rdv_date, resData.rdv_date_fin),
+          attachments: [{ filename: `confirmation-essai-${req.params.id.slice(0, 8)}.pdf`, content: confirmation }],
         })
       }
     } catch (emailErr) {
