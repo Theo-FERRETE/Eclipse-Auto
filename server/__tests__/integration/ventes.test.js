@@ -309,3 +309,59 @@ describe('PATCH /api/ventes/:id/status (admin)', () => {
     expect(mockSendMail).not.toHaveBeenCalled()
   })
 })
+
+describe('PATCH /api/ventes/:id/cancel', () => {
+  it('retourne 404 si la vente n\'existe pas', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockUser }, error: null })
+    const q = makeQuery(null)
+    q.single = jest.fn().mockResolvedValue({ data: null, error: null })
+    supabaseMock.from.mockReturnValue(q)
+
+    const res = await request(app)
+      .patch(`/api/ventes/${mockVente.id}/cancel`)
+      .set('Authorization', 'Bearer user-token')
+
+    expect(res.status).toBe(404)
+  })
+
+  it('rejette si la vente n\'appartient pas à l\'utilisateur (403)', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockUser }, error: null })
+    const q = makeQuery({ client_id: 'autre-user-id', status: 'pending' })
+    supabaseMock.from.mockReturnValue(q)
+
+    const res = await request(app)
+      .patch(`/api/ventes/${mockVente.id}/cancel`)
+      .set('Authorization', 'Bearer user-token')
+
+    expect(res.status).toBe(403)
+  })
+
+  it('rejette si la vente est déjà confirmée (400) — le véhicule est déjà marqué vendu', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockUser }, error: null })
+    const q = makeQuery({ client_id: mockUser.id, status: 'confirmed' })
+    supabaseMock.from.mockReturnValue(q)
+
+    const res = await request(app)
+      .patch(`/api/ventes/${mockVente.id}/cancel`)
+      .set('Authorization', 'Bearer user-token')
+
+    expect(res.status).toBe(400)
+    expect(res.body.error).toMatch(/en attente/)
+  })
+
+  it('annule une vente pending avec succès (200)', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: mockUser }, error: null })
+    const selectQuery = makeQuery({ client_id: mockUser.id, status: 'pending' })
+    const updateQuery = makeQuery({ ...mockVente, status: 'cancelled' })
+    supabaseMock.from
+      .mockReturnValueOnce(selectQuery)
+      .mockReturnValue(updateQuery)
+
+    const res = await request(app)
+      .patch(`/api/ventes/${mockVente.id}/cancel`)
+      .set('Authorization', 'Bearer user-token')
+
+    expect(res.status).toBe(200)
+    expect(res.body.status).toBe('cancelled')
+  })
+})

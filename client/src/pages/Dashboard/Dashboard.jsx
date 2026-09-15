@@ -21,6 +21,8 @@ export default function Dashboard() {
   const [cancelling, setCancelling] = useState(new Set())
   const [cancelError, setCancelError] = useState(null)
   const [confirmCancelId, setConfirmCancelId] = useState(null)
+  const [ventesCancelling, setVentesCancelling] = useState(new Set())
+  const [ventesCancelError, setVentesCancelError] = useState(null)
 
   useEffect(() => {
     // Passe par l'API : le client_id est extrait du JWT côté serveur.
@@ -91,6 +93,28 @@ export default function Dashboard() {
     setConfirmCancelId(null)
   }
 
+  // Pas de double confirmation ici : le bouton n'est proposé que sur un achat 'pending'
+  // (voir DashboardVentes), donc jamais sur un achat déjà confirmé.
+  async function handleCancelVente(id) {
+    if (ventesCancelling.has(id)) return
+    setVentesCancelling(prev => new Set(prev).add(id))
+
+    const { data: { session } } = await supabase.auth.getSession()
+    const res = await fetch(`/api/ventes/${id}/cancel`, {
+      method: 'PATCH',
+      headers: { 'Authorization': `Bearer ${session?.access_token}` },
+    })
+
+    if (res.ok) {
+      setVentes(prev => prev.map(v => v.id === id ? { ...v, status: 'cancelled' } : v))
+      setVentesCancelError(null)
+    } else {
+      setVentesCancelError('Impossible d\'annuler cet achat. Veuillez réessayer.')
+    }
+
+    setVentesCancelling(prev => { const s = new Set(prev); s.delete(id); return s })
+  }
+
   return (
     <main className="dashboard">
       <div className="dashboard-hero">
@@ -118,7 +142,17 @@ export default function Dashboard() {
           </>
         )}
         {view === 'ventes' && (
-          <DashboardVentes ventes={ventes} loading={ventesLoading} />
+          <>
+            {ventesCancelError && (
+              <div className="form-error" role="alert" style={{ marginBottom: '16px' }}>{ventesCancelError}</div>
+            )}
+            <DashboardVentes
+              ventes={ventes}
+              loading={ventesLoading}
+              cancelling={ventesCancelling}
+              onCancel={handleCancelVente}
+            />
+          </>
         )}
         {view === 'profile' && (
           <DashboardProfile user={user} profile={profile} refreshProfile={refreshProfile} />

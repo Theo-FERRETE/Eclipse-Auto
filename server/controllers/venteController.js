@@ -182,4 +182,25 @@ async function updateStatus(req, res) {
   res.json(data)
 }
 
-module.exports = { listMine, listAll, create, updateStatus }
+// PATCH /api/ventes/:id/cancel — annulation par le client, uniquement avant confirmation.
+// Une vente déjà confirmée a marqué le véhicule 'sold' via le trigger mark_vehicle_sold, qui
+// ne gère que le sens pending -> confirmed : il n'y a pas de retour automatique en 'available'.
+// L'annuler resterait une action admin (via updateStatus), pas un self-service client.
+async function cancel(req, res) {
+  const { data: vente } = await venteModel.findClientAndStatus(req.params.id)
+
+  // Existe / m'appartient / est encore annulable. Sans le test du milieu, n'importe qui
+  // pourrait annuler l'achat d'un autre : être connecté ne suffit pas.
+  if (!vente) return res.status(404).json({ error: 'Achat introuvable.' })
+  if (vente.client_id !== req.user.id) return res.status(403).json({ error: 'Accès refusé.' })
+  if (vente.status !== 'pending') {
+    return res.status(400).json({ error: 'Seul un achat en attente peut être annulé.' })
+  }
+
+  const { data, error } = await venteModel.cancel(req.params.id)
+
+  if (error) return res.status(500).json({ error: error.message })
+  res.json(data)
+}
+
+module.exports = { listMine, listAll, create, updateStatus, cancel }

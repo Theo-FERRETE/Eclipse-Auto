@@ -1,10 +1,12 @@
-// Liste des achats du client. Lecture seule : la confirmation/annulation d'une vente est
-// une action admin (PATCH /api/ventes/:id/status, requireAdmin).
+// Liste des achats du client. La confirmation reste une action admin (PATCH
+// /api/ventes/:id/status), mais le client peut annuler lui-même un achat encore en attente
+// (PATCH /api/ventes/:id/cancel) : au-delà, le véhicule est déjà marqué vendu, c'est à l'admin
+// de traiter l'annulation.
 
 import { Link } from 'react-router-dom'
 import { VENTE_STATUS, PAYMENT_METHOD_LABELS, optimizeImageUrl, formatPrice } from '@/lib/utils'
 
-export default function DashboardVentes({ ventes, loading }) {
+export default function DashboardVentes({ ventes, loading, cancelling, onCancel }) {
   return (
     <>
       <div className="dashboard-section-title">
@@ -64,6 +66,15 @@ export default function DashboardVentes({ ventes, loading }) {
 
                 <div className="vcard-footer">
                   <span className="dashboard-card-price">{formatPrice(v.prix_final)}</span>
+                  {v.status === 'pending' && (
+                    <button
+                      className="btn-text"
+                      onClick={() => onCancel(v.id)}
+                      disabled={cancelling.has(v.id)}
+                    >
+                      {cancelling.has(v.id) ? '...' : 'Annuler'}
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

@@ -58,6 +58,14 @@ function updateStatus(id, status) {
   return supabase.from('ventes').update({ status }).eq('id', id).select().single()
 }
 
+function findClientAndStatus(id) {
+  return supabase.from('ventes').select('client_id, status').eq('id', id).single()
+}
+
+function cancel(id) {
+  return supabase.from('ventes').update({ status: 'cancelled' }).eq('id', id).select().single()
+}
+
 function getAuthUserAndProfile(clientId) {
   return Promise.all([
     supabase.auth.admin.getUserById(clientId),
@@ -76,4 +84,6 @@ module.exports = {
   findWithDetailsForEmail,
   updateStatus,
   getAuthUserAndProfile,
+  findClientAndStatus,
+  cancel,
 }
