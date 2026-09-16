@@ -49,7 +49,7 @@ function linkEquipements(venteId, equipementIds) {
 function findWithDetailsForEmail(id) {
   return supabase
     .from('ventes')
-    .select('client_id, prix_final, mode_paiement, vehicles(brand, model, year), vente_equipements(equipements(nom))')
+    .select('client_id, prix_final, mode_paiement, vehicles(brand, model, year, price, fuel_type, transmission), vente_equipements(equipements(nom, prix_supplement))')
     .eq('id', id)
     .single()
 }

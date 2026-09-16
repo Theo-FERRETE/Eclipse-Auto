@@ -12,8 +12,16 @@ function findAll({ status, brand, fuel_type, limit, offset }) {
   return query.range(offset, offset + limit - 1)
 }
 
-function findAllOrderedByDate() {
-  return supabase.from('vehicles').select('*').order('created_at', { ascending: false })
+// slug non UNIQUE (voir migration 004) : en cas de collision, on garde le même
+// comportement que l'ancien .find() en JS — le véhicule le plus récent gagne.
+function findBySlug(slug) {
+  return supabase
+    .from('vehicles')
+    .select('*')
+    .eq('slug', slug)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
 }
 
 function findById(id) {
@@ -32,4 +40,4 @@ function remove(id) {
   return supabase.from('vehicles').delete().eq('id', id)
 }
 
-module.exports = { findAll, findAllOrderedByDate, findById, create, update, remove }
+module.exports = { findAll, findBySlug, findById, create, update, remove }

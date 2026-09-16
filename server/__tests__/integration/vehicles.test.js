@@ -14,8 +14,10 @@ function makeQuery(data, count = null) {
     delete: jest.fn().mockReturnThis(),
     eq: jest.fn().mockReturnThis(),
     order: jest.fn().mockReturnThis(),
+    limit: jest.fn().mockReturnThis(),
     range: jest.fn().mockResolvedValue(result),
     single: jest.fn().mockResolvedValue({ data, error: null }),
+    maybeSingle: jest.fn().mockResolvedValue({ data, error: null }),
     then: (fn) => Promise.resolve(result).then(fn),
     [Symbol.toStringTag]: 'Promise',
   }
@@ -83,16 +85,22 @@ describe('GET /api/vehicles/:id', () => {
 })
 
 describe('GET /api/vehicles/by-slug/:slug', () => {
-  it('retourne un véhicule par son slug (200), 404 si aucun ne correspond', async () => {
-    supabaseMock.from.mockReturnValue(makeQuery([mockVehicle]))
+  it('retourne un véhicule par son slug (200)', async () => {
+    supabaseMock.from.mockReturnValue(makeQuery(mockVehicle))
 
-    const trouve = await request(app).get('/api/vehicles/by-slug/toyota-corolla')
-    expect(trouve.status).toBe(200)
-    expect(trouve.body.brand).toBe('Toyota')
+    const res = await request(app).get('/api/vehicles/by-slug/toyota-corolla')
 
-    const absent = await request(app).get('/api/vehicles/by-slug/slug-inexistant')
-    expect(absent.status).toBe(404)
-    expect(absent.body).toHaveProperty('error')
+    expect(res.status).toBe(200)
+    expect(res.body.brand).toBe('Toyota')
+  })
+
+  it('retourne 404 si aucun véhicule ne correspond au slug', async () => {
+    supabaseMock.from.mockReturnValue(makeQuery(null))
+
+    const res = await request(app).get('/api/vehicles/by-slug/slug-inexistant')
+
+    expect(res.status).toBe(404)
+    expect(res.body).toHaveProperty('error')
   })
 })
 

@@ -41,6 +41,10 @@ jobs:
           GMAIL_APP_PASSWORD: test-password
           TRUST_PROXY: '1'
 
+      - name: Lint server
+        run: npm run lint
+        working-directory: server
+
       - name: Install client dependencies
         run: npm ci
         working-directory: client

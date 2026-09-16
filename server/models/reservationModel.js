@@ -40,7 +40,7 @@ function create(reservation) {
 function findWithVehicleForEmail(id) {
   return supabase
     .from('reservations')
-    .select('client_id, rdv_date, rdv_date_fin, vehicles(brand, model, year, price)')
+    .select('client_id, rdv_date, rdv_date_fin, vehicles(brand, model, year, price, fuel_type, transmission)')
     .eq('id', id)
     .single()
 }

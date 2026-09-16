@@ -36,8 +36,9 @@ app.use((req, res) => {
   res.sendFile(path.join(distPath, 'index.html'))
 })
 
-// Erreur globale
-app.use((err, req, res, next) => {
+// Erreur globale. next() n'est jamais appelé, mais la fonction doit garder ses 4 paramètres :
+// c'est cette arité qu'Express utilise pour reconnaître un middleware d'erreur.
+app.use((err, req, res, _next) => {
   const isDev = process.env.NODE_ENV !== 'production'
   const message = isDev ? err.message : 'Erreur interne du serveur.'
   if (isDev) console.error(err)

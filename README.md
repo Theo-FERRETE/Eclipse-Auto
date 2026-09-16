@@ -99,12 +99,14 @@ et de [docs/front/](docs/front/README.md#arborescence-commentée).
 ## Tests
 
 ```bash
-# Serveur (65 tests, 8 suites, 92.7% coverage - routes + controllers + models + middleware)
+# Serveur (100 tests, 11 suites, 92.3% coverage - routes + controllers + models + middleware)
 # Seuils de couverture verrouillés dans jest.config.js : la CI échoue en cas de régression
 cd server && npm test
+cd server && npm run lint
 
 # Client (37 tests, 7 suites)
 cd client && npm test
+cd client && npm run lint
 ```
 
 ## Base de données

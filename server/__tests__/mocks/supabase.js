@@ -23,28 +23,6 @@ const mockVehicle = {
   created_at: new Date().toISOString(),
 }
 
-// Builders chaînables qui imitent l'API Supabase
-function buildQuery(result) {
-  const q = {
-    select: jest.fn().mockReturnThis(),
-    insert: jest.fn().mockReturnThis(),
-    update: jest.fn().mockReturnThis(),
-    delete: jest.fn().mockReturnThis(),
-    eq: jest.fn().mockReturnThis(),
-    neq: jest.fn().mockReturnThis(),
-    in: jest.fn().mockReturnThis(),
-    order: jest.fn().mockReturnThis(),
-    range: jest.fn().mockReturnThis(),
-    single: jest.fn().mockResolvedValue(result),
-    then: undefined,
-  }
-  // Rendre la query elle-même awaitable
-  Object.assign(q, Promise.resolve(result))
-  q[Symbol.toStringTag] = 'Promise'
-  q.then = (fn) => Promise.resolve(result).then(fn)
-  return q
-}
-
 const supabaseMock = {
   auth: {
     getUser: jest.fn(),

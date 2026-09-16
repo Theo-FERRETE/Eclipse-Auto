@@ -81,25 +81,13 @@ async function list(req, res) {
   res.json({ data, total: count, limit: limitNum, offset: offsetNum })
 }
 
-// GET /api/vehicles/by-slug/:slug — détail par slug (brand-model)
+// GET /api/vehicles/by-slug/:slug — détail par slug (brand-model), colonne indexée
+// (migration 004) : plus besoin de charger toute la table pour une seule fiche.
 async function getBySlug(req, res) {
   const slug = req.params.slug.toLowerCase()
 
-  const { data: vehicles, error } = await vehicleModel.findAllOrderedByDate()
+  const { data: vehicle, error } = await vehicleModel.findBySlug(slug)
   if (error) return res.status(500).json({ error: error.message })
-
-  // Le slug n'existe pas en base, donc on le recalcule pour chaque véhicule. Ça lit toute
-  // la table pour une seule fiche : une colonne slug indexée réglerait ça.
-  const vehicle = vehicles?.find(v => {
-    const vehicleSlug = `${v.brand}-${v.model}`
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[̀-ͯ]/g, '')
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '')
-    return vehicleSlug === slug
-  })
-
   if (!vehicle) return res.status(404).json({ error: 'Véhicule introuvable.' })
   res.json(vehicle)
 }
