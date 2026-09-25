@@ -12,6 +12,7 @@ React 19 · Vite 8 · React Router 7 · Chart.js · Vitest. En **modules ES** (`
 | [architecture.md](architecture.md) | Conventions et structure des dossiers, le routing et les 18 routes, le code splitting, le build, les variables d'environnement |
 | [donnees.md](donnees.md) | La règle « API Express vs Supabase direct », le motif d'appel, le cache véhicules, le Realtime, les filtres dans l'URL, les doublons connus |
 | [auth.md](auth.md) | `auth.js` et `AuthContext`, `ProtectedRoute`, le parcours complet d'une connexion |
+| [i18n.md](i18n.md) | Le site public en français et en anglais : i18next, les fichiers de traduction, les données venues de la base, les erreurs de l'API |
 
 Le rôle détaillé de chaque fichier est listé dans `../documentation.html`.
 
@@ -38,8 +39,14 @@ client/
     │   ├── auth.js          login / register / logout / getSession / getProfile
     │   ├── AuthContext.jsx  Le contexte React qui porte la session
     │   ├── vehiclesCache.js Cache mémoire du catalogue (3 min)
+    │   ├── i18n.js          Configuration i18next (FR/EN) - voir i18n.md
+    │   ├── apiError.js      Traduit le `code` d'erreur renvoyé par l'API
     │   ├── utils.js         toSlug, formatPrice, optimizeImageUrl, libellés de statuts
     │   └── constants.js     Listes de valeurs
+    │
+    ├── locales/        Les traductions, une clé par texte affiché
+    │   ├── fr.json          Français (langue par défaut)
+    │   └── en.json          Anglais
     │
     ├── pages/          Un dossier par écran
     │   ├── Home, Catalogue, VehicleDetail, Reservation, Contact
@@ -50,6 +57,7 @@ client/
     │
     └── components/     Un dossier par composant réutilisable
         ├── Navbar, Footer, Pagination, Filters, VehicleCard, ConfirmModal
+        ├── LanguageSwitcher  La bascule FR / EN, dans la navbar
         ├── ErrorBoundary, ProtectedRoute
         ├── Dashboard*     (Sidebar, Reservations, Profile)
         ├── Reservation*   (Breadcrumb, VehiclePanel, Form, Success)

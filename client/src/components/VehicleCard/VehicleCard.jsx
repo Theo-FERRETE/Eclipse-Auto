@@ -1,18 +1,23 @@
 // Carte véhicule du catalogue.
 
 import { Link } from 'react-router-dom'
-import { toSlug, optimizeImageUrl, formatPrice, capitalize, VEHICLE_STATUS } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
+import { toSlug, optimizeImageUrl, formatPrice, formatNumber, translateFuel, VEHICLE_STATUS } from '@/lib/utils'
 import './VehicleCard.css'
 
 export default function VehicleCard({ vehicle, index }) {
   const { brand, model, year, price, fuel_type, mileage, power, images, status } = vehicle
+  const { t } = useTranslation()
 
   const slug = toSlug(brand, model)
   const isPriority = index < 3
-  const statusInfo = VEHICLE_STATUS[status] || VEHICLE_STATUS.available
+  const statusKey = VEHICLE_STATUS[status] ? status : 'available'
+  const statusInfo = VEHICLE_STATUS[statusKey]
 
-  const mileageLabel = mileage === 0 ? 'Neuf' : mileage ? `${mileage.toLocaleString('fr-FR')} km` : null
-  const specs = [year, capitalize(fuel_type), power, mileageLabel].filter(Boolean).join(' · ')
+  const mileageLabel = mileage === 0
+    ? t('common.new')
+    : mileage ? t('vehicle.mileageValue', { value: formatNumber(mileage) }) : null
+  const specs = [year, translateFuel(fuel_type), power, mileageLabel].filter(Boolean).join(' · ')
 
   return (
     <Link to={`/vehicles/${slug}`} className="vcard">
@@ -29,7 +34,7 @@ export default function VehicleCard({ vehicle, index }) {
             />
           : <div className="vcard-img-placeholder"></div>
         }
-        <span className={`${statusInfo.badge} vcard-badge`}>{statusInfo.label}</span>
+        <span className={`${statusInfo.badge} vcard-badge`}>{t(`status.vehicle.${statusKey}`)}</span>
       </div>
 
       <div className="vcard-body">

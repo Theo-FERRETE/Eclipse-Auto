@@ -3,7 +3,8 @@
 // disponibles mais repliés derrière « Plus de filtres » pour ne pas les perdre.
 
 import { useState } from 'react'
-import { capitalize } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
+import { translateFuel, translateTransmission, formatNumber } from '@/lib/utils'
 import './Filters.css'
 
 // Doit rester synchronisé avec DEFAULT_STATUS dans pages/Catalogue/catalogueFilters.js
@@ -13,6 +14,7 @@ const DEFAULT_STATUS = ['available', 'reserved', 'sold']
 
 export default function Filters({ filters, onChange, onReset, brands = [], fuelTypes = [], transmissions = [], years = [], priceMax = null }) {
   const [advancedOpen, setAdvancedOpen] = useState(false)
+  const { t } = useTranslation()
 
   const sliderValue = filters.price_max === Infinity ? priceMax : Math.min(Number(filters.price_max), priceMax)
   const isMaxPrice = filters.price_max === Infinity || Number(filters.price_max) >= priceMax
@@ -47,11 +49,13 @@ export default function Filters({ filters, onChange, onReset, brands = [], fuelT
       <div className="filter-bar-row">
         <div className="filter-pills">
           <button type="button" className={`filter-pill${isAllPill ? ' active' : ''}`} onClick={selectAll}>
-            Tous
+            {t('filters.all')}
           </button>
           <button type="button" className={`filter-pill${isAvailablePill ? ' active' : ''}`} onClick={selectAvailable}>
-            Disponibles
+            {t('filters.available')}
           </button>
+          {/* La valeur envoyée reste celle de la base ('Essence'), seul le libellé est
+              traduit : le filtrage compare sur la donnée, pas sur l'affichage. */}
           {fuelTypes.map(f => (
             <button
               key={f}
@@ -59,16 +63,16 @@ export default function Filters({ filters, onChange, onReset, brands = [], fuelT
               className={`filter-pill${filters.fuel_type === f ? ' active' : ''}`}
               onClick={() => selectFuel(f)}
             >
-              {capitalize(f)}
+              {translateFuel(f)}
             </button>
           ))}
         </div>
         <div className="filter-bar-actions">
           <button type="button" className="filters-advanced-toggle" onClick={() => setAdvancedOpen(v => !v)}>
-            Plus de filtres {advancedOpen ? '−' : '+'}
+            {t('filters.more')} {advancedOpen ? '−' : '+'}
           </button>
           <button className="filters-reset" onClick={onReset}>
-            Réinitialiser
+            {t('filters.reset')}
           </button>
         </div>
       </div>
@@ -77,38 +81,40 @@ export default function Filters({ filters, onChange, onReset, brands = [], fuelT
         <div className="filter-bar-row filter-bar-advanced">
           <select
             className="filter-pill-select"
-            aria-label="Marque"
+            aria-label={t('filters.brand')}
             value={filters.brand}
             onChange={e => onChange({ brand: e.target.value })}
           >
-            <option value="">Marque</option>
+            <option value="">{t('filters.brand')}</option>
             {brands.map(b => <option key={b} value={b}>{b}</option>)}
           </select>
 
           <select
             className="filter-pill-select"
-            aria-label="Transmission"
+            aria-label={t('filters.transmission')}
             value={filters.transmission}
             onChange={e => onChange({ transmission: e.target.value })}
           >
-            <option value="">Transmission</option>
-            {transmissions.map(t => <option key={t} value={t}>{capitalize(t)}</option>)}
+            <option value="">{t('filters.transmission')}</option>
+            {transmissions.map(tr => <option key={tr} value={tr}>{translateTransmission(tr)}</option>)}
           </select>
 
           <select
             className="filter-pill-select"
-            aria-label="Année minimum"
+            aria-label={t('filters.yearMin')}
             value={filters.year_min}
             onChange={e => onChange({ year_min: e.target.value })}
           >
-            <option value="">Année minimum</option>
+            <option value="">{t('filters.yearMin')}</option>
             {years.map(y => <option key={y} value={y}>{y}</option>)}
           </select>
 
           {priceMax && (
             <div className="filter-price">
               <label htmlFor="filter-price" className="filter-price-label">
-                Prix max — {isMaxPrice ? 'Sans limite' : `${sliderValue.toLocaleString('fr-FR')} €`}
+                {t('filters.priceMax', {
+                  value: isMaxPrice ? t('filters.priceNoLimit') : `${formatNumber(sliderValue)} €`,
+                })}
               </label>
               <input
                 id="filter-price"
@@ -127,14 +133,14 @@ export default function Filters({ filters, onChange, onReset, brands = [], fuelT
           )}
 
           <div className="filter-pills">
-            {[['reserved', 'Réservé'], ['sold', 'Vendu']].map(([value, label]) => (
+            {['reserved', 'sold'].map(value => (
               <button
                 key={value}
                 type="button"
                 className={`filter-pill filter-pill-small${filters.status.includes(value) ? ' active' : ''}`}
                 onClick={() => toggleStatus(value)}
               >
-                {label}
+                {t(`status.vehicle.${value}`)}
               </button>
             ))}
           </div>

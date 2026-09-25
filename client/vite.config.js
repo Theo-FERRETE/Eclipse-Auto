@@ -23,6 +23,7 @@ export default defineConfig({
         manualChunks(id) {
           if (!id.includes('node_modules')) return
           if (id.includes('@supabase')) return 'supabase'
+          if (id.includes('i18next')) return 'i18n'
           if (id.includes('chart.js') || id.includes('react-chartjs-2')) return 'charts'
           if (/node_modules\/(react|react-dom|react-router|react-router-dom|scheduler)\//.test(id)) return 'react'
         },

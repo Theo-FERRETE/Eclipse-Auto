@@ -11,7 +11,7 @@ La doc technique est dans [`docs/`](docs/README.md), séparée en deux :
   authentification et sécurité, validation, en-têtes HTTP, emails
 - **[docs/front/](docs/front/README.md)** : l'application React. Conventions et structure,
   routing, performance et build, d'où viennent les données, cache, Realtime,
-  authentification côté client
+  authentification côté client, site public bilingue FR/EN
 - **[docs/back/JWT.md](docs/back/JWT.md)** : où est physiquement stocké le jeton, ce qu'il contient,
   par où il passe, et ce qu'un attaquant peut ou non en faire
 
@@ -24,6 +24,7 @@ Rôle détaillé de chaque fichier source : `docs/documentation.html`.
 |--------|-------------|
 | Backend | Node.js + Express 5 |
 | Frontend | React 19 + Vite 8 |
+| Internationalisation | i18next + react-i18next (FR / EN, site public) |
 | Base de données | Supabase (PostgreSQL) |
 | Authentification | Supabase Auth + JWT |
 | Email | Nodemailer + Gmail SMTP |

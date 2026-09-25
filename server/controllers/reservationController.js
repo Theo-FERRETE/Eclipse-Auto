@@ -7,6 +7,7 @@ const nodemailer = require('nodemailer')
 const reservationModel = require('../models/reservationModel')
 const { buildConfirmationEmail } = require('../lib/emailTemplates')
 const { buildReservationPdf } = require('../lib/pdf')
+const { fail } = require('../lib/apiError')
 const { RESERVATION_STATUSES } = require('../constants')
 
 const transporter = nodemailer.createTransport({
@@ -64,17 +65,17 @@ async function create(req, res) {
   const { vehicle_id, message, rdv_date, rdv_date_fin } = req.body
 
   if (!vehicle_id) {
-    return res.status(400).json({ error: 'vehicle_id obligatoire.' })
+    return fail(res, 400, 'VEHICLE_ID_REQUIRED', 'vehicle_id obligatoire.')
   }
 
   // La période de l'essai (rdv_date -> rdv_date_fin) est ce qui permet la
   // remise en disponible automatique du véhicule (voir server/jobs/
   // expireReservations.js) : sans les deux bornes, rien à surveiller.
   if (!rdv_date || !rdv_date_fin) {
-    return res.status(400).json({ error: 'Dates de début et de fin d\'essai obligatoires.' })
+    return fail(res, 400, 'TEST_DRIVE_DATES_REQUIRED', 'Dates de début et de fin d\'essai obligatoires.')
   }
   if (new Date(rdv_date_fin) < new Date(rdv_date)) {
-    return res.status(400).json({ error: 'La date de fin doit être postérieure à la date de début.' })
+    return fail(res, 400, 'END_DATE_BEFORE_START', 'La date de fin doit être postérieure à la date de début.')
   }
 
   // Revérifié ici et pas seulement côté React : la page peut être ouverte depuis dix minutes.
@@ -82,7 +83,7 @@ async function create(req, res) {
   const { data: vehicle } = await reservationModel.findVehicleStatus(vehicle_id)
 
   if (!vehicle || vehicle.status !== 'available') {
-    return res.status(409).json({ error: 'Ce véhicule n\'est plus disponible.' })
+    return fail(res, 409, 'VEHICLE_UNAVAILABLE', 'Ce véhicule n\'est plus disponible.')
   }
 
   const { data, error } = await reservationModel.create({
@@ -100,7 +101,7 @@ async function create(req, res) {
     // 23P01 = exclusion_violation : la contrainte reservations_no_double_slot a refusé
     // deux essais confirmés sur le même véhicule au même créneau (voir migration 001).
     if (error.code === '23P01') {
-      return res.status(409).json({ error: 'Ce créneau est déjà réservé pour ce véhicule.' })
+      return fail(res, 409, 'SLOT_TAKEN', 'Ce créneau est déjà réservé pour ce véhicule.')
     }
     return res.status(500).json({ error: error.message })
   }
@@ -177,10 +178,10 @@ async function cancel(req, res) {
 
   // Existe / m'appartient / est annulable. Sans le test du milieu, n'importe qui pourrait
   // annuler la réservation d'un autre : être connecté ne suffit pas.
-  if (!reservation) return res.status(404).json({ error: 'Réservation introuvable.' })
-  if (reservation.client_id !== req.user.id) return res.status(403).json({ error: 'Accès refusé.' })
+  if (!reservation) return fail(res, 404, 'RESERVATION_NOT_FOUND', 'Réservation introuvable.')
+  if (reservation.client_id !== req.user.id) return fail(res, 403, 'FORBIDDEN', 'Accès refusé.')
   if (!['pending', 'confirmed'].includes(reservation.status)) {
-    return res.status(400).json({ error: 'Seules les réservations en attente ou confirmées peuvent être annulées.' })
+    return fail(res, 400, 'RESERVATION_NOT_CANCELLABLE', 'Seules les réservations en attente ou confirmées peuvent être annulées.')
   }
 
   const { data, error } = await reservationModel.cancel(req.params.id)

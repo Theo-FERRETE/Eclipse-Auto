@@ -2,6 +2,7 @@
 // sur le JWT.
 
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/lib/AuthContext'
 import { supabase } from '@/lib/supabase'
 import DashboardTabs from '@/components/DashboardTabs/DashboardTabs'
@@ -13,16 +14,17 @@ import './Dashboard.css'
 
 export default function Dashboard() {
   const { user, profile, refreshProfile } = useAuth()
+  const { t } = useTranslation()
   const [view, setView] = useState('reservations')
   const [reservations, setReservations] = useState([])
   const [ventes, setVentes] = useState([])
   const [loading, setLoading] = useState(true)
   const [ventesLoading, setVentesLoading] = useState(true)
   const [cancelling, setCancelling] = useState(new Set())
-  const [cancelError, setCancelError] = useState(null)
+  const [cancelError, setCancelError] = useState(false)
   const [confirmCancelId, setConfirmCancelId] = useState(null)
   const [ventesCancelling, setVentesCancelling] = useState(new Set())
-  const [ventesCancelError, setVentesCancelError] = useState(null)
+  const [ventesCancelError, setVentesCancelError] = useState(false)
 
   useEffect(() => {
     // Passe par l'API : le client_id est extrait du JWT côté serveur.
@@ -70,9 +72,10 @@ export default function Dashboard() {
       setReservations(prev =>
         prev.map(r => r.id === id ? { ...r, status: 'cancelled' } : r)
       )
-      setCancelError(null)
+      setCancelError(false)
     } else {
-      setCancelError('Impossible d\'annuler cette réservation. Veuillez réessayer.')
+      // Un booléen, pas un message : le texte est traduit au rendu.
+      setCancelError(true)
     }
 
     setCancelling(prev => { const s = new Set(prev); s.delete(id); return s })
@@ -107,9 +110,9 @@ export default function Dashboard() {
 
     if (res.ok) {
       setVentes(prev => prev.map(v => v.id === id ? { ...v, status: 'cancelled' } : v))
-      setVentesCancelError(null)
+      setVentesCancelError(false)
     } else {
-      setVentesCancelError('Impossible d\'annuler cet achat. Veuillez réessayer.')
+      setVentesCancelError(true)
     }
 
     setVentesCancelling(prev => { const s = new Set(prev); s.delete(id); return s })
@@ -119,8 +122,8 @@ export default function Dashboard() {
     <main className="dashboard">
       <div className="dashboard-hero">
         <div className="page-section">
-          <div className="tag">{profile?.first_name || 'Client'} {profile?.last_name}</div>
-          <h1 className="dashboard-title">Mon espace</h1>
+          <div className="tag">{profile?.first_name || t('dashboard.defaultName')} {profile?.last_name}</div>
+          <h1 className="dashboard-title">{t('dashboard.title')}</h1>
           <DashboardTabs view={view} onViewChange={setView} />
         </div>
       </div>
@@ -131,7 +134,7 @@ export default function Dashboard() {
         {view === 'reservations' && (
           <>
             {cancelError && (
-              <div className="form-error" role="alert" style={{ marginBottom: '16px' }}>{cancelError}</div>
+              <div className="form-error" role="alert" style={{ marginBottom: '16px' }}>{t('dashboard.cancelReservationError')}</div>
             )}
             <DashboardReservations
               reservations={reservations}
@@ -144,7 +147,7 @@ export default function Dashboard() {
         {view === 'ventes' && (
           <>
             {ventesCancelError && (
-              <div className="form-error" role="alert" style={{ marginBottom: '16px' }}>{ventesCancelError}</div>
+              <div className="form-error" role="alert" style={{ marginBottom: '16px' }}>{t('dashboard.cancelVenteError')}</div>
             )}
             <DashboardVentes
               ventes={ventes}
@@ -161,7 +164,7 @@ export default function Dashboard() {
 
       {confirmCancelId && (
         <ConfirmModal
-          message="Cette réservation est déjà confirmée. Voulez-vous vraiment l'annuler ?"
+          message={t('dashboard.confirmCancelReservation')}
           onConfirm={confirmCancel}
           onCancel={() => setConfirmCancelId(null)}
         />

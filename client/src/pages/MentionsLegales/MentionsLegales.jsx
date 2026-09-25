@@ -1,14 +1,17 @@
 // Mentions légales (page statique).
 
+import { useTranslation, Trans } from 'react-i18next'
 import './MentionsLegales.css'
 
 export default function MentionsLegales() {
+  const { t } = useTranslation()
+
   return (
     <main className="mentions">
       <div className="mentions-hero">
         <div className="page-section">
-          <div className="tag">Légal</div>
-          <h1 className="mentions-title">Mentions légales</h1>
+          <div className="tag">{t('legal.tag')}</div>
+          <h1 className="mentions-title">{t('legal.title')}</h1>
         </div>
       </div>
 
@@ -16,69 +19,71 @@ export default function MentionsLegales() {
 
       <div className="page-section mentions-content">
 
+        {/* Trans pour les paragraphes : le gras se déplace d'une langue à l'autre, il
+            doit donc rester dans la traduction et pas dans le JSX. */}
         <div className="mentions-block">
-          <h2 className="mentions-section">1. Présentation du site</h2>
-          <p>Le site <strong>Eclipse Auto</strong> est un projet éducatif réalisé dans le cadre du titre professionnel <strong>Développeur Web et Web Mobile (DWWM)</strong>. Il s'agit d'une application fictive de concession automobile en ligne. Aucune transaction commerciale réelle n'est effectuée sur ce site.</p>
+          <h2 className="mentions-section">{t('legal.s1Title')}</h2>
+          <p><Trans i18nKey="legal.s1Body" components={{ b: <strong /> }} /></p>
         </div>
 
         <div className="mentions-block">
-          <h2 className="mentions-section">2. Éditeur du site</h2>
+          <h2 className="mentions-section">{t('legal.s2Title')}</h2>
           <div className="mentions-table">
             <div className="mentions-row">
-              <span className="mentions-key">Nom</span>
-              <span className="mentions-val">Théo Ferreté</span>
+              <span className="mentions-key">{t('legal.s2Name')}</span>
+              <span className="mentions-val">{t('legal.s2NameValue')}</span>
             </div>
             <div className="mentions-row">
-              <span className="mentions-key">Statut</span>
-              <span className="mentions-val">Étudiant — Titre DWWM</span>
+              <span className="mentions-key">{t('legal.s2Status')}</span>
+              <span className="mentions-val">{t('legal.s2StatusValue')}</span>
             </div>
             <div className="mentions-row">
-              <span className="mentions-key">Email</span>
+              <span className="mentions-key">{t('legal.s2Email')}</span>
               <span className="mentions-val">theo.ferrete@gmail.com</span>
             </div>
             <div className="mentions-row">
-              <span className="mentions-key">Site portfolio</span>
+              <span className="mentions-key">{t('legal.s2Portfolio')}</span>
               <span className="mentions-val">theo-ferrete.fr</span>
             </div>
           </div>
         </div>
 
         <div className="mentions-block">
-          <h2 className="mentions-section">3. Hébergement</h2>
+          <h2 className="mentions-section">{t('legal.s3Title')}</h2>
           <div className="mentions-table">
             <div className="mentions-row">
-              <span className="mentions-key">Hébergeur</span>
-              <span className="mentions-val">VPS personnel</span>
+              <span className="mentions-key">{t('legal.s3Host')}</span>
+              <span className="mentions-val">{t('legal.s3HostValue')}</span>
             </div>
             <div className="mentions-row">
-              <span className="mentions-key">Serveur web</span>
+              <span className="mentions-key">{t('legal.s3Server')}</span>
               <span className="mentions-val">Nginx</span>
             </div>
             <div className="mentions-row">
-              <span className="mentions-key">Base de données</span>
+              <span className="mentions-key">{t('legal.s3Database')}</span>
               <span className="mentions-val">Supabase (PostgreSQL)</span>
             </div>
           </div>
         </div>
 
         <div className="mentions-block">
-          <h2 className="mentions-section">4. Propriété intellectuelle</h2>
-          <p>Les images utilisées sur ce site proviennent de <strong>Unsplash</strong> et sont soumises à leur licence respective. Le code source du projet est disponible sur <strong>GitHub</strong> à titre éducatif.</p>
+          <h2 className="mentions-section">{t('legal.s4Title')}</h2>
+          <p><Trans i18nKey="legal.s4Body" components={{ b: <strong /> }} /></p>
         </div>
 
         <div className="mentions-block">
-          <h2 className="mentions-section">5. Données personnelles</h2>
-          <p>Les données collectées (nom, prénom, email) sont uniquement utilisées dans le cadre de la démonstration du projet. Elles sont stockées de manière sécurisée via <strong>Supabase</strong> et ne sont transmises à aucun tiers. Conformément au RGPD, vous pouvez demander la suppression de vos données à tout moment en contactant l'éditeur.</p>
+          <h2 className="mentions-section">{t('legal.s5Title')}</h2>
+          <p><Trans i18nKey="legal.s5Body" components={{ b: <strong /> }} /></p>
         </div>
 
         <div className="mentions-block">
-          <h2 className="mentions-section">6. Cookies</h2>
-          <p>Ce site utilise des cookies de session uniquement pour gérer l'authentification des utilisateurs. Aucun cookie publicitaire ou de tracking n'est utilisé.</p>
+          <h2 className="mentions-section">{t('legal.s6Title')}</h2>
+          <p>{t('legal.s6Body')}</p>
         </div>
 
         <div className="mentions-block">
-          <h2 className="mentions-section">7. Avertissement</h2>
-          <p>Eclipse Auto est un projet <strong>fictif et éducatif</strong>. Les véhicules présentés, les prix affichés et les informations de contact ne correspondent à aucune entité commerciale réelle. Aucun achat, paiement ou transaction n'est possible sur ce site.</p>
+          <h2 className="mentions-section">{t('legal.s7Title')}</h2>
+          <p><Trans i18nKey="legal.s7Body" components={{ b: <strong /> }} /></p>
         </div>
 
       </div>

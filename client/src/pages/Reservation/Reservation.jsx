@@ -3,8 +3,10 @@
 
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/lib/AuthContext'
 import { supabase } from '@/lib/supabase'
+import { readApiError } from '@/lib/apiError'
 import { getVehicleBySlug } from '@/lib/vehiclesCache'
 import ReservationBreadcrumb from '@/components/ReservationBreadcrumb/ReservationBreadcrumb'
 import ReservationVehiclePanel from '@/components/ReservationVehiclePanel/ReservationVehiclePanel'
@@ -15,6 +17,7 @@ import './Reservation.css'
 export default function Reservation() {
   const { slug } = useParams()
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const { user, profile } = useAuth()
   const [vehicle, setVehicle] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -51,7 +54,7 @@ export default function Reservation() {
     // Revérifié côté serveur de toute façon, mais évite un aller-retour
     // réseau inutile pour une erreur de saisie évidente.
     if (form.rdv_date && form.rdv_date_fin && form.rdv_date_fin < form.rdv_date) {
-      setError('La date de fin doit être postérieure à la date de début.')
+      setError(t('reservation.endBeforeStart'))
       return
     }
 
@@ -77,14 +80,15 @@ export default function Reservation() {
       // fetch ne lève pas d'exception sur un 4xx : sans ce test, une réservation refusée
       // (409 créneau déjà pris, par exemple) passerait pour un succès.
       if (!res.ok) {
-        const data = await res.json()
-        throw new Error(data.error || 'Une erreur est survenue.')
+        // readApiError traduit le `code` renvoyé par l'API, et retombe sur son message
+        // quand il n'y en a pas.
+        throw new Error(await readApiError(res))
       }
 
       setSuccess(true)
       setTimeout(() => navigate('/dashboard'), 3000)
     } catch (err) {
-      setError(err.message || 'Une erreur est survenue. Veuillez réessayer.')
+      setError(err.message || t('common.errorRetry'))
     } finally {
       // finally : le bouton doit être réactivé même en cas d'erreur.
       setSubmitting(false)

@@ -2,15 +2,18 @@
 // ni options (c'est le rôle de la vente) ; un essai terminé propose de concrétiser l'achat.
 
 import { Link } from 'react-router-dom'
-import { RESERVATION_STATUS, optimizeImageUrl, toSlug } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
+import { RESERVATION_STATUS, optimizeImageUrl, toSlug, formatDate, formatDateTime } from '@/lib/utils'
 
 export default function DashboardReservations({ reservations, loading, cancelling, onCancel }) {
+  const { t } = useTranslation()
+
   return (
     <>
       <div className="dashboard-section-title">
-        <div className="tag">Historique</div>
+        <div className="tag">{t('dashboard.historyTag')}</div>
         <h2 className="section-title" style={{ fontSize: '32px', marginTop: '8px' }}>
-          Mes essais
+          {t('dashboard.tabReservations')}
         </h2>
       </div>
 
@@ -22,9 +25,9 @@ export default function DashboardReservations({ reservations, loading, cancellin
 
       {!loading && reservations.length === 0 && (
         <div className="dashboard-empty">
-          <p>Vous n'avez pas encore d'essai.</p>
+          <p>{t('dashboard.noReservations')}</p>
           <Link to="/catalogue" className="btn-primary">
-            Découvrir le catalogue
+            {t('dashboard.discoverCatalogue')}
           </Link>
         </div>
       )}
@@ -45,8 +48,10 @@ export default function DashboardReservations({ reservations, loading, cancellin
                     />
                   : <div className="vcard-img-placeholder"></div>
                 }
+                {/* RESERVATION_STATUS ne sert plus qu'à la classe CSS : le libellé vient
+                    des traductions (status.reservation.*). */}
                 <span className={`reservation-status vcard-badge ${RESERVATION_STATUS[r.status]?.class}`}>
-                  {RESERVATION_STATUS[r.status]?.label}
+                  {t(`status.reservation.${r.status}`)}
                 </span>
               </div>
 
@@ -56,8 +61,11 @@ export default function DashboardReservations({ reservations, loading, cancellin
                 {r.rdv_date && (
                   <div className="dashboard-card-meta">
                     {r.rdv_date_fin && r.rdv_date_fin !== r.rdv_date
-                      ? `Du ${new Date(r.rdv_date).toLocaleDateString('fr-FR')} au ${new Date(r.rdv_date_fin).toLocaleDateString('fr-FR')}`
-                      : `Créneau : ${new Date(r.rdv_date).toLocaleString('fr-FR')}`}
+                      ? t('dashboard.dateRange', {
+                          start: formatDate(r.rdv_date),
+                          end: formatDate(r.rdv_date_fin),
+                        })
+                      : t('dashboard.slot', { date: formatDateTime(r.rdv_date) })}
                   </div>
                 )}
                 {r.message && <div className="dashboard-card-meta dashboard-card-message">"{r.message}"</div>}
@@ -70,7 +78,7 @@ export default function DashboardReservations({ reservations, loading, cancellin
                         onClick={() => onCancel(r.id, r.status)}
                         disabled={cancelling.has(r.id)}
                       >
-                        {cancelling.has(r.id) ? '...' : 'Annuler'}
+                        {cancelling.has(r.id) ? '...' : t('common.cancel')}
                       </button>
                     )}
                     {r.status === 'completed' && r.vehicles && (
@@ -79,7 +87,7 @@ export default function DashboardReservations({ reservations, loading, cancellin
                         state={{ reservation_id: r.id }}
                         className="btn-primary dashboard-card-cta"
                       >
-                        Concrétiser la vente
+                        {t('dashboard.completeSale')}
                       </Link>
                     )}
                   </div>

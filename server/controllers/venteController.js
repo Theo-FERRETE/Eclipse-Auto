@@ -8,6 +8,7 @@ const nodemailer = require('nodemailer')
 const venteModel = require('../models/venteModel')
 const { buildVenteConfirmationEmail } = require('../lib/emailTemplates')
 const { buildInvoicePdf } = require('../lib/pdf')
+const { fail } = require('../lib/apiError')
 const { PAYMENT_METHODS } = require('../constants')
 
 const VENTE_UPDATABLE_STATUSES = ['confirmed', 'cancelled']
@@ -72,10 +73,10 @@ async function create(req, res) {
   const { vehicle_id, equipement_ids, mode_paiement, reservation_id } = req.body
 
   if (!vehicle_id) {
-    return res.status(400).json({ error: 'vehicle_id obligatoire.' })
+    return fail(res, 400, 'VEHICLE_ID_REQUIRED', 'vehicle_id obligatoire.')
   }
   if (!PAYMENT_METHODS.includes(mode_paiement)) {
-    return res.status(400).json({ error: `mode_paiement invalide (${PAYMENT_METHODS.join(', ')}).` })
+    return fail(res, 400, 'PAYMENT_METHOD_INVALID', `mode_paiement invalide (${PAYMENT_METHODS.join(', ')}).`)
   }
 
   // Revérifié ici et pas seulement côté React : la fiche peut être ouverte depuis longtemps.
@@ -83,7 +84,7 @@ async function create(req, res) {
   const { data: vehicle } = await venteModel.findVehicleForSale(vehicle_id)
 
   if (!vehicle || vehicle.status === 'sold') {
-    return res.status(409).json({ error: 'Ce véhicule a déjà été vendu.' })
+    return fail(res, 409, 'VEHICLE_ALREADY_SOLD', 'Ce véhicule a déjà été vendu.')
   }
 
   // Le total n'est jamais lu depuis le corps de la requête : on ne fait confiance qu'aux
@@ -191,10 +192,10 @@ async function cancel(req, res) {
 
   // Existe / m'appartient / est encore annulable. Sans le test du milieu, n'importe qui
   // pourrait annuler l'achat d'un autre : être connecté ne suffit pas.
-  if (!vente) return res.status(404).json({ error: 'Achat introuvable.' })
-  if (vente.client_id !== req.user.id) return res.status(403).json({ error: 'Accès refusé.' })
+  if (!vente) return fail(res, 404, 'SALE_NOT_FOUND', 'Achat introuvable.')
+  if (vente.client_id !== req.user.id) return fail(res, 403, 'FORBIDDEN', 'Accès refusé.')
   if (vente.status !== 'pending') {
-    return res.status(400).json({ error: 'Seul un achat en attente peut être annulé.' })
+    return fail(res, 400, 'SALE_NOT_CANCELLABLE', 'Seul un achat en attente peut être annulé.')
   }
 
   const { data, error } = await venteModel.cancel(req.params.id)

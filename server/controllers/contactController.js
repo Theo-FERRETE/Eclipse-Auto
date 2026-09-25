@@ -2,6 +2,7 @@
 
 const nodemailer = require('nodemailer')
 const { escapeHtml } = require('../lib/emailTemplates')
+const { fail } = require('../lib/apiError')
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -64,22 +65,22 @@ async function send(req, res) {
   // Avant la validation, sinon on pourrait marteler la route avec des corps invalides
   // sans jamais consommer son quota.
   if (!checkRateLimit(clientIp)) {
-    return res.status(429).json({ error: 'Trop de requêtes. Réessayez dans 15 minutes.' })
+    return fail(res, 429, 'RATE_LIMITED', 'Trop de requêtes. Réessayez dans 15 minutes.')
   }
 
   if (!name || !email || !message) {
-    return res.status(400).json({ error: 'Nom, email et message sont obligatoires.' })
+    return fail(res, 400, 'CONTACT_FIELDS_REQUIRED', 'Nom, email et message sont obligatoires.')
   }
 
   // Le test des retours à la ligne bloque l'injection d'en-têtes SMTP : un "x@y.fr\nBcc: ..."
   // ajouterait de vrais destinataires et ferait de ce formulaire un relais de spam.
   if (!isValidEmail(email) || /[\r\n]/.test(email)) {
-    return res.status(400).json({ error: 'Adresse email invalide.' })
+    return fail(res, 400, 'EMAIL_INVALID', 'Adresse email invalide.')
   }
 
   // Sans plafond, un message de 50 Mo serait accepté et envoyé.
   if (name.length > 100 || message.length > 5000) {
-    return res.status(400).json({ error: 'Champs trop longs.' })
+    return fail(res, 400, 'FIELDS_TOO_LONG', 'Champs trop longs.')
   }
 
   try {
@@ -102,7 +103,7 @@ async function send(req, res) {
     // On logue l'erreur réelle mais on ne la renvoie pas : elle contient la réponse brute
     // de Gmail.
     console.error('[Contact] Erreur envoi email :', err)
-    res.status(500).json({ error: "Erreur lors de l'envoi du message." })
+    fail(res, 500, 'CONTACT_SEND_FAILED', "Erreur lors de l'envoi du message.")
   }
 }
 

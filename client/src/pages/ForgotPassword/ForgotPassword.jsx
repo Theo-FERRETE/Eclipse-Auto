@@ -2,24 +2,26 @@
 
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useTranslation, Trans } from 'react-i18next'
 import { supabase } from '@/lib/supabase'
 import '../Login/Login.css'
 
 export default function ForgotPassword() {
+  const { t } = useTranslation()
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
-  const [error, setError] = useState(null)
+  const [error, setError] = useState(false)
 
   async function handleSubmit(e) {
     e.preventDefault()
-    setError(null)
+    setError(false)
     setLoading(true)
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`,
     })
     if (error) {
-      setError('Une erreur est survenue. Vérifiez votre adresse email.')
+      setError(true)
     } else {
       setSent(true)
     }
@@ -31,24 +33,29 @@ export default function ForgotPassword() {
       <div className="auth-card">
         <div className="auth-header">
           <img src="/eclipse-auto.svg" alt="Eclipse Auto" className="auth-logo" />
-          <div className="tag">Espace membre</div>
-          <h1 className="auth-title">Mot de passe oublié</h1>
+          <div className="tag">{t('auth.memberTag')}</div>
+          <h1 className="auth-title">{t('auth.forgotTitle')}</h1>
         </div>
 
         {sent ? (
           <div className="form-success">
-            Un email de réinitialisation a été envoyé à <strong>{email}</strong>.<br />
-            Vérifiez votre boîte mail et cliquez sur le lien.
+            {/* Trans plutôt que t() : la phrase contient du balisage (l'email en gras,
+                un retour à la ligne) que les traducteurs doivent pouvoir déplacer. */}
+            <Trans
+              i18nKey="auth.forgotSent"
+              values={{ email }}
+              components={{ b: <strong />, br: <br /> }}
+            />
           </div>
         ) : (
           <form className="auth-form" onSubmit={handleSubmit}>
             <div className="form-group">
-              <label className="form-label" htmlFor="forgot-email">Email</label>
+              <label className="form-label" htmlFor="forgot-email">{t('common.email')}</label>
               <input
                 id="forgot-email"
                 type="email"
                 className="form-input"
-                placeholder="votre@email.com"
+                placeholder={t('auth.emailPlaceholder')}
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 required
@@ -56,7 +63,7 @@ export default function ForgotPassword() {
               />
             </div>
 
-            {error && <div className="form-error" role="alert">{error}</div>}
+            {error && <div className="form-error" role="alert">{t('auth.forgotError')}</div>}
 
             <button
               type="submit"
@@ -64,13 +71,13 @@ export default function ForgotPassword() {
               style={{ width: '100%', padding: '14px' }}
               disabled={loading}
             >
-              {loading ? 'Envoi...' : 'Envoyer le lien'}
+              {loading ? t('common.sending') : t('auth.forgotSubmit')}
             </button>
           </form>
         )}
 
         <div className="auth-footer">
-          <Link to="/login" className="auth-link">← Retour à la connexion</Link>
+          <Link to="/login" className="auth-link">{t('auth.backToLogin')}</Link>
         </div>
       </div>
 

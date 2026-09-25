@@ -4,15 +4,18 @@
 // de traiter l'annulation.
 
 import { Link } from 'react-router-dom'
-import { VENTE_STATUS, PAYMENT_METHOD_LABELS, optimizeImageUrl, formatPrice } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
+import { VENTE_STATUS, optimizeImageUrl, formatPrice, translatePaymentMethod } from '@/lib/utils'
 
 export default function DashboardVentes({ ventes, loading, cancelling, onCancel }) {
+  const { t } = useTranslation()
+
   return (
     <>
       <div className="dashboard-section-title">
-        <div className="tag">Historique</div>
+        <div className="tag">{t('dashboard.historyTag')}</div>
         <h2 className="section-title" style={{ fontSize: '32px', marginTop: '8px' }}>
-          Mes achats
+          {t('dashboard.tabVentes')}
         </h2>
       </div>
 
@@ -24,9 +27,9 @@ export default function DashboardVentes({ ventes, loading, cancelling, onCancel 
 
       {!loading && ventes.length === 0 && (
         <div className="dashboard-empty">
-          <p>Vous n'avez pas encore d'achat.</p>
+          <p>{t('dashboard.noVentes')}</p>
           <Link to="/catalogue" className="btn-primary">
-            Découvrir le catalogue
+            {t('dashboard.discoverCatalogue')}
           </Link>
         </div>
       )}
@@ -47,8 +50,10 @@ export default function DashboardVentes({ ventes, loading, cancelling, onCancel 
                     />
                   : <div className="vcard-img-placeholder"></div>
                 }
+                {/* VENTE_STATUS ne sert plus qu'à la classe CSS : le libellé vient des
+                    traductions (status.vente.*). */}
                 <span className={`reservation-status vcard-badge ${VENTE_STATUS[v.status]?.class}`}>
-                  {VENTE_STATUS[v.status]?.label}
+                  {t(`status.vente.${v.status}`)}
                 </span>
               </div>
 
@@ -57,11 +62,11 @@ export default function DashboardVentes({ ventes, loading, cancelling, onCancel 
                 <div className="vcard-model">{v.vehicles?.model}</div>
                 {v.equipements?.length > 0 && (
                   <div className="dashboard-card-meta">
-                    Options : {v.equipements.map(eq => eq.nom).join(', ')}
+                    {t('dashboard.options', { list: v.equipements.map(eq => eq.nom).join(', ') })}
                   </div>
                 )}
                 <div className="dashboard-card-meta">
-                  Paiement : {PAYMENT_METHOD_LABELS[v.mode_paiement] || v.mode_paiement}
+                  {t('dashboard.payment', { method: translatePaymentMethod(v.mode_paiement) })}
                 </div>
 
                 <div className="vcard-footer">
@@ -72,7 +77,7 @@ export default function DashboardVentes({ ventes, loading, cancelling, onCancel 
                       onClick={() => onCancel(v.id)}
                       disabled={cancelling.has(v.id)}
                     >
-                      {cancelling.has(v.id) ? '...' : 'Annuler'}
+                      {cancelling.has(v.id) ? '...' : t('common.cancel')}
                     </button>
                   )}
                 </div>

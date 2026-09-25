@@ -327,3 +327,45 @@ Envoyer un message de contact (rate limit : 5 req / 15 min / IP).
 | 404 | Ressource introuvable |
 | 429 | Trop de requêtes |
 | 500 | Erreur serveur interne |
+
+---
+
+## Forme des erreurs
+
+Les **routes publiques** (contact, réservations, ventes, authentification) renvoient un
+identifiant `code` en plus du message :
+
+```json
+{ "error": "Ce véhicule n'est plus disponible.", "code": "VEHICLE_UNAVAILABLE" }
+```
+
+Le message reste en français ; le `code` est stable et permet à un client de l'afficher
+dans sa propre langue. C'est ce dont se sert le site, bilingue FR/EN (voir
+[docs/front/i18n.md](front/i18n.md)). Les routes réservées à l'admin s'en passent : le
+back-office n'est pas traduit.
+
+| `code` | Route | Statut |
+|---|---|---|
+| `TOKEN_MISSING` | toute route 🔒 | 401 |
+| `TOKEN_INVALID` | toute route 🔒 | 401 |
+| `ADMIN_ONLY` | toute route 🔒 Admin | 403 |
+| `FORBIDDEN` | `PATCH /reservations/:id/cancel`, `PATCH /ventes/:id/cancel` | 403 |
+| `VEHICLE_ID_REQUIRED` | `POST /reservations`, `POST /ventes` | 400 |
+| `TEST_DRIVE_DATES_REQUIRED` | `POST /reservations` | 400 |
+| `END_DATE_BEFORE_START` | `POST /reservations` | 400 |
+| `VEHICLE_UNAVAILABLE` | `POST /reservations` | 409 |
+| `SLOT_TAKEN` | `POST /reservations` | 409 |
+| `RESERVATION_NOT_FOUND` | `PATCH /reservations/:id/cancel` | 404 |
+| `RESERVATION_NOT_CANCELLABLE` | `PATCH /reservations/:id/cancel` | 400 |
+| `PAYMENT_METHOD_INVALID` | `POST /ventes` | 400 |
+| `VEHICLE_ALREADY_SOLD` | `POST /ventes` | 409 |
+| `SALE_NOT_FOUND` | `PATCH /ventes/:id/cancel` | 404 |
+| `SALE_NOT_CANCELLABLE` | `PATCH /ventes/:id/cancel` | 400 |
+| `RATE_LIMITED` | `POST /contact` | 429 |
+| `CONTACT_FIELDS_REQUIRED` | `POST /contact` | 400 |
+| `EMAIL_INVALID` | `POST /contact` | 400 |
+| `FIELDS_TOO_LONG` | `POST /contact` | 400 |
+| `CONTACT_SEND_FAILED` | `POST /contact` | 500 |
+
+Une erreur inattendue (remontée par Supabase, par exemple) n'a pas de `code` : elle ne
+contient que `error`. Les clients doivent donc toujours prévoir ce cas.

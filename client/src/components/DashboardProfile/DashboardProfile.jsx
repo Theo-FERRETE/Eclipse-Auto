@@ -1,15 +1,19 @@
 // Profil et mot de passe. Seule écriture qui passe encore en direct par Supabase.
 
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { supabase } from '@/lib/supabase'
 
 export default function DashboardProfile({ user, profile, refreshProfile }) {
+  const { t } = useTranslation()
   const [profileForm, setProfileForm] = useState({
     first_name: profile?.first_name || '',
     last_name: profile?.last_name || '',
     phone: profile?.phone || '',
   })
   const [profileSaving, setProfileSaving] = useState(false)
+  // Les messages sont stockés sous forme de clé, jamais de texte : un changement de
+  // langue doit aussi retraduire un message déjà affiché.
   const [profileMsg, setProfileMsg] = useState(null)
 
   const [pwForm, setPwForm] = useState({ password: '', confirm: '' })
@@ -31,10 +35,10 @@ export default function DashboardProfile({ user, profile, refreshProfile }) {
       .eq('id', user.id)
 
     if (error) {
-      setProfileMsg({ type: 'error', text: 'Erreur lors de la sauvegarde.' })
+      setProfileMsg({ type: 'error', key: 'dashboard.saveError' })
     } else {
       await refreshProfile()
-      setProfileMsg({ type: 'success', text: 'Profil mis à jour.' })
+      setProfileMsg({ type: 'success', key: 'dashboard.saveSuccess' })
     }
     setProfileSaving(false)
   }
@@ -42,11 +46,11 @@ export default function DashboardProfile({ user, profile, refreshProfile }) {
   async function handlePasswordSave(e) {
     e.preventDefault()
     if (pwForm.password !== pwForm.confirm) {
-      setPwMsg({ type: 'error', text: 'Les mots de passe ne correspondent pas.' })
+      setPwMsg({ type: 'error', key: 'common.passwordMismatch' })
       return
     }
     if (pwForm.password.length < 6) {
-      setPwMsg({ type: 'error', text: 'Le mot de passe doit faire au moins 6 caractères.' })
+      setPwMsg({ type: 'error', key: 'common.passwordTooShort' })
       return
     }
     setPwSaving(true)
@@ -55,50 +59,63 @@ export default function DashboardProfile({ user, profile, refreshProfile }) {
     const { error } = await supabase.auth.updateUser({ password: pwForm.password })
 
     if (error) {
+      // Message brut de Supabase : pas de clé, on affiche tel quel.
       setPwMsg({ type: 'error', text: error.message })
     } else {
-      setPwMsg({ type: 'success', text: 'Mot de passe mis à jour.' })
+      setPwMsg({ type: 'success', key: 'dashboard.passwordUpdated' })
       setPwForm({ password: '', confirm: '' })
     }
     setPwSaving(false)
   }
 
+  function renderMsg(msg) {
+    if (!msg) return null
+    return (
+      <div
+        className={msg.type === 'error' ? 'form-error' : 'form-success'}
+        role={msg.type === 'error' ? 'alert' : 'status'}
+      >
+        {msg.key ? t(msg.key) : msg.text}
+      </div>
+    )
+  }
+
   return (
     <>
       <div className="dashboard-section-title">
-        <div className="tag">Paramètres</div>
+        <div className="tag">{t('dashboard.settingsTag')}</div>
         <h2 className="section-title" style={{ fontSize: '32px', marginTop: '8px' }}>
-          Mon profil
+          {t('dashboard.tabProfile')}
         </h2>
       </div>
 
       <div className="profile-forms-row">
         <form className="profile-form" onSubmit={handleProfileSave}>
-          <div className="profile-form-title">Informations personnelles</div>
+          <div className="profile-form-title">{t('dashboard.personalInfo')}</div>
           <div className="form-row">
             <div className="form-group">
-              <label className="form-label" htmlFor="profile-firstname">Prénom</label>
+              <label className="form-label" htmlFor="profile-firstname">{t('common.firstName')}</label>
               <input
                 id="profile-firstname"
                 className="form-input"
                 value={profileForm.first_name}
                 onChange={e => setProfileForm(p => ({ ...p, first_name: e.target.value }))}
-                placeholder="Prénom"
+                placeholder={t('common.firstName')}
               />
             </div>
             <div className="form-group">
-              <label className="form-label" htmlFor="profile-lastname">Nom</label>
+              <label className="form-label" htmlFor="profile-lastname">{t('common.lastName')}</label>
               <input
                 id="profile-lastname"
                 className="form-input"
                 value={profileForm.last_name}
                 onChange={e => setProfileForm(p => ({ ...p, last_name: e.target.value }))}
-                placeholder="Nom"
+                placeholder={t('common.lastName')}
               />
             </div>
           </div>
           <div className="form-group">
-            <label className="form-label" htmlFor="profile-phone">Téléphone</label>
+            <label className="form-label" htmlFor="profile-phone">{t('common.phone')}</label>
             <input
               id="profile-phone"
               className="form-input"
@@ -109,7 +126,7 @@ export default function DashboardProfile({ user, profile, refreshProfile }) {
             />
           </div>
           <div className="form-group">
-            <label className="form-label" htmlFor="profile-email">Email</label>
+            <label className="form-label" htmlFor="profile-email">{t('common.email')}</label>
             <input
               id="profile-email"
               className="form-input"
@@ -118,47 +135,39 @@ export default function DashboardProfile({ user, profile, refreshProfile }) {
               style={{ opacity: 0.5, cursor: 'not-allowed' }}
             />
           </div>
-          {profileMsg && (
-            <div className={profileMsg.type === 'error' ? 'form-error' : 'form-success'} role={profileMsg.type === 'error' ? 'alert' : 'status'}>
-              {profileMsg.text}
-            </div>
-          )}
+          {renderMsg(profileMsg)}
           <button type="submit" className="btn-primary" disabled={profileSaving}>
-            {profileSaving ? 'Enregistrement...' : 'Sauvegarder'}
+            {profileSaving ? t('dashboard.saving') : t('dashboard.save')}
           </button>
         </form>
 
         <form className="profile-form" onSubmit={handlePasswordSave}>
-          <div className="profile-form-title">Changer le mot de passe</div>
+          <div className="profile-form-title">{t('dashboard.changePassword')}</div>
           <div className="form-group">
-            <label className="form-label" htmlFor="profile-new-password">Nouveau mot de passe</label>
+            <label className="form-label" htmlFor="profile-new-password">{t('auth.resetNewPassword')}</label>
             <input
               id="profile-new-password"
               className="form-input"
               type="password"
               value={pwForm.password}
               onChange={e => setPwForm(p => ({ ...p, password: e.target.value }))}
-              placeholder="6 caractères minimum"
+              placeholder={t('dashboard.passwordPlaceholder')}
             />
           </div>
           <div className="form-group">
-            <label className="form-label" htmlFor="profile-confirm-password">Confirmer le mot de passe</label>
+            <label className="form-label" htmlFor="profile-confirm-password">{t('common.passwordConfirm')}</label>
             <input
               id="profile-confirm-password"
               className="form-input"
               type="password"
               value={pwForm.confirm}
               onChange={e => setPwForm(p => ({ ...p, confirm: e.target.value }))}
-              placeholder="Répéter le mot de passe"
+              placeholder={t('dashboard.passwordRepeatPlaceholder')}
             />
           </div>
-          {pwMsg && (
-            <div className={pwMsg.type === 'error' ? 'form-error' : 'form-success'} role={pwMsg.type === 'error' ? 'alert' : 'status'}>
-              {pwMsg.text}
-            </div>
-          )}
+          {renderMsg(pwMsg)}
           <button type="submit" className="btn-primary" disabled={pwSaving}>
-            {pwSaving ? 'Mise à jour...' : 'Changer le mot de passe'}
+            {pwSaving ? t('dashboard.passwordUpdating') : t('dashboard.changePassword')}
           </button>
         </form>
       </div>

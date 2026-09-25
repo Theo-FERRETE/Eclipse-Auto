@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { toSlug, optimizeImageUrl, formatPrice, capitalize } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
+import { toSlug, optimizeImageUrl, formatPrice, translateFuel } from '@/lib/utils'
 import { getVehicles } from '@/lib/vehiclesCache'
 import './Home.css'
 
 export default function Home() {
   const [featured, setFeatured] = useState([])
+  const { t } = useTranslation()
 
   useEffect(() => {
     getVehicles().then(({ data }) => {
@@ -22,19 +24,19 @@ export default function Home() {
         <div className="hero-bg"></div>
 
         <div className="hero-content">
-          <div className="tag" style={{ color: 'var(--cyan)' }}>Collection 2026</div>
+          <div className="tag" style={{ color: 'var(--cyan)' }}>{t('home.heroTag')}</div>
           <h1 className="hero-title">
-            Conduisez<br />l'exception<em>.</em>
+            {t('home.heroTitleLine1')}<br />{t('home.heroTitleLine2')}<em>.</em>
           </h1>
           <p className="hero-sub">
-            Une sélection rigoureuse de voitures de sport d'exception, choisies pour leur caractère autant que pour leurs performances.
+            {t('home.heroSub')}
           </p>
           <div className="hero-btns">
             <Link to="/catalogue" className="btn-primary">
-              Découvrir le catalogue
+              {t('home.heroCtaCatalogue')}
             </Link>
             <Link to="/contact" className="btn-ghost">
-              Prendre rendez-vous
+              {t('home.heroCtaContact')}
             </Link>
           </div>
         </div>
@@ -52,11 +54,11 @@ export default function Home() {
         <div className="page-section">
           <div className="section-header">
             <div>
-              <div className="tag">Sélection du moment</div>
-              <h2 className="section-title">Véhicules en vedette</h2>
+              <div className="tag">{t('home.featuredTag')}</div>
+              <h2 className="section-title">{t('home.featuredTitle')}</h2>
             </div>
             <Link to="/catalogue" className="section-header-link">
-              Voir tout le catalogue →
+              {t('home.featuredLink')}
             </Link>
           </div>
 
@@ -80,7 +82,7 @@ export default function Home() {
                   <div className="tag" style={{ color: 'var(--cyan)' }}>{car.brand}</div>
                   <div className="car-model">{car.model}</div>
                   <div className="car-specs">
-                    {[car.year, car.power, capitalize(car.fuel_type)].filter(Boolean).join(' · ')}
+                    {[car.year, car.power, translateFuel(car.fuel_type)].filter(Boolean).join(' · ')}
                   </div>
                   <div className="car-footer">
                     <div className="car-price">
@@ -89,9 +91,9 @@ export default function Home() {
                     <Link
                       to={`/vehicles/${toSlug(car.brand, car.model)}`}
                       className="car-link"
-                      aria-label={`Voir ${car.brand} ${car.model}`}
+                      aria-label={t('home.viewVehicleAria', { vehicle: `${car.brand} ${car.model}` })}
                     >
-                      Voir →
+                      {t('home.viewVehicle')}
                     </Link>
                   </div>
                 </div>
@@ -104,19 +106,15 @@ export default function Home() {
       <section className="section why">
         <div className="page-section">
           <div className="section-header">
-            <div className="tag">Pourquoi nous</div>
-            <h2 className="section-title">L'excellence au service<br />de la performance</h2>
+            <div className="tag">{t('home.whyTag')}</div>
+            <h2 className="section-title">{t('home.whyTitleLine1')}<br />{t('home.whyTitleLine2')}</h2>
           </div>
           <div className="why-grid">
-            {[
-              { num: '01', title: 'Sélection rigoureuse', desc: 'Chaque véhicule est inspecté et certifié avant d\'intégrer notre catalogue.' },
-              { num: '02', title: 'Réservation en ligne', desc: 'Réservez un essai ou lancez un achat en quelques clics, 24h/24.' },
-              { num: '03', title: 'Expertise reconnue', desc: '12 ans d\'expérience dans la vente de véhicules de sport haut de gamme.' },
-            ].map((item) => (
-              <div className="why-card" key={item.num}>
-                <div className="why-num">{item.num}</div>
-                <h3 className="why-title">{item.title}</h3>
-                <p className="why-desc">{item.desc}</p>
+            {['1', '2', '3'].map((n) => (
+              <div className="why-card" key={n}>
+                <div className="why-num">{`0${n}`}</div>
+                <h3 className="why-title">{t(`home.why${n}Title`)}</h3>
+                <p className="why-desc">{t(`home.why${n}Desc`)}</p>
               </div>
             ))}
           </div>

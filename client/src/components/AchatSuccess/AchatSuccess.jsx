@@ -1,23 +1,30 @@
 // Écran de confirmation après envoi de la demande d'achat.
 
 import { Link } from 'react-router-dom'
+import { useTranslation, Trans } from 'react-i18next'
 
 export default function AchatSuccess({ vehicle }) {
+  const { t } = useTranslation()
+
   return (
     <main className="reservation-success-page">
       <div className="page-section">
         <div className="success-card">
           <div className="success-icon">✓</div>
-          <div className="tag">Confirmation</div>
-          <h1 className="success-title">Demande d'achat envoyée !</h1>
+          <div className="tag">{t('reservation.successTag')}</div>
+          <h1 className="success-title">{t('achat.successTitle')}</h1>
           <p className="success-desc">
-            Votre demande d'achat pour la <strong>{vehicle.brand} {vehicle.model}</strong> a bien été enregistrée. Notre équipe vous contactera dans les plus brefs délais pour finaliser la transaction.
+            <Trans
+              i18nKey="achat.successDesc"
+              values={{ vehicle: `${vehicle.brand} ${vehicle.model}` }}
+              components={{ b: <strong /> }}
+            />
           </p>
           <p className="success-redirect">
-            Redirection vers votre espace client dans 3 secondes...
+            {t('reservation.successRedirect')}
           </p>
           <Link to="/dashboard" className="btn-primary" style={{ display: 'inline-block', marginTop: '8px' }}>
-            Voir mes achats
+            {t('achat.successLink')}
           </Link>
         </div>
       </div>

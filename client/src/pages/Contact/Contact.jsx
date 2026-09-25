@@ -1,9 +1,12 @@
 // Formulaire de contact.
 
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { readApiError } from '@/lib/apiError'
 import './Contact.css'
 
 export default function Contact() {
+  const { t } = useTranslation()
   const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' })
   const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -23,8 +26,9 @@ export default function Contact() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       })
-      const json = await res.json()
-      if (!res.ok) throw new Error(json.error || 'Erreur lors de l\'envoi.')
+      // readApiError traduit le `code` renvoyé par l'API, et retombe sur son message
+      // quand il n'y en a pas.
+      if (!res.ok) throw new Error(await readApiError(res))
       setSuccess(true)
     } catch (err) {
       setError(err.message)
@@ -37,9 +41,9 @@ export default function Contact() {
     <main className="contact">
       <div className="contact-hero">
         <div className="page-section">
-          <div className="tag">Nous contacter</div>
-          <h1 className="contact-title">Contact</h1>
-          <p className="contact-sub">Une question ? Prenez rendez-vous ou envoyez-nous un message.</p>
+          <div className="tag">{t('contact.tag')}</div>
+          <h1 className="contact-title">{t('contact.title')}</h1>
+          <p className="contact-sub">{t('contact.sub')}</p>
         </div>
       </div>
 
@@ -48,59 +52,59 @@ export default function Contact() {
       <div className="page-section contact-layout">
         <div className="contact-info">
           <div className="info-block">
-            <div className="info-value">12 Avenue de la Promenade<br />06000 Nice, France</div>
-            <div className="info-label">Adresse</div>
+            <div className="info-value">{t('contact.addressLine1')}<br />{t('contact.addressLine2')}</div>
+            <div className="info-label">{t('contact.addressLabel')}</div>
           </div>
           <div className="info-block">
             <div className="info-value">+33 4 93 47 82 10</div>
-            <div className="info-label">Téléphone</div>
+            <div className="info-label">{t('contact.phoneLabel')}</div>
           </div>
           <div className="info-block">
             <div className="info-value">theo.ferrete@gmail.com</div>
-            <div className="info-label">Email</div>
+            <div className="info-label">{t('contact.emailLabel')}</div>
           </div>
           <div className="info-block">
             <div className="info-value">
-              Lundi — Vendredi : 9h — 19h<br />
-              Samedi : 10h — 17h<br />
-              Dimanche : Fermé
+              {t('contact.hoursWeek')}<br />
+              {t('contact.hoursSaturday')}<br />
+              {t('contact.hoursSunday')}
             </div>
-            <div className="info-label">Horaires</div>
+            <div className="info-label">{t('contact.hoursLabel')}</div>
           </div>
           <div className="contact-note">
-            Réponse sous 24h en jours ouvrés.
+            {t('contact.note')}
           </div>
         </div>
 
         <div className="contact-form-wrap">
           {success ? (
             <div className="contact-success">
-              <div className="tag">Confirmation</div>
-              <h2 className="success-title">Message envoyé !</h2>
-              <p>Notre équipe vous répondra dans les plus brefs délais.</p>
+              <div className="tag">{t('contact.successTag')}</div>
+              <h2 className="success-title">{t('contact.successTitle')}</h2>
+              <p>{t('contact.successDesc')}</p>
             </div>
           ) : (
             <form className="auth-form" onSubmit={handleSubmit}>
               <div className="form-row">
                 <div className="form-group">
-                  <label className="form-label">Prénom et nom *</label>
+                  <label className="form-label">{t('contact.nameLabel')}</label>
                   <input
                     type="text"
                     name="name"
                     className="form-input"
-                    placeholder="John Doe"
+                    placeholder={t('contact.namePlaceholder')}
                     value={form.name}
                     onChange={handleChange}
                     required
                   />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Téléphone</label>
+                  <label className="form-label">{t('common.phone')}</label>
                   <input
                     type="tel"
                     name="phone"
                     className="form-input"
-                    placeholder="+33 6 00 00 00 00"
+                    placeholder={t('contact.phonePlaceholder')}
                     value={form.phone}
                     onChange={handleChange}
                   />
@@ -108,12 +112,12 @@ export default function Contact() {
               </div>
 
               <div className="form-group">
-                <label className="form-label">Email *</label>
+                <label className="form-label">{t('contact.emailRequired')}</label>
                 <input
                   type="email"
                   name="email"
                   className="form-input"
-                  placeholder="votre@email.com"
+                  placeholder={t('auth.emailPlaceholder')}
                   value={form.email}
                   onChange={handleChange}
                   required
@@ -121,11 +125,11 @@ export default function Contact() {
               </div>
 
               <div className="form-group">
-                <label className="form-label">Message *</label>
+                <label className="form-label">{t('contact.messageLabel')}</label>
                 <textarea
                   name="message"
                   className="form-input form-textarea"
-                  placeholder="Votre message..."
+                  placeholder={t('contact.messagePlaceholder')}
                   value={form.message}
                   onChange={handleChange}
                   rows={5}
@@ -140,7 +144,7 @@ export default function Contact() {
                 style={{ width: '100%', padding: '14px' }}
                 disabled={loading}
               >
-                {loading ? 'Envoi...' : 'Envoyer le message'}
+                {loading ? t('common.sending') : t('contact.submit')}
               </button>
             </form>
           )}

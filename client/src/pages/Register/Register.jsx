@@ -2,11 +2,13 @@
 
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { register } from '@/lib/auth'
 import '../Login/Login.css'
 
 export default function Register() {
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const [form, setForm] = useState({
     first_name: '',
     last_name: '',
@@ -14,6 +16,8 @@ export default function Register() {
     password: '',
     confirm_password: '',
   })
+  // { key } pour une erreur traduisible, { text } pour un message brut de Supabase :
+  // stocker du texte déjà traduit le figerait dans la langue du moment.
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -27,12 +31,12 @@ export default function Register() {
     setError(null)
 
     if (form.password !== form.confirm_password) {
-      setError('Les mots de passe ne correspondent pas.')
+      setError({ key: 'common.passwordMismatch' })
       return
     }
 
     if (form.password.length < 6) {
-      setError('Le mot de passe doit contenir au moins 6 caractères.')
+      setError({ key: 'common.passwordTooShort' })
       return
     }
 
@@ -42,7 +46,7 @@ export default function Register() {
       setSuccess(true)
       setTimeout(() => navigate('/login'), 3000)
     } catch (err) {
-      setError(err.message || 'Une erreur est survenue.')
+      setError(err.message ? { text: err.message } : { key: 'common.errorGeneric' })
     } finally {
       setLoading(false)
     }
@@ -53,14 +57,14 @@ export default function Register() {
       <div className="auth-card">
         <div className="auth-header">
           <img src="/eclipse-auto.svg" alt="Eclipse Auto" className="auth-logo" />
-          <div className="tag">Espace membre</div>
-          <h1 className="auth-title">Inscription</h1>
+          <div className="tag">{t('auth.memberTag')}</div>
+          <h1 className="auth-title">{t('auth.registerTitle')}</h1>
         </div>
 
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="form-row">
             <div className="form-group">
-              <label className="form-label" htmlFor="reg-firstname">Prénom</label>
+              <label className="form-label" htmlFor="reg-firstname">{t('common.firstName')}</label>
               <input
                 id="reg-firstname"
                 type="text"
@@ -73,7 +77,7 @@ export default function Register() {
               />
             </div>
             <div className="form-group">
-              <label className="form-label" htmlFor="reg-lastname">Nom</label>
+              <label className="form-label" htmlFor="reg-lastname">{t('common.lastName')}</label>
               <input
                 id="reg-lastname"
                 type="text"
@@ -88,13 +92,13 @@ export default function Register() {
           </div>
 
           <div className="form-group">
-            <label className="form-label" htmlFor="reg-email">Email</label>
+            <label className="form-label" htmlFor="reg-email">{t('common.email')}</label>
             <input
               id="reg-email"
               type="email"
               name="email"
               className="form-input"
-              placeholder="votre@email.com"
+              placeholder={t('auth.emailPlaceholder')}
               value={form.email}
               onChange={handleChange}
               required
@@ -102,7 +106,7 @@ export default function Register() {
           </div>
 
           <div className="form-group">
-            <label className="form-label" htmlFor="reg-password">Mot de passe</label>
+            <label className="form-label" htmlFor="reg-password">{t('common.password')}</label>
             <input
               id="reg-password"
               type="password"
@@ -116,7 +120,7 @@ export default function Register() {
           </div>
 
           <div className="form-group">
-            <label className="form-label" htmlFor="reg-confirm">Confirmer le mot de passe</label>
+            <label className="form-label" htmlFor="reg-confirm">{t('common.passwordConfirm')}</label>
             <input
               id="reg-confirm"
               type="password"
@@ -130,12 +134,12 @@ export default function Register() {
           </div>
 
           {error && (
-            <div className="form-error" role="alert">{error}</div>
+            <div className="form-error" role="alert">{error.key ? t(error.key) : error.text}</div>
           )}
 
           {success && (
             <div className="form-success">
-              Compte créé ! Vérifiez votre email puis connectez-vous. Redirection dans 3 secondes...
+              {t('auth.registerSuccess')}
             </div>
           )}
 
@@ -145,13 +149,13 @@ export default function Register() {
             style={{ width: '100%', padding: '14px' }}
             disabled={loading || success}
           >
-            {loading ? 'Inscription...' : success ? 'Compte créé !' : 'Créer mon compte'}
+            {loading ? t('auth.registerPending') : success ? t('auth.registerDone') : t('auth.registerSubmit')}
           </button>
         </form>
 
         <div className="auth-footer">
-          <span>Déjà un compte ?</span>
-          <Link to="/login" className="auth-link">Se connecter</Link>
+          <span>{t('auth.hasAccount')}</span>
+          <Link to="/login" className="auth-link">{t('auth.loginLink')}</Link>
         </div>
       </div>
 

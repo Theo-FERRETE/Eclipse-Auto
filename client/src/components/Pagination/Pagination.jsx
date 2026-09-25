@@ -1,5 +1,6 @@
 // Pagination réutilisable, avec des « ... » au-delà de 7 pages.
 
+import { useTranslation } from 'react-i18next'
 import './Pagination.css'
 
 // Construit la liste à afficher, par exemple [1, '...', 7, 8, 9, '...', 42] : toujours la
@@ -24,6 +25,9 @@ function getPages(page, totalPages) {
 }
 
 export default function Pagination({ page, totalPages, onPageChange }) {
+  // Le hook avant le return anticipé : React exige le même nombre d'appels à chaque rendu.
+  const { t } = useTranslation()
+
   if (totalPages <= 1) return null
 
   const pages = getPages(page, totalPages)
@@ -34,7 +38,7 @@ export default function Pagination({ page, totalPages, onPageChange }) {
         className="page-btn"
         onClick={() => onPageChange(page - 1)}
         disabled={page === 1}
-        aria-label="Page précédente"
+        aria-label={t('pagination.previous')}
       >
         ←
       </button>
@@ -46,7 +50,7 @@ export default function Pagination({ page, totalPages, onPageChange }) {
               key={p}
               className={`page-btn${p === page ? ' active' : ''}`}
               onClick={() => onPageChange(p)}
-              aria-label={`Page ${p}`}
+              aria-label={t('pagination.page', { page: p })}
               aria-current={p === page ? 'page' : undefined}
             >
               {p}
@@ -57,7 +61,7 @@ export default function Pagination({ page, totalPages, onPageChange }) {
         className="page-btn"
         onClick={() => onPageChange(page + 1)}
         disabled={page === totalPages}
-        aria-label="Page suivante"
+        aria-label={t('pagination.next')}
       >
         →
       </button>

@@ -3,6 +3,7 @@
 
 import { useState, useMemo, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import Filters from '@/components/Filters/Filters'
 import { supabase } from '@/lib/supabase'
 import { getVehicles, patchCachedVehicle } from '@/lib/vehiclesCache'
@@ -14,9 +15,10 @@ import './Catalogue.css'
 export default function Catalogue() {
   const [vehicles, setVehicles] = useState([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [error, setError] = useState(false)
   const [page, setPage] = useState(1)
   const [searchParams, setSearchParams] = useSearchParams()
+  const { t } = useTranslation()
 
   const filters = filtersFromParams(searchParams)
   const sort = searchParams.get('sort') || 'default'
@@ -25,7 +27,8 @@ export default function Catalogue() {
   useEffect(() => {
     async function fetchVehicles() {
       const { data, error } = await getVehicles()
-      if (error) setError('Impossible de charger les véhicules.')
+      // Un booléen, pas un message : le texte est traduit au rendu par CatalogueGrid.
+      if (error) setError(true)
       else setVehicles(data)
       setLoading(false)
     }
@@ -116,7 +119,7 @@ export default function Catalogue() {
     <main className="catalogue">
       <div className="catalogue-hero">
         <div className="page-section">
-          <h1 className="catalogue-title">Le catalogue</h1>
+          <h1 className="catalogue-title">{t('catalogue.title')}</h1>
         </div>
       </div>
 

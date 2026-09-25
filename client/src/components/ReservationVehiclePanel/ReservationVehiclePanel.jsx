@@ -1,10 +1,12 @@
 // Rappel du véhicule choisi pour l'essai. Pas de prix ici : un essai est gratuit et sans
 // options, le prix n'a de sens que côté achat (voir AchatVehiclePanel).
 
-import { optimizeImageUrl } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
+import { optimizeImageUrl, formatNumber, translateFuel, translateTransmission } from '@/lib/utils'
 
 export default function ReservationVehiclePanel({ vehicle }) {
   const { brand, model, year, fuel_type, transmission, mileage, power, images } = vehicle
+  const { t } = useTranslation()
 
   return (
     <div className="reservation-vehicle">
@@ -29,10 +31,15 @@ export default function ReservationVehiclePanel({ vehicle }) {
 
       <div className="reservation-specs">
         {[
-          { label: 'Carburant', value: fuel_type },
-          { label: 'Transmission', value: transmission },
-          { label: 'Kilométrage', value: mileage === 0 ? 'Neuf' : mileage ? `${mileage.toLocaleString('fr-FR')} km` : 'N/A' },
-          { label: 'Puissance', value: power || 'N/A' },
+          { label: t('vehicle.fuel'), value: translateFuel(fuel_type) },
+          { label: t('vehicle.transmission'), value: translateTransmission(transmission) },
+          {
+            label: t('vehicle.mileage'),
+            value: mileage === 0
+              ? t('common.new')
+              : mileage ? t('vehicle.mileageValue', { value: formatNumber(mileage) }) : t('common.na'),
+          },
+          { label: t('vehicle.power'), value: power || t('common.na') },
         ].map((spec, i) => (
           <div className="spec-row" key={i}>
             <span className="spec-label">{spec.label}</span>

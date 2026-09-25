@@ -1,0 +1,362 @@
+{
+  "common": {
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "email": "Email",
+    "errorGeneric": "Une erreur est survenue.",
+    "errorRetry": "Une erreur est survenue. Veuillez réessayer.",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "fullName": "Nom",
+    "na": "N/A",
+    "new": "Neuf",
+    "password": "Mot de passe",
+    "passwordConfirm": "Confirmer le mot de passe",
+    "passwordMismatch": "Les mots de passe ne correspondent pas.",
+    "passwordTooShort": "Le mot de passe doit contenir au moins 6 caractères.",
+    "phone": "Téléphone",
+    "priceOnRequest": "Prix sur demande",
+    "sending": "Envoi...",
+    "total": "Total"
+  },
+
+  "lang": {
+    "switchLabel": "Changer de langue",
+    "fr": "FR",
+    "en": "EN",
+    "frFull": "Français",
+    "enFull": "English"
+  },
+
+  "nav": {
+    "account": "Mon compte",
+    "admin": "Admin",
+    "catalogue": "Catalogue",
+    "contact": "Contact",
+    "dashboard": "Mon espace",
+    "login": "Connexion",
+    "logout": "Déconnexion",
+    "menu": "Menu"
+  },
+
+  "meta": {
+    "description": "Eclipse Auto, concessionnaire de voitures de sport d'exception : catalogue de véhicules premium, réservation en ligne et 12 ans d'expertise."
+  },
+
+  "home": {
+    "heroTag": "Collection 2026",
+    "heroTitleLine1": "Conduisez",
+    "heroTitleLine2": "l'exception",
+    "heroSub": "Une sélection rigoureuse de voitures de sport d'exception, choisies pour leur caractère autant que pour leurs performances.",
+    "heroCtaCatalogue": "Découvrir le catalogue",
+    "heroCtaContact": "Prendre rendez-vous",
+    "featuredTag": "Sélection du moment",
+    "featuredTitle": "Véhicules en vedette",
+    "featuredLink": "Voir tout le catalogue →",
+    "viewVehicle": "Voir →",
+    "viewVehicleAria": "Voir {{vehicle}}",
+    "whyTag": "Pourquoi nous",
+    "whyTitleLine1": "L'excellence au service",
+    "whyTitleLine2": "de la performance",
+    "why1Title": "Sélection rigoureuse",
+    "why1Desc": "Chaque véhicule est inspecté et certifié avant d'intégrer notre catalogue.",
+    "why2Title": "Réservation en ligne",
+    "why2Desc": "Réservez un essai ou lancez un achat en quelques clics, 24h/24.",
+    "why3Title": "Expertise reconnue",
+    "why3Desc": "12 ans d'expérience dans la vente de véhicules de sport haut de gamme."
+  },
+
+  "catalogue": {
+    "title": "Le catalogue",
+    "loadError": "Impossible de charger les véhicules.",
+    "loading": "Chargement des véhicules...",
+    "errorPrefix": "Erreur : {{message}}",
+    "empty": "Aucun véhicule ne correspond à vos critères.",
+    "emptyReset": "Réinitialiser les filtres",
+    "searchAria": "Rechercher un véhicule",
+    "searchPlaceholder": "Rechercher une marque, un modèle...",
+    "sortAria": "Trier les véhicules",
+    "sortDefault": "Trier par défaut",
+    "sortPriceAsc": "Prix croissant",
+    "sortPriceDesc": "Prix décroissant",
+    "sortYearDesc": "Année récente",
+    "sortMileage": "Kilométrage"
+  },
+
+  "filters": {
+    "all": "Tous",
+    "available": "Disponibles",
+    "more": "Plus de filtres",
+    "reset": "Réinitialiser",
+    "brand": "Marque",
+    "transmission": "Transmission",
+    "yearMin": "Année minimum",
+    "priceMax": "Prix max — {{value}}",
+    "priceNoLimit": "Sans limite"
+  },
+
+  "pagination": {
+    "previous": "Page précédente",
+    "next": "Page suivante",
+    "page": "Page {{page}}"
+  },
+
+  "vehicle": {
+    "back": "← Retour au catalogue",
+    "specsTag": "Caractéristiques",
+    "fuel": "Carburant",
+    "transmission": "Transmission",
+    "mileage": "Kilométrage",
+    "power": "Puissance",
+    "powerValue": "{{power}} ch",
+    "mileageValue": "{{value}} km",
+    "viewImage": "Voir l'image {{index}}",
+    "bookTestDrive": "Réserver un essai",
+    "buy": "Acheter",
+    "sold": "Véhicule vendu",
+    "contactUs": "Nous contacter"
+  },
+
+  "status": {
+    "vehicle": {
+      "available": "Disponible",
+      "reserved": "Réservé",
+      "sold": "Vendu"
+    },
+    "reservation": {
+      "pending": "En attente",
+      "confirmed": "Confirmée",
+      "cancelled": "Annulée",
+      "completed": "Terminé"
+    },
+    "vente": {
+      "pending": "En attente",
+      "confirmed": "Confirmée",
+      "cancelled": "Annulée"
+    }
+  },
+
+  "payment": {
+    "carte": "Carte bancaire",
+    "virement": "Virement",
+    "financement": "Financement",
+    "especes": "Espèces"
+  },
+
+  "fuel": {
+    "essence": "Essence",
+    "diesel": "Diesel",
+    "hybride": "Hybride",
+    "électrique": "Électrique",
+    "electrique": "Électrique"
+  },
+
+  "transmission": {
+    "automatique": "Automatique",
+    "manuelle": "Manuelle"
+  },
+
+  "auth": {
+    "memberTag": "Espace membre",
+    "loginTitle": "Connexion",
+    "loginSubmit": "Se connecter",
+    "loginPending": "Connexion...",
+    "loginFailed": "Email ou mot de passe incorrect.",
+    "emailPlaceholder": "votre@email.com",
+    "forgotLink": "Mot de passe oublié ?",
+    "noAccount": "Pas encore de compte ?",
+    "registerLink": "S'inscrire",
+    "registerTitle": "Inscription",
+    "registerSubmit": "Créer mon compte",
+    "registerPending": "Inscription...",
+    "registerDone": "Compte créé !",
+    "registerSuccess": "Compte créé ! Vérifiez votre email puis connectez-vous. Redirection dans 3 secondes...",
+    "hasAccount": "Déjà un compte ?",
+    "loginLink": "Se connecter",
+    "forgotTitle": "Mot de passe oublié",
+    "forgotSubmit": "Envoyer le lien",
+    "forgotError": "Une erreur est survenue. Vérifiez votre adresse email.",
+    "forgotSent": "Un email de réinitialisation a été envoyé à <b>{{email}}</b>.<br/>Vérifiez votre boîte mail et cliquez sur le lien.",
+    "backToLogin": "← Retour à la connexion",
+    "resetTitle": "Nouveau mot de passe",
+    "resetNewPassword": "Nouveau mot de passe",
+    "resetSubmit": "Changer le mot de passe",
+    "resetPending": "Mise à jour...",
+    "resetSuccess": "Mot de passe mis à jour avec succès.<br/>Redirection vers la connexion...",
+    "resetInvalidLink": "Lien invalide ou expiré.",
+    "resetNewRequest": "Faire une nouvelle demande"
+  },
+
+  "dashboard": {
+    "defaultName": "Client",
+    "title": "Mon espace",
+    "tabReservations": "Mes essais",
+    "tabVentes": "Mes achats",
+    "tabProfile": "Mon profil",
+    "catalogueLink": "Voir le catalogue →",
+    "historyTag": "Historique",
+    "cancelReservationError": "Impossible d'annuler cette réservation. Veuillez réessayer.",
+    "cancelVenteError": "Impossible d'annuler cet achat. Veuillez réessayer.",
+    "confirmCancelReservation": "Cette réservation est déjà confirmée. Voulez-vous vraiment l'annuler ?",
+    "noReservations": "Vous n'avez pas encore d'essai.",
+    "noVentes": "Vous n'avez pas encore d'achat.",
+    "discoverCatalogue": "Découvrir le catalogue",
+    "dateRange": "Du {{start}} au {{end}}",
+    "slot": "Créneau : {{date}}",
+    "completeSale": "Concrétiser la vente",
+    "options": "Options : {{list}}",
+    "payment": "Paiement : {{method}}",
+    "settingsTag": "Paramètres",
+    "personalInfo": "Informations personnelles",
+    "changePassword": "Changer le mot de passe",
+    "passwordPlaceholder": "6 caractères minimum",
+    "passwordRepeatPlaceholder": "Répéter le mot de passe",
+    "save": "Sauvegarder",
+    "saving": "Enregistrement...",
+    "saveError": "Erreur lors de la sauvegarde.",
+    "saveSuccess": "Profil mis à jour.",
+    "passwordUpdated": "Mot de passe mis à jour.",
+    "passwordUpdating": "Mise à jour..."
+  },
+
+  "reservation": {
+    "breadcrumb": "Réservation",
+    "breadcrumbCatalogue": "← Catalogue",
+    "formTag": "Formulaire",
+    "formTitle": "Votre demande",
+    "yourInfo": "Vos informations",
+    "startLabel": "Début de l'essai souhaité",
+    "endLabel": "Fin de l'essai souhaitée",
+    "messageLabel": "Message (optionnel)",
+    "messagePlaceholder": "Précisez vos questions ou demandes particulières...",
+    "disclaimer": "En soumettant ce formulaire, vous faites une demande de réservation. Notre équipe vous contactera pour confirmer le rendez-vous. Aucun paiement n'est requis à cette étape.",
+    "submit": "Confirmer la demande",
+    "submitting": "Envoi en cours...",
+    "endBeforeStart": "La date de fin doit être postérieure à la date de début.",
+    "successTag": "Confirmation",
+    "successTitle": "Réservation envoyée !",
+    "successDesc": "Votre demande de réservation pour la <b>{{vehicle}}</b> a bien été enregistrée. Notre équipe vous contactera dans les plus brefs délais.",
+    "successRedirect": "Redirection vers votre espace client dans 3 secondes...",
+    "successLink": "Voir mes réservations"
+  },
+
+  "achat": {
+    "breadcrumb": "Achat",
+    "formTitle": "Votre achat",
+    "fromReservation": "Cet achat sera lié à l'essai que vous avez déjà effectué.",
+    "optionsLabel": "Options",
+    "optionPrice": "{{name}} (+{{price}})",
+    "paymentLabel": "Mode de paiement",
+    "paymentPlaceholder": "Choisir un mode de paiement",
+    "disclaimer": "En soumettant ce formulaire, vous faites une demande d'achat. Notre équipe vous contactera pour finaliser la transaction et le paiement.",
+    "submit": "Confirmer la demande d'achat",
+    "vehicleLine": "Véhicule",
+    "successTitle": "Demande d'achat envoyée !",
+    "successDesc": "Votre demande d'achat pour la <b>{{vehicle}}</b> a bien été enregistrée. Notre équipe vous contactera dans les plus brefs délais pour finaliser la transaction.",
+    "successLink": "Voir mes achats"
+  },
+
+  "contact": {
+    "tag": "Nous contacter",
+    "title": "Contact",
+    "sub": "Une question ? Prenez rendez-vous ou envoyez-nous un message.",
+    "addressLine1": "12 Avenue de la Promenade",
+    "addressLine2": "06000 Nice, France",
+    "addressLabel": "Adresse",
+    "phoneLabel": "Téléphone",
+    "emailLabel": "Email",
+    "hoursWeek": "Lundi — Vendredi : 9h — 19h",
+    "hoursSaturday": "Samedi : 10h — 17h",
+    "hoursSunday": "Dimanche : Fermé",
+    "hoursLabel": "Horaires",
+    "note": "Réponse sous 24h en jours ouvrés.",
+    "nameLabel": "Prénom et nom *",
+    "namePlaceholder": "John Doe",
+    "phonePlaceholder": "+33 6 00 00 00 00",
+    "emailRequired": "Email *",
+    "messageLabel": "Message *",
+    "messagePlaceholder": "Votre message...",
+    "submit": "Envoyer le message",
+    "sendError": "Erreur lors de l'envoi.",
+    "successTag": "Confirmation",
+    "successTitle": "Message envoyé !",
+    "successDesc": "Notre équipe vous répondra dans les plus brefs délais."
+  },
+
+  "legal": {
+    "tag": "Légal",
+    "title": "Mentions légales",
+    "s1Title": "1. Présentation du site",
+    "s1Body": "Le site <b>Eclipse Auto</b> est un projet éducatif réalisé dans le cadre du titre professionnel <b>Développeur Web et Web Mobile (DWWM)</b>. Il s'agit d'une application fictive de concession automobile en ligne. Aucune transaction commerciale réelle n'est effectuée sur ce site.",
+    "s2Title": "2. Éditeur du site",
+    "s2Name": "Nom",
+    "s2NameValue": "Théo Ferreté",
+    "s2Status": "Statut",
+    "s2StatusValue": "Étudiant — Titre DWWM",
+    "s2Email": "Email",
+    "s2Portfolio": "Site portfolio",
+    "s3Title": "3. Hébergement",
+    "s3Host": "Hébergeur",
+    "s3HostValue": "VPS personnel",
+    "s3Server": "Serveur web",
+    "s3Database": "Base de données",
+    "s4Title": "4. Propriété intellectuelle",
+    "s4Body": "Les images utilisées sur ce site proviennent de <b>Unsplash</b> et sont soumises à leur licence respective. Le code source du projet est disponible sur <b>GitHub</b> à titre éducatif.",
+    "s5Title": "5. Données personnelles",
+    "s5Body": "Les données collectées (nom, prénom, email) sont uniquement utilisées dans le cadre de la démonstration du projet. Elles sont stockées de manière sécurisée via <b>Supabase</b> et ne sont transmises à aucun tiers. Conformément au RGPD, vous pouvez demander la suppression de vos données à tout moment en contactant l'éditeur.",
+    "s6Title": "6. Cookies",
+    "s6Body": "Ce site utilise des cookies de session uniquement pour gérer l'authentification des utilisateurs. Aucun cookie publicitaire ou de tracking n'est utilisé.",
+    "s7Title": "7. Avertissement",
+    "s7Body": "Eclipse Auto est un projet <b>fictif et éducatif</b>. Les véhicules présentés, les prix affichés et les informations de contact ne correspondent à aucune entité commerciale réelle. Aucun achat, paiement ou transaction n'est possible sur ce site."
+  },
+
+  "notFound": {
+    "tag": "Erreur",
+    "title": "Page introuvable",
+    "sub": "Cette page n'existe pas ou a été déplacée.",
+    "home": "Retour à l'accueil",
+    "catalogue": "Voir le catalogue"
+  },
+
+  "errorBoundary": {
+    "title": "Erreur inattendue",
+    "desc": "Une erreur est survenue. Veuillez recharger la page.",
+    "reload": "Recharger"
+  },
+
+  "footer": {
+    "desc": "Concession automobile de sport haut de gamme. Sélection exclusive de véhicules d'exception disponibles à la réservation en ligne.",
+    "navTitle": "Navigation",
+    "home": "Accueil",
+    "accountTitle": "Compte",
+    "register": "Inscription",
+    "legalTitle": "Légal",
+    "legalLink": "Mentions légales",
+    "copy": "© {{year}} Eclipse Auto — Projet DWWM. Tous droits réservés.",
+    "creditEducational": "Projet éducatif — aucune transaction réelle",
+    "creditAuthor": "Développé par Théo Ferreté"
+  },
+
+  "apiErrors": {
+    "VEHICLE_ID_REQUIRED": "Véhicule manquant.",
+    "TEST_DRIVE_DATES_REQUIRED": "Dates de début et de fin d'essai obligatoires.",
+    "END_DATE_BEFORE_START": "La date de fin doit être postérieure à la date de début.",
+    "VEHICLE_UNAVAILABLE": "Ce véhicule n'est plus disponible.",
+    "SLOT_TAKEN": "Ce créneau est déjà réservé pour ce véhicule.",
+    "RESERVATION_NOT_FOUND": "Réservation introuvable.",
+    "RESERVATION_NOT_CANCELLABLE": "Seules les réservations en attente ou confirmées peuvent être annulées.",
+    "PAYMENT_METHOD_INVALID": "Mode de paiement invalide.",
+    "VEHICLE_ALREADY_SOLD": "Ce véhicule a déjà été vendu.",
+    "SALE_NOT_FOUND": "Achat introuvable.",
+    "SALE_NOT_CANCELLABLE": "Seul un achat en attente peut être annulé.",
+    "FORBIDDEN": "Accès refusé.",
+    "TOKEN_MISSING": "Vous devez être connecté pour effectuer cette action.",
+    "TOKEN_INVALID": "Votre session a expiré. Veuillez vous reconnecter.",
+    "ADMIN_ONLY": "Accès réservé aux administrateurs.",
+    "RATE_LIMITED": "Trop de requêtes. Réessayez dans 15 minutes.",
+    "CONTACT_FIELDS_REQUIRED": "Nom, email et message sont obligatoires.",
+    "EMAIL_INVALID": "Adresse email invalide.",
+    "FIELDS_TOO_LONG": "Champs trop longs.",
+    "CONTACT_SEND_FAILED": "Erreur lors de l'envoi du message."
+  }
+}

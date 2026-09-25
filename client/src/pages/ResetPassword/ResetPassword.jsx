@@ -2,13 +2,16 @@
 
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useTranslation, Trans } from 'react-i18next'
 import { supabase } from '@/lib/supabase'
 import '../Login/Login.css'
 
 export default function ResetPassword() {
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const [form, setForm] = useState({ password: '', confirm: '' })
   const [loading, setLoading] = useState(false)
+  // { key } pour une erreur traduisible, { text } pour un message brut de Supabase.
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(false)
   const [ready, setReady] = useState(false)
@@ -24,18 +27,18 @@ export default function ResetPassword() {
   async function handleSubmit(e) {
     e.preventDefault()
     if (form.password !== form.confirm) {
-      setError('Les mots de passe ne correspondent pas.')
+      setError({ key: 'common.passwordMismatch' })
       return
     }
     if (form.password.length < 6) {
-      setError('Le mot de passe doit faire au moins 6 caractères.')
+      setError({ key: 'common.passwordTooShort' })
       return
     }
     setError(null)
     setLoading(true)
     const { error } = await supabase.auth.updateUser({ password: form.password })
     if (error) {
-      setError(error.message)
+      setError({ text: error.message })
     } else {
       setSuccess(true)
       setTimeout(() => navigate('/login'), 3000)
@@ -48,28 +51,27 @@ export default function ResetPassword() {
       <div className="auth-card">
         <div className="auth-header">
           <img src="/eclipse-auto.svg" alt="Eclipse Auto" className="auth-logo" />
-          <div className="tag">Espace membre</div>
-          <h1 className="auth-title">Nouveau mot de passe</h1>
+          <div className="tag">{t('auth.memberTag')}</div>
+          <h1 className="auth-title">{t('auth.resetTitle')}</h1>
         </div>
 
         {success ? (
           <div className="form-success">
-            Mot de passe mis à jour avec succès.<br />
-            Redirection vers la connexion...
+            <Trans i18nKey="auth.resetSuccess" components={{ br: <br /> }} />
           </div>
         ) : !ready ? (
           <>
             <div className="form-error">
-              Lien invalide ou expiré.
+              {t('auth.resetInvalidLink')}
             </div>
             <div className="auth-footer">
-              <Link to="/forgot-password" className="auth-link">Faire une nouvelle demande</Link>
+              <Link to="/forgot-password" className="auth-link">{t('auth.resetNewRequest')}</Link>
             </div>
           </>
         ) : (
           <form className="auth-form" onSubmit={handleSubmit}>
             <div className="form-group">
-              <label className="form-label" htmlFor="reset-password">Nouveau mot de passe</label>
+              <label className="form-label" htmlFor="reset-password">{t('auth.resetNewPassword')}</label>
               <input
                 id="reset-password"
                 type="password"
@@ -82,7 +84,7 @@ export default function ResetPassword() {
               />
             </div>
             <div className="form-group">
-              <label className="form-label" htmlFor="reset-confirm">Confirmer le mot de passe</label>
+              <label className="form-label" htmlFor="reset-confirm">{t('common.passwordConfirm')}</label>
               <input
                 id="reset-confirm"
                 type="password"
@@ -94,7 +96,9 @@ export default function ResetPassword() {
               />
             </div>
 
-            {error && <div className="form-error" role="alert">{error}</div>}
+            {error && (
+              <div className="form-error" role="alert">{error.key ? t(error.key) : error.text}</div>
+            )}
 
             <button
               type="submit"
@@ -102,7 +106,7 @@ export default function ResetPassword() {
               style={{ width: '100%', padding: '14px' }}
               disabled={loading}
             >
-              {loading ? 'Mise à jour...' : 'Changer le mot de passe'}
+              {loading ? t('auth.resetPending') : t('auth.resetSubmit')}
             </button>
           </form>
         )}

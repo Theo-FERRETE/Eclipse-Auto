@@ -54,7 +54,12 @@
   color: var(--red-text) !important;
 }
 
-.navbar-actions { margin-left: auto; }
+.navbar-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
 
 .navbar-user {
   display: flex;

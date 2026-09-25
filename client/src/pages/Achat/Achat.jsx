@@ -3,8 +3,10 @@
 
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/lib/AuthContext'
 import { supabase } from '@/lib/supabase'
+import { readApiError } from '@/lib/apiError'
 import { getVehicleBySlug } from '@/lib/vehiclesCache'
 import ReservationBreadcrumb from '@/components/ReservationBreadcrumb/ReservationBreadcrumb'
 import AchatVehiclePanel from '@/components/AchatVehiclePanel/AchatVehiclePanel'
@@ -17,6 +19,7 @@ export default function Achat() {
   const { slug } = useParams()
   const navigate = useNavigate()
   const location = useLocation()
+  const { t } = useTranslation()
   const { user, profile } = useAuth()
   const [vehicle, setVehicle] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -82,14 +85,15 @@ export default function Achat() {
       // fetch ne lève pas d'exception sur un 4xx : sans ce test, un achat refusé
       // (véhicule déjà vendu, mode de paiement invalide...) passerait pour un succès.
       if (!res.ok) {
-        const data = await res.json()
-        throw new Error(data.error || 'Une erreur est survenue.')
+        // readApiError traduit le `code` renvoyé par l'API, et retombe sur son message
+        // quand il n'y en a pas.
+        throw new Error(await readApiError(res))
       }
 
       setSuccess(true)
       setTimeout(() => navigate('/dashboard'), 3000)
     } catch (err) {
-      setError(err.message || 'Une erreur est survenue. Veuillez réessayer.')
+      setError(err.message || t('common.errorRetry'))
     } finally {
       // finally : le bouton doit être réactivé même en cas d'erreur.
       setSubmitting(false)
@@ -110,7 +114,7 @@ export default function Achat() {
 
   return (
     <main className="reservation">
-      <ReservationBreadcrumb slug={slug} brand={vehicle.brand} model={vehicle.model} label="Achat" />
+      <ReservationBreadcrumb slug={slug} brand={vehicle.brand} model={vehicle.model} label={t('achat.breadcrumb')} />
       <div className="page-section reservation-layout">
         <AchatVehiclePanel vehicle={vehicle} selectedEquipements={selectedEquipements} />
         <AchatForm

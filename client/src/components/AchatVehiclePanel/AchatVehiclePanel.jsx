@@ -1,9 +1,14 @@
 // Rappel du véhicule choisi, avec le total recalculé en direct selon les options cochées.
 
-import { optimizeImageUrl, formatPrice } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
+import {
+  optimizeImageUrl, formatPrice, formatNumber,
+  translateFuel, translateTransmission,
+} from '@/lib/utils'
 
 export default function AchatVehiclePanel({ vehicle, selectedEquipements }) {
   const { brand, model, year, fuel_type, transmission, mileage, power, price, images } = vehicle
+  const { t } = useTranslation()
 
   const optionsTotal = selectedEquipements.reduce((sum, eq) => sum + Number(eq.prix_supplement), 0)
   const total = Number(price) + optionsTotal
@@ -31,10 +36,15 @@ export default function AchatVehiclePanel({ vehicle, selectedEquipements }) {
 
       <div className="reservation-specs">
         {[
-          { label: 'Carburant', value: fuel_type },
-          { label: 'Transmission', value: transmission },
-          { label: 'Kilométrage', value: mileage === 0 ? 'Neuf' : mileage ? `${mileage.toLocaleString('fr-FR')} km` : 'N/A' },
-          { label: 'Puissance', value: power || 'N/A' },
+          { label: t('vehicle.fuel'), value: translateFuel(fuel_type) },
+          { label: t('vehicle.transmission'), value: translateTransmission(transmission) },
+          {
+            label: t('vehicle.mileage'),
+            value: mileage === 0
+              ? t('common.new')
+              : mileage ? t('vehicle.mileageValue', { value: formatNumber(mileage) }) : t('common.na'),
+          },
+          { label: t('vehicle.power'), value: power || t('common.na') },
         ].map((spec, i) => (
           <div className="spec-row" key={i}>
             <span className="spec-label">{spec.label}</span>
@@ -46,20 +56,21 @@ export default function AchatVehiclePanel({ vehicle, selectedEquipements }) {
       {selectedEquipements.length > 0 && (
         <div className="reservation-specs">
           <div className="spec-row">
-            <span className="spec-label">Véhicule</span>
+            <span className="spec-label">{t('achat.vehicleLine')}</span>
             <span className="spec-value">{formatPrice(price)}</span>
           </div>
+          {/* Le nom de l'option vient de la base, saisi par l'admin : il reste tel quel. */}
           {selectedEquipements.map(eq => (
             <div className="spec-row" key={eq.id}>
               <span className="spec-label">{eq.nom}</span>
-              <span className="spec-value">+{Number(eq.prix_supplement).toLocaleString('fr-FR')} €</span>
+              <span className="spec-value">+{formatNumber(eq.prix_supplement)} €</span>
             </div>
           ))}
         </div>
       )}
 
       <div className="reservation-price-block">
-        <span className="reservation-price-label">Total</span>
+        <span className="reservation-price-label">{t('common.total')}</span>
         <span className="reservation-price">{formatPrice(total)}</span>
       </div>
     </div>

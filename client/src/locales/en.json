@@ -1,0 +1,362 @@
+{
+  "common": {
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "email": "Email",
+    "errorGeneric": "Something went wrong.",
+    "errorRetry": "Something went wrong. Please try again.",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "fullName": "Name",
+    "na": "N/A",
+    "new": "Brand new",
+    "password": "Password",
+    "passwordConfirm": "Confirm password",
+    "passwordMismatch": "Passwords do not match.",
+    "passwordTooShort": "Password must be at least 6 characters long.",
+    "phone": "Phone",
+    "priceOnRequest": "Price on request",
+    "sending": "Sending...",
+    "total": "Total"
+  },
+
+  "lang": {
+    "switchLabel": "Change language",
+    "fr": "FR",
+    "en": "EN",
+    "frFull": "Français",
+    "enFull": "English"
+  },
+
+  "nav": {
+    "account": "My account",
+    "admin": "Admin",
+    "catalogue": "Catalogue",
+    "contact": "Contact",
+    "dashboard": "My account",
+    "login": "Sign in",
+    "logout": "Sign out",
+    "menu": "Menu"
+  },
+
+  "meta": {
+    "description": "Eclipse Auto, a dealership for exceptional sports cars: premium vehicle catalogue, online booking and 12 years of expertise."
+  },
+
+  "home": {
+    "heroTag": "2026 Collection",
+    "heroTitleLine1": "Drive",
+    "heroTitleLine2": "the exceptional",
+    "heroSub": "A carefully curated selection of exceptional sports cars, chosen for their character as much as for their performance.",
+    "heroCtaCatalogue": "Browse the catalogue",
+    "heroCtaContact": "Book an appointment",
+    "featuredTag": "Current selection",
+    "featuredTitle": "Featured vehicles",
+    "featuredLink": "See the full catalogue →",
+    "viewVehicle": "View →",
+    "viewVehicleAria": "View {{vehicle}}",
+    "whyTag": "Why us",
+    "whyTitleLine1": "Excellence in the service",
+    "whyTitleLine2": "of performance",
+    "why1Title": "Rigorous selection",
+    "why1Desc": "Every vehicle is inspected and certified before joining our catalogue.",
+    "why2Title": "Book online",
+    "why2Desc": "Book a test drive or start a purchase in a few clicks, around the clock.",
+    "why3Title": "Proven expertise",
+    "why3Desc": "12 years of experience selling high-end sports cars."
+  },
+
+  "catalogue": {
+    "title": "The catalogue",
+    "loadError": "Unable to load the vehicles.",
+    "loading": "Loading vehicles...",
+    "errorPrefix": "Error: {{message}}",
+    "empty": "No vehicle matches your criteria.",
+    "emptyReset": "Reset filters",
+    "searchAria": "Search for a vehicle",
+    "searchPlaceholder": "Search a make, a model...",
+    "sortAria": "Sort vehicles",
+    "sortDefault": "Default order",
+    "sortPriceAsc": "Price: low to high",
+    "sortPriceDesc": "Price: high to low",
+    "sortYearDesc": "Newest year",
+    "sortMileage": "Mileage"
+  },
+
+  "filters": {
+    "all": "All",
+    "available": "Available",
+    "more": "More filters",
+    "reset": "Reset",
+    "brand": "Make",
+    "transmission": "Transmission",
+    "yearMin": "Year from",
+    "priceMax": "Max price — {{value}}",
+    "priceNoLimit": "No limit"
+  },
+
+  "pagination": {
+    "previous": "Previous page",
+    "next": "Next page",
+    "page": "Page {{page}}"
+  },
+
+  "vehicle": {
+    "back": "← Back to catalogue",
+    "specsTag": "Specifications",
+    "fuel": "Fuel",
+    "transmission": "Transmission",
+    "mileage": "Mileage",
+    "power": "Power",
+    "powerValue": "{{power}} hp",
+    "mileageValue": "{{value}} km",
+    "viewImage": "View image {{index}}",
+    "bookTestDrive": "Book a test drive",
+    "buy": "Buy",
+    "sold": "Vehicle sold",
+    "contactUs": "Contact us"
+  },
+
+  "status": {
+    "vehicle": {
+      "available": "Available",
+      "reserved": "Reserved",
+      "sold": "Sold"
+    },
+    "reservation": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "cancelled": "Cancelled",
+      "completed": "Completed"
+    },
+    "vente": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "cancelled": "Cancelled"
+    }
+  },
+
+  "payment": {
+    "carte": "Credit card",
+    "virement": "Bank transfer",
+    "financement": "Financing",
+    "especes": "Cash"
+  },
+
+  "fuel": {
+    "essence": "Petrol",
+    "diesel": "Diesel",
+    "hybride": "Hybrid",
+    "électrique": "Electric",
+    "electrique": "Electric"
+  },
+
+  "transmission": {
+    "automatique": "Automatic",
+    "manuelle": "Manual"
+  },
+
+  "auth": {
+    "memberTag": "Member area",
+    "loginTitle": "Sign in",
+    "loginSubmit": "Sign in",
+    "loginPending": "Signing in...",
+    "loginFailed": "Incorrect email or password.",
+    "emailPlaceholder": "your@email.com",
+    "forgotLink": "Forgot password?",
+    "noAccount": "No account yet?",
+    "registerLink": "Sign up",
+    "registerTitle": "Sign up",
+    "registerSubmit": "Create my account",
+    "registerPending": "Signing up...",
+    "registerDone": "Account created!",
+    "registerSuccess": "Account created! Check your email, then sign in. Redirecting in 3 seconds...",
+    "hasAccount": "Already have an account?",
+    "loginLink": "Sign in",
+    "forgotTitle": "Forgot password",
+    "forgotSubmit": "Send the link",
+    "forgotError": "Something went wrong. Please check your email address.",
+    "forgotSent": "A reset email has been sent to <b>{{email}}</b>.<br/>Check your inbox and click the link.",
+    "backToLogin": "← Back to sign in",
+    "resetTitle": "New password",
+    "resetNewPassword": "New password",
+    "resetSubmit": "Change password",
+    "resetPending": "Updating...",
+    "resetSuccess": "Password updated successfully.<br/>Redirecting to sign in...",
+    "resetInvalidLink": "Invalid or expired link.",
+    "resetNewRequest": "Request a new link"
+  },
+
+  "dashboard": {
+    "defaultName": "Customer",
+    "title": "My account",
+    "tabReservations": "My test drives",
+    "tabVentes": "My purchases",
+    "tabProfile": "My profile",
+    "catalogueLink": "See the catalogue →",
+    "historyTag": "History",
+    "cancelReservationError": "Unable to cancel this booking. Please try again.",
+    "cancelVenteError": "Unable to cancel this purchase. Please try again.",
+    "confirmCancelReservation": "This booking is already confirmed. Are you sure you want to cancel it?",
+    "noReservations": "You have no test drive yet.",
+    "noVentes": "You have no purchase yet.",
+    "discoverCatalogue": "Browse the catalogue",
+    "dateRange": "From {{start}} to {{end}}",
+    "slot": "Slot: {{date}}",
+    "completeSale": "Complete the purchase",
+    "options": "Options: {{list}}",
+    "payment": "Payment: {{method}}",
+    "settingsTag": "Settings",
+    "personalInfo": "Personal information",
+    "changePassword": "Change password",
+    "passwordPlaceholder": "6 characters minimum",
+    "passwordRepeatPlaceholder": "Repeat the password",
+    "save": "Save",
+    "saving": "Saving...",
+    "saveError": "Error while saving.",
+    "saveSuccess": "Profile updated.",
+    "passwordUpdated": "Password updated.",
+    "passwordUpdating": "Updating..."
+  },
+
+  "reservation": {
+    "breadcrumb": "Booking",
+    "breadcrumbCatalogue": "← Catalogue",
+    "formTag": "Form",
+    "formTitle": "Your request",
+    "yourInfo": "Your details",
+    "startLabel": "Preferred test drive start",
+    "endLabel": "Preferred test drive end",
+    "messageLabel": "Message (optional)",
+    "messagePlaceholder": "Tell us about any question or specific request...",
+    "disclaimer": "By submitting this form you are sending a booking request. Our team will contact you to confirm the appointment. No payment is required at this stage.",
+    "submit": "Confirm the request",
+    "submitting": "Sending...",
+    "endBeforeStart": "The end date must be later than the start date.",
+    "successTag": "Confirmation",
+    "successTitle": "Booking sent!",
+    "successDesc": "Your booking request for the <b>{{vehicle}}</b> has been recorded. Our team will get back to you shortly.",
+    "successRedirect": "Redirecting to your account in 3 seconds...",
+    "successLink": "See my bookings"
+  },
+
+  "achat": {
+    "breadcrumb": "Purchase",
+    "formTitle": "Your purchase",
+    "fromReservation": "This purchase will be linked to the test drive you already completed.",
+    "optionsLabel": "Options",
+    "optionPrice": "{{name}} (+{{price}})",
+    "paymentLabel": "Payment method",
+    "paymentPlaceholder": "Choose a payment method",
+    "disclaimer": "By submitting this form you are sending a purchase request. Our team will contact you to finalise the transaction and the payment.",
+    "submit": "Confirm the purchase request",
+    "vehicleLine": "Vehicle",
+    "successTitle": "Purchase request sent!",
+    "successDesc": "Your purchase request for the <b>{{vehicle}}</b> has been recorded. Our team will get back to you shortly to finalise the transaction.",
+    "successLink": "See my purchases"
+  },
+
+  "contact": {
+    "tag": "Get in touch",
+    "title": "Contact",
+    "sub": "A question? Book an appointment or send us a message.",
+    "addressLine1": "12 Avenue de la Promenade",
+    "addressLine2": "06000 Nice, France",
+    "addressLabel": "Address",
+    "phoneLabel": "Phone",
+    "emailLabel": "Email",
+    "hoursWeek": "Monday — Friday: 9am — 7pm",
+    "hoursSaturday": "Saturday: 10am — 5pm",
+    "hoursSunday": "Sunday: Closed",
+    "hoursLabel": "Opening hours",
+    "note": "We reply within 24 hours on business days.",
+    "nameLabel": "Full name *",
+    "namePlaceholder": "John Doe",
+    "phonePlaceholder": "+33 6 00 00 00 00",
+    "emailRequired": "Email *",
+    "messageLabel": "Message *",
+    "messagePlaceholder": "Your message...",
+    "submit": "Send the message",
+    "sendError": "Error while sending.",
+    "successTag": "Confirmation",
+    "successTitle": "Message sent!",
+    "successDesc": "Our team will get back to you shortly."
+  },
+
+  "legal": {
+    "tag": "Legal",
+    "title": "Legal notice",
+    "s1Title": "1. About this site",
+    "s1Body": "<b>Eclipse Auto</b> is an educational project built as part of the French <b>Développeur Web et Web Mobile (DWWM)</b> professional qualification. It is a fictional online car dealership application. No real commercial transaction takes place on this site.",
+    "s2Title": "2. Site publisher",
+    "s2Name": "Name",
+    "s2NameValue": "Théo Ferreté",
+    "s2Status": "Status",
+    "s2StatusValue": "Student — DWWM qualification",
+    "s2Email": "Email",
+    "s2Portfolio": "Portfolio site",
+    "s3Title": "3. Hosting",
+    "s3Host": "Host",
+    "s3HostValue": "Personal VPS",
+    "s3Server": "Web server",
+    "s3Database": "Database",
+    "s4Title": "4. Intellectual property",
+    "s4Body": "The images used on this site come from <b>Unsplash</b> and are subject to their respective licences. The project source code is available on <b>GitHub</b> for educational purposes.",
+    "s5Title": "5. Personal data",
+    "s5Body": "The data collected (first name, last name, email) is used solely for the purposes of demonstrating this project. It is stored securely with <b>Supabase</b> and is never shared with third parties. Under the GDPR, you may request the deletion of your data at any time by contacting the publisher.",
+    "s6Title": "6. Cookies",
+    "s6Body": "This site uses session cookies only, to handle user authentication. No advertising or tracking cookies are used.",
+    "s7Title": "7. Disclaimer",
+    "s7Body": "Eclipse Auto is a <b>fictional, educational</b> project. The vehicles shown, the prices displayed and the contact details do not correspond to any real business. No purchase, payment or transaction is possible on this site."
+  },
+
+  "notFound": {
+    "tag": "Error",
+    "title": "Page not found",
+    "sub": "This page does not exist or has been moved.",
+    "home": "Back to home",
+    "catalogue": "See the catalogue"
+  },
+
+  "errorBoundary": {
+    "title": "Unexpected error",
+    "desc": "Something went wrong. Please reload the page.",
+    "reload": "Reload"
+  },
+
+  "footer": {
+    "desc": "High-end sports car dealership. An exclusive selection of exceptional vehicles available to book online.",
+    "navTitle": "Navigation",
+    "home": "Home",
+    "accountTitle": "Account",
+    "register": "Sign up",
+    "legalTitle": "Legal",
+    "legalLink": "Legal notice",
+    "copy": "© {{year}} Eclipse Auto — DWWM project. All rights reserved.",
+    "creditEducational": "Educational project — no real transaction",
+    "creditAuthor": "Built by Théo Ferreté"
+  },
+
+  "apiErrors": {
+    "VEHICLE_ID_REQUIRED": "Missing vehicle.",
+    "TEST_DRIVE_DATES_REQUIRED": "Test drive start and end dates are required.",
+    "END_DATE_BEFORE_START": "The end date must be later than the start date.",
+    "VEHICLE_UNAVAILABLE": "This vehicle is no longer available.",
+    "SLOT_TAKEN": "This slot is already booked for this vehicle.",
+    "RESERVATION_NOT_FOUND": "Booking not found.",
+    "RESERVATION_NOT_CANCELLABLE": "Only pending or confirmed bookings can be cancelled.",
+    "PAYMENT_METHOD_INVALID": "Invalid payment method.",
+    "VEHICLE_ALREADY_SOLD": "This vehicle has already been sold.",
+    "SALE_NOT_FOUND": "Purchase not found.",
+    "SALE_NOT_CANCELLABLE": "Only a pending purchase can be cancelled.",
+    "FORBIDDEN": "Access denied.",
+    "TOKEN_MISSING": "You must be signed in to perform this action.",
+    "TOKEN_INVALID": "Your session has expired. Please sign in again.",
+    "ADMIN_ONLY": "Administrators only.",
+    "RATE_LIMITED": "Too many requests. Try again in 15 minutes.",
+    "CONTACT_FIELDS_REQUIRED": "Name, email and message are required.",
+    "EMAIL_INVALID": "Invalid email address.",
+    "FIELDS_TOO_LONG": "Fields are too long.",
+    "CONTACT_SEND_FAILED": "Error while sending the message."
+  }
+}

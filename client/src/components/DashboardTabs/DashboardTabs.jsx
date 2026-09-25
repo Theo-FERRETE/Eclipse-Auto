@@ -1,33 +1,31 @@
 // Navigation de l'espace client, en pastilles à côté du titre.
 
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+
+const TABS = [
+  { view: 'reservations', label: 'dashboard.tabReservations' },
+  { view: 'ventes', label: 'dashboard.tabVentes' },
+  { view: 'profile', label: 'dashboard.tabProfile' },
+]
 
 export default function DashboardTabs({ view, onViewChange }) {
+  const { t } = useTranslation()
+
   return (
     <div className="dashboard-tabs">
-      <button
-        type="button"
-        className={`tab-pill${view === 'reservations' ? ' active' : ''}`}
-        onClick={() => onViewChange('reservations')}
-      >
-        Mes essais
-      </button>
-      <button
-        type="button"
-        className={`tab-pill${view === 'ventes' ? ' active' : ''}`}
-        onClick={() => onViewChange('ventes')}
-      >
-        Mes achats
-      </button>
-      <button
-        type="button"
-        className={`tab-pill${view === 'profile' ? ' active' : ''}`}
-        onClick={() => onViewChange('profile')}
-      >
-        Mon profil
-      </button>
+      {TABS.map(tab => (
+        <button
+          key={tab.view}
+          type="button"
+          className={`tab-pill${view === tab.view ? ' active' : ''}`}
+          onClick={() => onViewChange(tab.view)}
+        >
+          {t(tab.label)}
+        </button>
+      ))}
       <Link to="/catalogue" className="dashboard-tabs-catalogue">
-        Voir le catalogue →
+        {t('dashboard.catalogueLink')}
       </Link>
     </div>
   )

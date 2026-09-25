@@ -3,13 +3,18 @@
 
 import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { optimizeImageUrl, formatPrice, capitalize, VEHICLE_STATUS } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
+import {
+  optimizeImageUrl, formatPrice, formatNumber,
+  translateFuel, translateTransmission, VEHICLE_STATUS,
+} from '@/lib/utils'
 import { getVehicleBySlug } from '@/lib/vehiclesCache'
 import './VehicleDetail.css'
 
 export default function VehicleDetail() {
   const { slug } = useParams()
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const [vehicle, setVehicle] = useState(null)
   const [loading, setLoading] = useState(true)
   const [activeImg, setActiveImg] = useState(0)
@@ -46,13 +51,19 @@ export default function VehicleDetail() {
     images, status
   } = vehicle
 
-  const statusInfo = VEHICLE_STATUS[status] || VEHICLE_STATUS.available
+  const statusKey = VEHICLE_STATUS[status] ? status : 'available'
+  const statusInfo = VEHICLE_STATUS[statusKey]
 
   const mainSpecs = [
-    { label: 'Carburant', value: capitalize(fuel_type) || 'N/A' },
-    { label: 'Transmission', value: capitalize(transmission) || 'N/A' },
-    { label: 'Kilométrage', value: mileage === 0 ? 'Neuf' : mileage ? `${mileage.toLocaleString('fr-FR')} km` : 'N/A' },
-    { label: 'Puissance', value: power ? `${power} ch` : 'N/A' },
+    { label: t('vehicle.fuel'), value: translateFuel(fuel_type) || t('common.na') },
+    { label: t('vehicle.transmission'), value: translateTransmission(transmission) || t('common.na') },
+    {
+      label: t('vehicle.mileage'),
+      value: mileage === 0
+        ? t('common.new')
+        : mileage ? t('vehicle.mileageValue', { value: formatNumber(mileage) }) : t('common.na'),
+    },
+    { label: t('vehicle.power'), value: power ? t('vehicle.powerValue', { power }) : t('common.na') },
   ]
 
   return (
@@ -73,7 +84,7 @@ export default function VehicleDetail() {
         <div className="detail-hero-overlay"></div>
 
         <Link to="/catalogue" className="detail-hero-back">
-          ← Retour au catalogue
+          {t('vehicle.back')}
         </Link>
 
         <div className="detail-hero-content">
@@ -84,7 +95,7 @@ export default function VehicleDetail() {
           <div className="detail-hero-meta">
             <div className="tag">{year}</div>
             <div className="detail-price">{formatPrice(price)}</div>
-            <span className={statusInfo.badge}>{statusInfo.label}</span>
+            <span className={statusInfo.badge}>{t(`status.vehicle.${statusKey}`)}</span>
           </div>
         </div>
 
@@ -95,7 +106,7 @@ export default function VehicleDetail() {
                 key={i}
                 className={`detail-hero-thumb ${i === activeImg ? 'active' : ''}`}
                 onClick={() => setActiveImg(i)}
-                aria-label={`Voir l'image ${i + 1}`}
+                aria-label={t('vehicle.viewImage', { index: i + 1 })}
               >
                 <img
                   src={optimizeImageUrl(img, 160)}
@@ -111,7 +122,7 @@ export default function VehicleDetail() {
 
       <div className="page-section detail-body">
         <div className="detail-main">
-          <div className="tag">Caractéristiques</div>
+          <div className="tag">{t('vehicle.specsTag')}</div>
           <div className="detail-spec-grid">
             {mainSpecs.map((spec, i) => (
               <div className="detail-spec-item" key={i}>
@@ -121,6 +132,8 @@ export default function VehicleDetail() {
             ))}
           </div>
 
+          {/* La description vient de la base, saisie par l'admin : elle reste dans la
+              langue où elle a été écrite. */}
           {description && (
             <p className="detail-description">{description}</p>
           )}
@@ -131,7 +144,7 @@ export default function VehicleDetail() {
               cours d'essai ('reserved'), seul 'sold' le bloque (voir venteController.create). */}
           {status === 'available' && (
             <button onClick={() => navigate(`/reserve/${slug}`)} className="btn-primary">
-              Réserver un essai
+              {t('vehicle.bookTestDrive')}
             </button>
           )}
           {status !== 'sold' ? (
@@ -139,15 +152,15 @@ export default function VehicleDetail() {
               onClick={() => navigate(`/achat/${slug}`)}
               className={status === 'available' ? 'btn-ghost' : 'btn-primary'}
             >
-              Acheter
+              {t('vehicle.buy')}
             </button>
           ) : (
             <button className="btn-ghost" disabled style={{ opacity: 0.5 }}>
-              Véhicule vendu
+              {t('vehicle.sold')}
             </button>
           )}
           <Link to="/contact" className="btn-ghost">
-            Nous contacter
+            {t('vehicle.contactUs')}
           </Link>
         </div>
       </div>

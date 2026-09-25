@@ -2,6 +2,7 @@
 // hooks ne savent pas le faire.
 
 import { Component } from 'react'
+import i18n from '@/lib/i18n'
 
 export default class ErrorBoundary extends Component {
   constructor(props) {
@@ -22,17 +23,20 @@ export default class ErrorBoundary extends Component {
 
   render() {
     if (this.state.hasError) {
+      // i18n.t directement plutôt que le hook (interdit dans une classe) ou withTranslation :
+      // cet écran remplace toute l'application, sélecteur de langue compris, il n'a donc
+      // jamais à se retraduire une fois affiché.
       return (
         <main style={{ textAlign: 'center', padding: '80px 24px' }}>
           <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '48px', textTransform: 'uppercase', marginBottom: '16px' }}>
-            Erreur inattendue
+            {i18n.t('errorBoundary.title')}
           </h1>
           <p style={{ color: 'var(--gray)', marginBottom: '32px' }}>
-            Une erreur est survenue. Veuillez recharger la page.
+            {i18n.t('errorBoundary.desc')}
           </p>
           {/* Rechargement complet : l'état de l'app a peut-être causé l'erreur. */}
           <button className="btn-primary" onClick={() => window.location.reload()}>
-            Recharger
+            {i18n.t('errorBoundary.reload')}
           </button>
         </main>
       )
